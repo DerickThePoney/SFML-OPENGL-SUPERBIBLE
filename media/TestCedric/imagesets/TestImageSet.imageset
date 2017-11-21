@@ -1,0 +1,4 @@
+<Imageset autoScaled="true" imagefile="..\..\..\..\..\..\Artwork\kenneyDonation_v8\Art (5230 files)\UI pack (220 assets)\Adventure pack (80 assets)\preview.png" name="Test" nativeHorzRes="1920" nativeVertRes="1080" version="2">
+    <Image height="49" name="ButtonNormal" width="190" xPos="393" yPos="56" />
+    <Image height="45" name="ButtonPressed" width="190" xPos="603" yPos="60" />
+</Imageset>

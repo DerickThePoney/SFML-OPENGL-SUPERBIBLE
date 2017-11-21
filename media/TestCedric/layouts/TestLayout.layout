@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<GUILayout version="4" >
+    <Window type="VerticalLayoutContainer" name="VerticalLayoutContainer" >
+        <Property name="Area" value="{{0,1032},{0,224},{1,-6},{1,-256}}" />
+        <Window type="DefaultWindow" name="DefaultWindow" >
+            <Property name="Area" value="{{0,-490},{0,252},{1,-970},{1,-28}}" />
+            <Property name="MaxSize" value="{{1,0},{1,0}}" />
+        </Window>
+        <Window type="DefaultWindow" name="DefaultWindow2" >
+            <Property name="Area" value="{{0,1336},{0,158},{1,-152},{1,-230}}" />
+            <Property name="MaxSize" value="{{1,0},{1,0}}" />
+        </Window>
+    </Window>
+</GUILayout>
