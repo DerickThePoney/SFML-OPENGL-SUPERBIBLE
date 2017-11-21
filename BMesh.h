@@ -184,18 +184,6 @@ private:
 	vec3 m_kScaleFactor;
 };
 
-class MakeSingleFace : public BMeshOperation
-{
-public:
-	MakeSingleFace(vec3 kScale = vec3(1), mat4 kPositionMatrix = mat4::identity()): m_kScale(kScale), m_kPositionMatrix(kPositionMatrix) {}
-	// Hérité via BMeshOperation
-	virtual void Apply(BMesh & rkMesh) override;
-
-private:
-	vec3 m_kScale;
-	mat4 m_kPositionMatrix;
-};
-
 class MakeCube : public BMeshOperation
 {
 public:

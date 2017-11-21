@@ -5,7 +5,7 @@
 #include "OGLApplication.h"
 #include "SinningCubeApplication.h"
 #include "TestVesselApplication.h"
-#include "CEGUITutorial.h"
+//#include "CEGUITutorial.h"
 #include "GameObjectApplication.h"
 
 
@@ -14,8 +14,8 @@ int main()
 {
 	//OGLApplication app;
 	//SpinningCubeApplication app;
-	CEGUITutorial app;
-	//GameObjectApplication app;
+	//CEGUITutorial app;
+	GameObjectApplication app;
 
 	app.MainLoop();
 

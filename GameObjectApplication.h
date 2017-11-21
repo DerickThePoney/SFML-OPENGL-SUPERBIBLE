@@ -1,6 +1,7 @@
 #pragma once
 #include "Application.h"
 #include "GameObject.h"
+#include "Camera.h"
 
 class GameObjectApplication :
 	public Application
@@ -23,19 +24,12 @@ public:
 	void LoadAndCompileProgram();
 
 private:
+	Camera m_kCamera;
 	GameObject kGameObjects[3];
 	Mesh m_kMesh;
-	Mesh m_kDirectionsX;
-	Mesh m_kDirectionsY;
-	GLuint m_hiProgram;
-	GLuint m_hiProgramArrows;
+	OGLProgram m_kProgram;
 	GLuint m_hiMoveMatrixUniformLocation;
-	GLuint m_hiColor;
-	GLuint m_hiProjColor;
-	GLuint m_hiMovColor;
 	GLuint m_hiProjMatrixUniformLocation;
-	vmath::mat4 m_kProjectionMatrice;
-	vmath::mat4 m_kLookAtMatrix;
 
 };
 

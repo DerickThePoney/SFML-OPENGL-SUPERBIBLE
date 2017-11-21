@@ -29,10 +29,10 @@ public:
 
 	//runtime methods
 	void Update(double fElapsedTime);
-	void UpdateAllTransformsInHierarchy();
+	virtual void UpdateAllTransformsInHierarchy();
 
-	virtual void ImGUIHierarchy(GameObject*& node_clicked);
-	void Inspector();
+	void ImGUIHierarchy(GameObject*& node_clicked);
+	virtual void Inspector();
 
 	void SetName(const std::string& rkName) { m_kName = rkName; }
 

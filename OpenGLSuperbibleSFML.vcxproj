@@ -95,14 +95,14 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>SFML_STATIC;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>imgui;%SFML_INSTALL%\include;%GLEW_INSTALL%\include;%INSTALL_CEGUI%\dependencies\include;%INSTALL_CEGUI%\include\cegui-0</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>imgui;%SFML_INSTALL%\include;%GLEW_INSTALL%\include;%INSTALL_CEGUI%\dependencies\include;C:\Program Files (x86)\cegui\include\cegui-0</AdditionalIncludeDirectories>
       <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>%SFML_INSTALL%\lib\$(Platform);%GLEW_INSTALL%\lib\Release\$(Platform);%INSTALL_CEGUI%\lib;%INSTALL_CEGUI%\dependencies\lib\dynamic;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>pcre_d.lib;sfml-graphics-s-d.lib;sfml-window-s-d.lib;sfml-system-s-d.lib;opengl32.lib;glew32s.lib;freetype.lib;jpeg.lib;winmm.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;CEGUIBase-0_d.lib;CEGUIExpatParser_d.lib;CEGUISILLYImageCodec_d.lib;SILLY_d.lib;CEGUIOpenGLRenderer-0_d.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sfml-graphics-s-d.lib;sfml-window-s-d.lib;sfml-system-s-d.lib;opengl32.lib;glew32s.lib;freetype.lib;jpeg.lib;winmm.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -129,7 +129,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>SFML_STATIC;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>imgui;%SFML_INSTALL%\include;%GLEW_INSTALL%\include;%INSTALL_CEGUI%\dependencies\include;%INSTALL_CEGUI%\include\cegui-0</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>imgui;%SFML_INSTALL%\include;%GLEW_INSTALL%\include;%INSTALL_CEGUI%\dependencies\include;C:\Program Files (x86)\cegui\include\cegui-0</AdditionalIncludeDirectories>
       <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
@@ -138,7 +138,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>%SFML_INSTALL%\lib\$(Platform);%GLEW_INSTALL%\lib\Release\$(Platform);%INSTALL_CEGUI%\lib;%INSTALL_CEGUI%\dependencies\lib\dynamic;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>pcre.lib;sfml-graphics-s.lib;sfml-window-s.lib;sfml-system-s.lib;opengl32.lib;glew32s.lib;freetype.lib;jpeg.lib;winmm.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;CEGUIBase-0.lib;CEGUIExpatParser.lib;CEGUISILLYImageCodec.lib;SILLY.lib;CEGUIOpenGLRenderer-0.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sfml-graphics-s.lib;sfml-window-s.lib;sfml-system-s.lib;opengl32.lib;glew32s.lib;freetype.lib;jpeg.lib;winmm.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <Profile>true</Profile>
     </Link>
   </ItemDefinitionGroup>
@@ -172,10 +172,8 @@
     <ClInclude Include="BezierSpline.h" />
     <ClInclude Include="BMesh.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="CEGUITutorial.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameObjectApplication.h" />
-    <ClInclude Include="GUIManager.h" />
     <ClInclude Include="imgui\imconfig-events-SFML.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui-events-SFML.h" />
@@ -191,6 +189,7 @@
     <ClInclude Include="MeshManager.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="OGLApplication.h" />
+    <ClInclude Include="OGLShader.h" />
     <ClInclude Include="SinningCubeApplication.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -204,10 +203,8 @@
     <ClCompile Include="BezierCurve.cpp" />
     <ClCompile Include="BMesh.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="CEGUITutorial.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameObjectApplication.cpp" />
-    <ClCompile Include="GUIManager.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
     <ClCompile Include="imgui\imgui_draw.cpp" />
@@ -217,6 +214,7 @@
     <ClCompile Include="MeshManager.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="OGLApplication.cpp" />
+    <ClCompile Include="OGLShader.cpp" />
     <ClCompile Include="SFML_Project.cpp" />
     <ClCompile Include="SinningCubeApplication.cpp" />
     <ClCompile Include="stdafx.cpp">

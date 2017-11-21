@@ -20,30 +20,20 @@ void GameObjectApplication::Initialise()
 	kBMesh.BuildMesh(m_kMesh);
 	m_kMesh.LoadOnGraphicsCard();
 
-	BMesh kBMesh2;
-	MakeSingleFace kSingleFace(vec3(1));// 0.1f, 0.3, 1));
-	//TranslateFace kFaceTranslate(0, vec3(-0.7, 0.7,0));
-	kSingleFace.Apply(kBMesh2);
-	//kFaceTranslate.Apply(kBMesh2);
-	kBMesh2.BuildMesh(m_kDirectionsX);
-	m_kDirectionsX.LoadOnGraphicsCard();
-
-	BMesh kBMesh3;
-	MakeSingleFace kSingleFace2(vec3(1));// 0.3f, 0.1, 1));
-	kSingleFace2.Apply(kBMesh3);
-	//kFaceTranslate2.Apply(kBMesh3);
-	kBMesh3.BuildMesh(m_kDirectionsY);
-	m_kDirectionsY.LoadOnGraphicsCard();
-
-
 	LoadAndCompileProgram();
 
-	m_kLookAtMatrix = vmath::lookat(vmath::vec3(0, 0, 0), vmath::vec3(0, 0, 20), vmath::vec3(0, 1, 0));
+	/*m_kLookAtMatrix = vmath::lookat(vmath::vec3(0, 0, 20), vmath::vec3(0, 0, 0), vmath::vec3(0, 1, 0));
 	m_kProjectionMatrice = vmath::perspective(50.0f,
 		(float)m_window.getSize().x / (float)m_window.getSize().y,
 		0.1f,
+		1000.0f);*/
+
+	m_kCamera.Init(50, (float)m_window.getSize().x / (float)m_window.getSize().y,
+		0.1f,
 		1000.0f);
 
+	m_kCamera.UpdateAllTransformsInHierarchy();
+	m_kCamera.AddChild(&kGameObjects[0]);
 	kGameObjects[0].SetName("BaseObject");
 	kGameObjects[1].SetName("Middle");
 	kGameObjects[2].SetName("LeafObject");
@@ -55,7 +45,11 @@ void GameObjectApplication::Initialise()
 	kGameObjects[1].m_kTransform.SetLocalPosition(vec3(1, 0, 0));
 	kGameObjects[2].m_kTransform.SetLocalPosition(vec3(1, 0, 0));
 
-	kGameObjects[0].UpdateAllTransformsInHierarchy();
+	kGameObjects[0].m_kTransform.SetLocalOrientation(quaternion(-1, 0, 0, 0));
+
+	m_kCamera.UpdateAllTransformsInHierarchy();
+
+
 
 	/*std::cout << "---------------------------------------------------------------\n";
 	std::cout << "INIT LOOP\n";
@@ -99,21 +93,21 @@ void GameObjectApplication::Update(double deltaTime)
 		//q = mix(qStart, qEnd, t);
 	}
 	
-
+	//m_kCamera.UpdateAllTransformsInHierarchy();
 	/*kGameObjects[0].m_kTransform.SetLocalOrientation(normalize(q));
 	kGameObjects[1].m_kTransform.SetLocalOrientation(normalize(q2));
 	kGameObjects[2].m_kTransform.SetLocalOrientation(normalize(q3));*/
-	kGameObjects[0].UpdateAllTransformsInHierarchy();
+	m_kCamera.UpdateAllTransformsInHierarchy();
 	elapsed += deltaTime * 0.001 / fLoopTime;
 //	++tick;
-	std::cout << "---------------------------------------------------------------\n";
+	/*std::cout << "---------------------------------------------------------------\n";
 	std::cout << "UPDATE LOOP: delta: " << deltaTime << "\n";
 	std::cout << "q: " << q[0] << "\t" << q[1] << "\t" << q[2] << "\t" << q[3] << "\n";
 	for (int i = 0; i < 3; ++i)
 	{
 		std::cout << "Game object " << i << "\n";
 		kGameObjects[i].m_kTransform.WriteIntoStream(std::cout);
-	}
+	}*/
 
 	ImGuiIO &io = ImGui::GetIO();
 	
@@ -121,7 +115,8 @@ void GameObjectApplication::Update(double deltaTime)
 	ImGui::Begin("Hierarchy");
 	static GameObject* node_clicked;// = nullptr;
 	//ImGui::PushStyleVar(ImGuiStyleVar_IndentSpacing, ImGui::GetFontSize() * 3); // Increase spacing to differentiate leaves from expanded contents.
-	kGameObjects[0].ImGUIHierarchy(node_clicked);
+	m_kCamera.ImGUIHierarchy(node_clicked);
+	//kGameObjects[0].ImGUIHierarchy(node_clicked);
 	//ImGui::PopStyleVar();
 	//ImGui::TreePop();
 	ImGui::End();
@@ -152,43 +147,18 @@ void GameObjectApplication::Render(double currentTime)
 	glClearBufferfv(GL_DEPTH, 0, &one);
 
 	//use program
-	glUseProgram(m_hiProgram);
+	m_kProgram.UseProgram();
 	m_kMesh.BindForDrawing();
 
-	glUniformMatrix4fv(m_hiProjMatrixUniformLocation, 1, GL_FALSE, m_kProjectionMatrice);
+	m_kCamera.LoadProjectionOnGraphics(m_hiProjMatrixUniformLocation);
 
 	for (int i = 0; i < 3; ++i)
 	{
-		vmath::mat4 moveMat = m_kLookAtMatrix * kGameObjects[i].m_kTransform.GetWorldSpaceTransform();
-		glUseProgram(m_hiProgram);
-		m_kMesh.BindForDrawing();
-
-		glUniformMatrix4fv(m_hiProjMatrixUniformLocation, 1, GL_FALSE, m_kProjectionMatrice);
 		//set modelview and proj matrix
-		glUniformMatrix4fv(m_hiMoveMatrixUniformLocation, 1, GL_FALSE, moveMat);
+		glUniformMatrix4fv(m_hiMoveMatrixUniformLocation, 1, GL_FALSE, m_kCamera.GetLookAt() * kGameObjects[i].m_kTransform.GetWorldSpaceTransform());
 
 		//draw call
 		glDrawElements(GL_TRIANGLES, m_kMesh.m_aiIndices.size(), GL_UNSIGNED_INT, 0);
-
-		//set modelview and proj matrix
-		const vec4 red = vec4(1, 0, 0, 1);
-		const vec4 green = vec4(0, 1, 0, 1);
-		const vec4 blue = vec4(1, 0, 1, 1);
-
-		glUseProgram(m_hiProgramArrows);
-		m_kDirectionsX.BindForDrawing();
-		
-		glUniform4fv(m_hiColor, 1, red.GetData());
-		glUniformMatrix4fv(m_hiMovColor, 1, GL_FALSE, moveMat);
-		glUniformMatrix4fv(m_hiProjColor, 1, GL_FALSE, m_kProjectionMatrice);
-		glDrawElements(GL_TRIANGLES, m_kDirectionsX.m_aiIndices.size(), GL_UNSIGNED_INT, 0);
-
-
-		m_kDirectionsY.BindForDrawing();
-		glUniform4fv(m_hiColor, 1, green.GetData());
-		glUniformMatrix4fv(m_hiMovColor, 1, GL_FALSE, moveMat);
-		//glUniformMatrix4fv(m_hiProjColor, 1, GL_FALSE, m_kProjectionMatrice);
-		glDrawElements(GL_TRIANGLES, m_kDirectionsY.m_aiIndices.size(), GL_UNSIGNED_INT, 0);
 	}
 
 	ImGui::Render();
@@ -204,50 +174,18 @@ void GameObjectApplication::Terminate()
 void GameObjectApplication::OnResize(unsigned int width, unsigned int height)
 {
 	Application::OnResize(width, height);
-	m_kProjectionMatrice = vmath::perspective(50.0f,
-		(float)width / (float)height,
-		0.1f,
-		1000.0f);
+	m_kCamera.OnResize(width, height);
 }
 
 void GameObjectApplication::LoadAndCompileProgram()
 {
-	GLuint ahiShaders[2];// hiVertexShader, hiFragmentShader;
+	OGLShader akShaders[2];// hiVertexShader, hiFragmentShader;
 
-	ahiShaders[0] = LoadShader("media/shaders/SpinnyCube.vert.glsl", GL_VERTEX_SHADER, true);
-	ahiShaders[1] = LoadShader("media/shaders/SpinnyCube.frag.glsl", GL_FRAGMENT_SHADER, true);
+	akShaders[0].InitFromFile("media/shaders/SpinnyCube.vert.glsl", GL_VERTEX_SHADER);
+	akShaders[1].InitFromFile("media/shaders/SpinnyCube.frag.glsl", GL_FRAGMENT_SHADER);
 
+	m_kProgram.LinkProgram(akShaders, 2, false);
 
-	m_hiProgram = LinkProgram(ahiShaders, 2, true, true);// glCreateProgram();
-														 /*glAttachShader(m_hiProgram, hiVertexShader);
-														 glAttachShader(m_hiProgram, hiFragmentShader);
-														 glLinkProgram(m_hiProgram);*/
-
-														 //delete vertex and fragment shaders
-														 //glDeleteShader(hiVertexShader);
-														 //glDeleteShader(hiFragmentShader);
-
-														 //get the unforms
-	m_hiMoveMatrixUniformLocation = glGetUniformLocation(m_hiProgram, "mv_matrix");
-	m_hiProjMatrixUniformLocation = glGetUniformLocation(m_hiProgram, "proj_matrix");
-
-//	GLuint ahiShaders[2];// hiVertexShader, hiFragmentShader;
-
-	ahiShaders[0] = LoadShader("media/shaders/Arrows.vert.glsl", GL_VERTEX_SHADER, true);
-	ahiShaders[1] = LoadShader("media/shaders/Arrows.frag.glsl", GL_FRAGMENT_SHADER, true);
-
-
-	m_hiProgramArrows = LinkProgram(ahiShaders, 2, true, true);// glCreateProgram();
-														 /*glAttachShader(m_hiProgram, hiVertexShader);
-														 glAttachShader(m_hiProgram, hiFragmentShader);
-														 glLinkProgram(m_hiProgram);*/
-
-														 //delete vertex and fragment shaders
-														 //glDeleteShader(hiVertexShader);
-														 //glDeleteShader(hiFragmentShader);
-
-														 //get the unforms
-	m_hiColor = glGetUniformLocation(m_hiProgramArrows, "color");
-	m_hiProjColor = glGetUniformLocation(m_hiProgramArrows, "mv_matrix");
-	m_hiMovColor = glGetUniformLocation(m_hiProgramArrows, "proj_matrix");
+	m_hiMoveMatrixUniformLocation = glGetUniformLocation(m_kProgram, "mv_matrix");
+	m_hiProjMatrixUniformLocation = glGetUniformLocation(m_kProgram, "proj_matrix");
 }

@@ -31,3 +31,10 @@
 *.out
 *.app
 media/fonts/batang.ttf
+ipch/
+.vs/
+Debug/
+*.opendb
+*.db
+*.bak
+Release/

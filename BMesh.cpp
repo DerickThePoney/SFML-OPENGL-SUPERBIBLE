@@ -979,25 +979,3 @@ void MakeSpaceShip2::Apply(BMesh & rkMesh)
 	kRightWing3.Apply(rkMesh);
 
 }
-
-void MakeSingleFace::Apply(BMesh & rkMesh)
-{
-	//make vertices
-	mat4 kScaleMatrix = m_kPositionMatrix * scale(m_kScale);
-
-	I32 iStart = rkMesh.m_akVertices.size();
-	rkMesh.m_akVertices.push_back(Vertice(-1, -1, -1));//0
-	rkMesh.m_akVertices.push_back(Vertice(-1, 1, -1));//1
-	rkMesh.m_akVertices.push_back(Vertice(1, 1, -1));//2
-	rkMesh.m_akVertices.push_back(Vertice(1, -1, -1));//3
-
-	for (UI32 i = iStart; i < rkMesh.m_akVertices.size(); ++i)
-	{
-		vec4 scaledVertice = kScaleMatrix * vec4(rkMesh.m_akVertices[i], 1);
-		rkMesh.m_akVertices[i] = Vertice(scaledVertice[0], scaledVertice[1], scaledVertice[2]);
-	}
-
-	rkMesh.m_akFaces[0] = Face();
-
-	rkMesh.m_akFaces[0].m_apkVerticesMap = std::vector<I32>{ 3,0,1,2 };
-}

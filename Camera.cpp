@@ -1,12 +1,135 @@
 #include "stdafx.h"
 #include "Camera.h"
 
-Camera::Camera(float fovy, float aspectRation, float n, float f)
-	: GameObject("Camera"), focal(fovy), aspectRatio(aspectRation), n(n), f(f)
+void Camera::Init(float fovy, float aspectRation, float n, float f)
 {
+	SetName("Main camera");
+	focal = (fovy);
+	aspectRatio = (aspectRation);
+	fNearPlane = (n);
+	fFarPlane = (f);
+	m_eType = CameraType::PERSPECTIVE;
 
+	m_top = 5.0 / 2;
+	m_bottom = -5.0 / 2;
+	m_left = m_bottom * aspectRatio;
+	m_right = m_top* aspectRatio;
+	
+	m_kTransform.UpdateWorldSpaceTransform(nullptr);
+
+	ComputeProjection();
+
+	ComputeLookAt();
 }
 
-void Camera::ImGUIHierarchy(GameObject *& node_clicked)
+void Camera::OnResize(unsigned int width, unsigned int height)
 {
+	float size = m_top - m_bottom;
+	aspectRatio = (float)width / (float)height;
+
+	m_top = size / 2;
+	m_bottom = -size / 2;
+	m_left = m_bottom * aspectRatio;
+	m_right = m_top* aspectRatio;
+
+	ComputeProjection();
+}
+
+void Camera::LoadProjectionOnGraphics(GLuint m_hiProjectionLocation)
+{
+	glUniformMatrix4fv(m_hiProjectionLocation, 1, GL_FALSE, m_kProjectionMatrice);
+}
+
+void Camera::UpdateAllTransformsInHierarchy()
+{
+	GameObject::UpdateAllTransformsInHierarchy();
+	ComputeLookAt();
+}
+
+void Camera::Inspector()
+{
+	GameObject::Inspector();
+	if (ImGui::CollapsingHeader("Camera"))
+	{
+		bool hasChanged = false;
+
+		const char* listbox_items[] = { "Orthographic", "Perspective" };
+		int listbox_item_current = (int)m_eType;
+		if (ImGui::ListBox("Type of camera", &listbox_item_current, listbox_items, 2, 2))
+		{
+			m_eType = (CameraType)listbox_item_current;
+			hasChanged = true;
+		}
+
+
+		if (m_eType == ORTHOGRAPHIC)
+		{
+			float size = m_top - m_bottom;
+
+			if (ImGui::DragFloat("Size", &size))
+			{
+				m_top = size / 2;
+				m_bottom = -size / 2;
+				m_left = m_bottom * aspectRatio;
+				m_right = m_top* aspectRatio;
+				hasChanged = true;
+			}
+		}
+		else
+		{
+			if (ImGui::DragFloat("Focal", &focal)) hasChanged = true;
+		}
+
+		if (ImGui::DragFloat("Near plane", &fNearPlane)) hasChanged = true;
+		if (ImGui::DragFloat("Far plane", &fFarPlane)) hasChanged = true;
+
+		if (hasChanged)
+		{
+			ComputeProjection();
+		}	
+	}
+}
+
+void Camera::ComputeLookAt()
+{
+	vmath::mat4 t = m_kTransform.GetWorldSpaceTransform();
+
+	vmath::vec3 eye(t[3][0], t[3][1], t[3][2]);
+
+	vmath::vec4 center4 = t * vmath::vec4(0, 0, 20, 0);
+	vmath::vec3 center = eye + vmath::vec3(center4[0], center4[1], center4[2]);
+
+	vmath::vec4 up4 = t * vmath::vec4(0, 1, 0, 0);
+	vmath::vec3 up = vmath::vec3(up4[0], up4[1], up4[2]);
+
+	m_kLookAtMatrix = vmath::lookat(eye, center, up);
+}
+
+void Camera::ComputeProjection()
+{
+	switch (m_eType)
+	{
+	case ORTHOGRAPHIC:
+		m_kProjectionMatrice = vmath::ortho(m_left,
+			m_right,
+			m_bottom,
+			m_top,
+			fNearPlane,
+			fFarPlane);
+		break;
+	case PERSPECTIVE:
+		m_kProjectionMatrice = vmath::perspective(focal,
+			aspectRatio,
+			fNearPlane,
+			fFarPlane);
+		/*m_kProjectionMatrice = vmath::frustum(-5,
+			5,
+			-5,
+			5,
+			10,
+			100);*/
+
+
+		break;
+	}
 }
