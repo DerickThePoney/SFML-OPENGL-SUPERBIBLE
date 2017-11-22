@@ -84,7 +84,3 @@ void Mesh::SetAttributes()
 	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 	glEnableVertexAttribArray(3);
 }
-
-void Mesh::MakeSphere(Mesh & rkDest, I32 iPhiSubDiv, I32 iThetaSubdiv, F64 fRadius)
-{
-}

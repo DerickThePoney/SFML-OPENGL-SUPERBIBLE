@@ -19,20 +19,20 @@ out VS_OUT
 	vec2 UV;
 } vs_out;
 
-uniform mat4 projectionMatrix;
-uniform mat4 moveMatrix;
-uniform vec3 lightPosition = vec3(100,100,100);
+uniform mat4 mv_matrix;
+uniform mat4 proj_matrix;
+uniform vec3 lightPosition = vec3(0,0,10);
 
 void main(void)
 {
 	
-	vec4 P = moveMatrix * position;
-	vs_out.N = mat3(moveMatrix) * normal;
+	vec4 P = mv_matrix * position;
+	vs_out.N = mat3(mv_matrix) * normal;
 	vs_out.L = lightPosition - P.xyz;
 	vs_out.V = -P.xyz;
 
 	vs_out.UV = UV;
 	vs_out.color = color;
-	gl_Position = projectionMatrix * P;
+	gl_Position = proj_matrix * P;
 	
 }

@@ -1,7 +1,5 @@
 #version 450 core
 
-uniform sampler2D tex_object;
-
 in VS_OUT
 {
 	vec3 N;
@@ -13,6 +11,7 @@ in VS_OUT
 
 layout (location = 0) out vec4 color;
 
+uniform vec3 ambiant_light = vec3(0.2,0.2,0.2);
 uniform vec3 diffuse_albedo = vec3(0.8,0.8,0.8);
 uniform vec3 specular_albedo = vec3(0.7);
 uniform float specular_power = 8.0;
@@ -28,10 +27,12 @@ void main(void)
 	vec3 R = reflect(-L, N);
 	
 	//diffuse and specular quantity
-	vec3 colorTexture = texture(tex_object, fs_in.UV).rgb;  
+	vec3 colorTexture = vec3(1.0,1.0,1.0);//texture(tex_object, fs_in.UV).rgb;  
 	vec3 diffuse = max(dot(N,L), 0.0) * colorTexture;
 	vec3 specular = pow(max(dot(R,V),0.0), specular_power) * colorTexture;
 	
+	vec3 light = ambiant_light + diffuse + specular;
+	
 	//color = vec4(fs_in.tc, 1.0, 1.0);//texture(tex_object, fs_in.tc * vec2(3.0, 1.0));
-	color = fs_in.color * vec4(diffuse + specular, 1.0);
+	color = fs_in.color * vec4(light, 1.0);
 }

@@ -181,8 +181,8 @@ void GameObjectApplication::LoadAndCompileProgram()
 {
 	OGLShader akShaders[2];// hiVertexShader, hiFragmentShader;
 
-	akShaders[0].InitFromFile("media/shaders/SpinnyCube.vert.glsl", GL_VERTEX_SHADER);
-	akShaders[1].InitFromFile("media/shaders/SpinnyCube.frag.glsl", GL_FRAGMENT_SHADER);
+	akShaders[0].InitFromFile("media/shaders/StandardMeshShader.vert.glsl", GL_VERTEX_SHADER);
+	akShaders[1].InitFromFile("media/shaders/StandardMeshShader.frag.glsl", GL_FRAGMENT_SHADER);
 
 	m_kProgram.LinkProgram(akShaders, 2, false);
 
