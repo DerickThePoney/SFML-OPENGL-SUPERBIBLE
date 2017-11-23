@@ -1,4 +1,4 @@
-#version 450 core
+#version 430 core
 
 in VS_OUT
 {
@@ -31,7 +31,7 @@ void main(void)
 	vec3 diffuse = max(dot(N,L), 0.0) * colorTexture;
 	vec3 specular = pow(max(dot(R,V),0.0), specular_power) * colorTexture;
 	
-	vec3 light = ambiant_light + diffuse + specular;
+	vec3 light = clamp(ambiant_light + diffuse + specular,0,1);
 	
 	//color = vec4(fs_in.tc, 1.0, 1.0);//texture(tex_object, fs_in.tc * vec2(3.0, 1.0));
 	color = fs_in.color * vec4(light, 1.0);

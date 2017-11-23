@@ -33,7 +33,7 @@ void GameObjectApplication::Initialise()
 		1000.0f);
 
 	m_kCamera.UpdateAllTransformsInHierarchy();
-	m_kCamera.AddChild(&kGameObjects[0]);
+	//m_kCamera.AddChild(&kGameObjects[0]);
 	kGameObjects[0].SetName("BaseObject");
 	kGameObjects[1].SetName("Middle");
 	kGameObjects[2].SetName("LeafObject");
@@ -48,7 +48,7 @@ void GameObjectApplication::Initialise()
 	kGameObjects[0].m_kTransform.SetLocalOrientation(quaternion(-1, 0, 0, 0));
 
 	m_kCamera.UpdateAllTransformsInHierarchy();
-
+	kGameObjects[0].UpdateAllTransformsInHierarchy();
 
 
 	/*std::cout << "---------------------------------------------------------------\n";
@@ -98,6 +98,7 @@ void GameObjectApplication::Update(double deltaTime)
 	kGameObjects[1].m_kTransform.SetLocalOrientation(normalize(q2));
 	kGameObjects[2].m_kTransform.SetLocalOrientation(normalize(q3));*/
 	m_kCamera.UpdateAllTransformsInHierarchy();
+	kGameObjects[0].UpdateAllTransformsInHierarchy();
 	elapsed += deltaTime * 0.001 / fLoopTime;
 //	++tick;
 	/*std::cout << "---------------------------------------------------------------\n";
@@ -116,7 +117,7 @@ void GameObjectApplication::Update(double deltaTime)
 	static GameObject* node_clicked;// = nullptr;
 	//ImGui::PushStyleVar(ImGuiStyleVar_IndentSpacing, ImGui::GetFontSize() * 3); // Increase spacing to differentiate leaves from expanded contents.
 	m_kCamera.ImGUIHierarchy(node_clicked);
-	//kGameObjects[0].ImGUIHierarchy(node_clicked);
+	kGameObjects[0].ImGUIHierarchy(node_clicked);
 	//ImGui::PopStyleVar();
 	//ImGui::TreePop();
 	ImGui::End();
