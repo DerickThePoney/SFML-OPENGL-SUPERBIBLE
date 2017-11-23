@@ -25,7 +25,7 @@ bool Mesh::LoadFromFile(const std::string & kFilename)
 void Mesh::BindForDrawing()
 {
 	glBindVertexArray(m_kOGLBindings.m_hiVao);
-	SetAttributes();
+	//SetAttributes();
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_kOGLBindings.m_hIndices);
 	
 }
@@ -39,14 +39,13 @@ void Mesh::LoadOnGraphicsCard()
 	//generate vertex buffer
 	glGenBuffers(1, &m_kOGLBindings.m_hVertices);
 	glBindBuffer(GL_ARRAY_BUFFER, m_kOGLBindings.m_hVertices);
-	glBufferData(GL_ARRAY_BUFFER, m_akVertices.size() * sizeof(vec3), m_akVertices.data(), GL_STATIC_DRAW);
-	/*glNamedBufferStorage(m_kOGLBindings.m_hVertices, m_akVertices.size() * sizeof(vec3), NULL, GL_DYNAMIC_STORAGE_BIT);
-	void* ptr = glMapNamedBuffer(m_kOGLBindings.m_hVertices, GL_WRITE_ONLY);
-
+	//glBufferData(GL_ARRAY_BUFFER, m_akVertices.size() * sizeof(vec3), m_akVertices.data(), GL_STATIC_DRAW);
+	
+	glBufferStorage(GL_ARRAY_BUFFER, m_akVertices.size() * sizeof(vec3), m_akVertices.data(), 0);
+	void* ptr = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
 	memcpy(ptr, m_akVertices.data(), m_akVertices.size() * sizeof(vec3));
+	glUnmapBuffer(GL_ARRAY_BUFFER);
 
-	glUnmapNamedBuffer(m_kOGLBindings.m_hVertices);
-	*/
 	//generate normal buffer
 	glGenBuffers(1, &m_kOGLBindings.m_hNormals);
 	glBindBuffer(GL_ARRAY_BUFFER, m_kOGLBindings.m_hNormals);
@@ -66,11 +65,17 @@ void Mesh::LoadOnGraphicsCard()
 	glGenBuffers(1, &m_kOGLBindings.m_hIndices);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_kOGLBindings.m_hIndices);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_aiIndices.size() * sizeof(UI32), m_aiIndices.data(), GL_STATIC_DRAW);
+
+	SetAttributes();
 }
 
 void Mesh::SetAttributes()
 {
 	//set vertex array as attributes
+	/*glBindVertexBuffer(0, m_kOGLBindings.m_hVertices, 0, sizeof(vec3));
+	glVertexAttribFormat(0, sizeof(vec3), GL_FLOAT, GL_FALSE, 0);
+	glVertexAttribBinding(0, 0);*/
+
 	glBindBuffer(GL_ARRAY_BUFFER, m_kOGLBindings.m_hVertices);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 	glEnableVertexAttribArray(0);
