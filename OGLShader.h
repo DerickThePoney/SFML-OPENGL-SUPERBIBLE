@@ -17,18 +17,3 @@ private:
 	GLenum m_eType;
 };
 
-class OGLProgram
-{
-public:
-	OGLProgram();
-	~OGLProgram();
-
-	bool LinkProgram(OGLShader * uiShaders, int iShaderCount, bool bDeleteShaders);
-
-	void UseProgram();
-
-	operator GLuint() const { return m_hProgram; }
-private:
-	GLuint m_hProgram;
-};
-

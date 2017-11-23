@@ -189,6 +189,8 @@
     <ClInclude Include="MeshManager.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="OGLApplication.h" />
+    <ClInclude Include="OGLProgram.h" />
+    <ClInclude Include="OGLRendering.h" />
     <ClInclude Include="OGLShader.h" />
     <ClInclude Include="SinningCubeApplication.h" />
     <ClInclude Include="stdafx.h" />
@@ -214,6 +216,7 @@
     <ClCompile Include="MeshManager.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="OGLApplication.cpp" />
+    <ClCompile Include="OGLProgram.cpp" />
     <ClCompile Include="OGLShader.cpp" />
     <ClCompile Include="SFML_Project.cpp" />
     <ClCompile Include="SinningCubeApplication.cpp" />

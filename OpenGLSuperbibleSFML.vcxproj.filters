@@ -114,6 +114,12 @@
     <ClInclude Include="imgui\imconfig.h">
       <Filter>IMGUI</Filter>
     </ClInclude>
+    <ClInclude Include="OGLProgram.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="OGLRendering.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -181,6 +187,9 @@
     </ClCompile>
     <ClCompile Include="imgui\imgui_draw.cpp">
       <Filter>IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="OGLProgram.cpp">
+      <Filter>Rendering</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

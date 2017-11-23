@@ -169,6 +169,7 @@ void GameObjectApplication::Render(double currentTime)
 
 void GameObjectApplication::Terminate()
 {
+	m_kProgram.DeleteProgram();
 	ImGui::SFML::Shutdown();
 }
 

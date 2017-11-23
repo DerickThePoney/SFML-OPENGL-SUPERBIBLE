@@ -2,7 +2,7 @@
 #include "vmath.h"
 #include "Utility.h"
 #include "Object.h"
-#include "OGLShader.h"
+#include "OGLRendering.h"
 //#include "GUIManager.h"
 
 #define TIME_MSEC_DOUBLE(x) ((double)(x).count() / 1000000.0)
