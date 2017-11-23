@@ -40,7 +40,13 @@ void Mesh::LoadOnGraphicsCard()
 	glGenBuffers(1, &m_kOGLBindings.m_hVertices);
 	glBindBuffer(GL_ARRAY_BUFFER, m_kOGLBindings.m_hVertices);
 	glBufferData(GL_ARRAY_BUFFER, m_akVertices.size() * sizeof(vec3), m_akVertices.data(), GL_STATIC_DRAW);
+	/*glNamedBufferStorage(m_kOGLBindings.m_hVertices, m_akVertices.size() * sizeof(vec3), NULL, GL_DYNAMIC_STORAGE_BIT);
+	void* ptr = glMapNamedBuffer(m_kOGLBindings.m_hVertices, GL_WRITE_ONLY);
 
+	memcpy(ptr, m_akVertices.data(), m_akVertices.size() * sizeof(vec3));
+
+	glUnmapNamedBuffer(m_kOGLBindings.m_hVertices);
+	*/
 	//generate normal buffer
 	glGenBuffers(1, &m_kOGLBindings.m_hNormals);
 	glBindBuffer(GL_ARRAY_BUFFER, m_kOGLBindings.m_hNormals);
