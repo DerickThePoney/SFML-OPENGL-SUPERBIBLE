@@ -169,8 +169,8 @@ void GameObjectApplication::Render(double currentTime)
 
 void GameObjectApplication::Terminate()
 {
-	m_kProgram.DeleteProgram();
 	ImGui::SFML::Shutdown();
+	m_kProgram.DeleteProgram();
 }
 
 void GameObjectApplication::OnResize(unsigned int width, unsigned int height)

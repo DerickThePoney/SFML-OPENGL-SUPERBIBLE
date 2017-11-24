@@ -5,6 +5,7 @@ class OGLBuffer
 {
 public:
 	OGLBuffer(): m_iSize(0) {}
+	OGLBuffer(GLuint hiBuffer);
 
 	//Data handling
 	void Init(GLenum eTarget, I32 iSize, void* pData, GLbitfield eFlags);
@@ -16,6 +17,9 @@ public:
 
 	operator GLuint() { return m_hiBuffer; }
 	const UI32& GetSize() const { return m_iSize; }
+
+private:
+	void InitFromHandle();
 private:
 	GLuint m_hiBuffer;
 	UI32 m_iSize;

@@ -120,9 +120,6 @@
     <ClInclude Include="OGLRendering.h">
       <Filter>Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="Macros.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="OGLBuffer.h">
       <Filter>Rendering</Filter>
     </ClInclude>

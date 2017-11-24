@@ -47,6 +47,8 @@ void Mesh::LoadBuffersOnGraphicsCard()
 	//generate indices buffer
 	m_kOGLBindings.m_kIndices.Init(GL_ELEMENT_ARRAY_BUFFER, m_aiIndices.size() * sizeof(UI32), m_aiIndices.data(), 0);
 
+	OGLBuffer justForTest((GLuint)m_kOGLBindings.m_kIndices);
+
 	SetAttributes();
 }
 
