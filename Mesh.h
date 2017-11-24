@@ -33,7 +33,7 @@ public:
 
 	struct OGLMeshBuffers
 	{
-		GLuint m_hiVao;
+		OGLVertexArray m_hkVao;
 		OGLBuffer m_kVertices;
 		OGLBuffer m_kNormals;
 		OGLBuffer m_kColor;

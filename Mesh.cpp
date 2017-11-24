@@ -14,7 +14,7 @@ Mesh::~Mesh()
 	m_kOGLBindings.m_kColor.Delete();
 	m_kOGLBindings.m_kUVs.Delete();
 	m_kOGLBindings.m_kIndices.Delete();
-	glDeleteVertexArrays(1, &m_kOGLBindings.m_hiVao);
+	m_kOGLBindings.m_hkVao.Delete();
 }
 
 bool Mesh::LoadFromFile(const std::string & kFilename)
@@ -24,7 +24,7 @@ bool Mesh::LoadFromFile(const std::string & kFilename)
 
 void Mesh::BindForDrawing()
 {
-	glBindVertexArray(m_kOGLBindings.m_hiVao);
+	m_kOGLBindings.m_hkVao.Bind();
 	m_kOGLBindings.m_kIndices.Bind(GL_ELEMENT_ARRAY_BUFFER);
 	
 }
@@ -56,26 +56,23 @@ void Mesh::SetAttributes()
 {
 
 	//generate vertex array
-	glGenVertexArrays(1, &m_kOGLBindings.m_hiVao);
-	glBindVertexArray(m_kOGLBindings.m_hiVao);
+	m_kOGLBindings.m_hkVao.Init();
 
 	//set vertex array as attributes
 	m_kOGLBindings.m_kVertices.Bind(GL_ARRAY_BUFFER);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-	glEnableVertexAttribArray(0);
+	m_kOGLBindings.m_hkVao.SetAttribute(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
 	//set normals array as attributes
 	m_kOGLBindings.m_kNormals.Bind(GL_ARRAY_BUFFER);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-	glEnableVertexAttribArray(1);
+	m_kOGLBindings.m_hkVao.SetAttribute(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
 	//set color array as attributes
 	m_kOGLBindings.m_kColor.Bind(GL_ARRAY_BUFFER);
-	glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, 0, NULL);
-	glEnableVertexAttribArray(2);
+	m_kOGLBindings.m_hkVao.SetAttribute(2, 4, GL_FLOAT, GL_FALSE, 0, NULL);
 
 	//set UVs array as attributes
 	m_kOGLBindings.m_kUVs.Bind(GL_ARRAY_BUFFER);
-	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 0, NULL);
-	glEnableVertexAttribArray(3);
+	m_kOGLBindings.m_hkVao.SetAttribute(3, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+
+	m_kOGLBindings.m_hkVao.UnBind();
 }
