@@ -127,7 +127,7 @@
       <Filter>Rendering</Filter>
     </ClInclude>
     <ClInclude Include="OGLVertexArray.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+      <Filter>Rendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -207,7 +207,7 @@
       <Filter>Rendering</Filter>
     </ClCompile>
     <ClCompile Include="OGLVertexArray.cpp">
-      <Filter>Fichiers sources</Filter>
+      <Filter>Rendering</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

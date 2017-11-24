@@ -14,6 +14,7 @@ OGLVertexArray::~OGLVertexArray()
 
 void OGLVertexArray::Delete()
 {
+	m_bIsBound = false;
 	glDeleteVertexArrays(1, &m_hiVertexBuffer);
 }
 
