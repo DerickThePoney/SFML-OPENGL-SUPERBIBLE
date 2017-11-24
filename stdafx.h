@@ -9,6 +9,7 @@
 #include "targetver.h"
 #endif // WIN32
 
+#include "Macros.h"
 #include <iostream>
 #include <SFML\Graphics.hpp>
 #define GLEW_STATIC

@@ -1,13 +1,14 @@
 #pragma once
+#include "OGLUtilities.h"
 #include "OGLShader.h"
 
 struct ActiveProgramVertexAttributes
 {
-	~Act
-	GLsizei length;
-	GLint size;
-	GLenum type;
-	GLchar* name;
+	ActiveProgramVertexAttributes(): m_pcName(nullptr) {}
+	GLsizei m_iLength;
+	GLint m_iSize;
+	GLenum m_eType;
+	GLchar* m_pcName;
 };
 
 

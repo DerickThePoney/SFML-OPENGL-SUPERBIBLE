@@ -2,6 +2,8 @@
 #include "vmath.h"
 #include "Utility.h"
 
+#include "OGLRendering.h"
+
 using namespace vmath;
 
 enum Attributes
@@ -20,7 +22,7 @@ public:
 
 	bool LoadFromFile(const std::string& kFilename);
 	void BindForDrawing();
-	void LoadOnGraphicsCard();
+	void LoadBuffersOnGraphicsCard();
 	void SetAttributes();
 
 	std::vector<vec3> m_akVertices;
@@ -32,11 +34,11 @@ public:
 	struct OGLMeshBuffers
 	{
 		GLuint m_hiVao;
-		GLuint m_hVertices;
-		GLuint m_hNormals;
-		GLuint m_hColor;
-		GLuint m_hIndices;
-		GLuint m_hUVs;
+		OGLBuffer m_kVertices;
+		OGLBuffer m_kNormals;
+		OGLBuffer m_kColor;
+		OGLBuffer m_kIndices;
+		OGLBuffer m_kUVs;
 	};
 
 	OGLMeshBuffers m_kOGLBindings;

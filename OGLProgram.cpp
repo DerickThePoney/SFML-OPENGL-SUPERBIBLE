@@ -8,6 +8,12 @@ OGLProgram::OGLProgram()
 
 OGLProgram::~OGLProgram()
 {
+	for (std::size_t i = 0; i < m_akAttributesInfo.size(); ++i)
+	{
+		SAFE_DELETE_ARRAY(m_akAttributesInfo[i].m_pcName);
+	}
+
+	m_akAttributesInfo.clear();
 }
 
 bool OGLProgram::LinkProgram(OGLShader * uiShaders, int iShaderCount, bool bDeleteShaders)
@@ -66,16 +72,13 @@ void OGLProgram::ExtractInformation()
 
 	for (int i = 0; i < value; ++i)
 	{
-		ActiveProgramVertexAttributes
-		GLsizei length;
-		GLint size;
-		GLenum type;
-		GLchar* name = new GLchar[maxlength];
-		glGetActiveAttrib(m_hProgram, i, maxlength, &length, &size, &type, name);
+		ActiveProgramVertexAttributes att;
+		att.m_pcName = new GLchar[maxlength];
+		glGetActiveAttrib(m_hProgram, i, maxlength, &att.m_iLength, &att.m_iSize, &att.m_eType, att.m_pcName);
 
-		std::cout << "Attrib: " << length << "\t" << size << "\t" << type << "\t" << name << std::endl;
+		std::cout << "Attrib: " << att.m_iLength << "\t" << att.m_iSize << "\t" << OGLUtilities::GLTypeEnumToCString(att.m_eType) << "\t" << att.m_pcName << std::endl;
 
-		delete[] name;
+		m_akAttributesInfo.push_back(att);
 	}
 
 

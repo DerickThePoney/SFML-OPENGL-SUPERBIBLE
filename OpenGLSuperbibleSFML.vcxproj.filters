@@ -120,6 +120,15 @@
     <ClInclude Include="OGLRendering.h">
       <Filter>Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="Macros.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="OGLBuffer.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="OGLUtilities.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -189,6 +198,12 @@
       <Filter>IMGUI</Filter>
     </ClCompile>
     <ClCompile Include="OGLProgram.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="OGLBuffer.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="OGLUtilities.cpp">
       <Filter>Rendering</Filter>
     </ClCompile>
   </ItemGroup>

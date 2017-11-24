@@ -18,7 +18,7 @@ void GameObjectApplication::Initialise()
 	MakeCube kMakeCube(vec3(0.2f));
 	kMakeCube.Apply(kBMesh);
 	kBMesh.BuildMesh(m_kMesh);
-	m_kMesh.LoadOnGraphicsCard();
+	m_kMesh.LoadBuffersOnGraphicsCard();
 
 	LoadAndCompileProgram();
 

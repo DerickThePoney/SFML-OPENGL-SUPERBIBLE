@@ -154,7 +154,7 @@ void Object::Initialise()
 
 	//create the mesh
 	SplinedRevolutionMesh(5, 100, *m_pkMesh, kCurve, kSpline, kSpline);*/
-	m_pkMesh->LoadOnGraphicsCard();
+	m_pkMesh->LoadBuffersOnGraphicsCard();
 
 	//create the data
 	/*vmath::vec3* pkData;
