@@ -17,7 +17,7 @@ public:
 
 	//Scene API
 	Camera& GetCamera() { return m_kCamera; }
-	void AddRootObject(GameObject kObject) { m_akRootObjects.push_back(kObject); }
+	void AddRootObject(GameObject* kObject) { m_akRootObjects.push_back(kObject); }
 
 	void ExtractVisibleObjectList(std::vector<GameObject *>& akObjects);
 
@@ -26,6 +26,6 @@ private:
 
 private:
 	Camera m_kCamera;
-	std::vector<GameObject> m_akRootObjects;
+	std::vector<GameObject*> m_akRootObjects;
 };
 
