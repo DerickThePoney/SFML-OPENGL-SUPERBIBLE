@@ -59,34 +59,9 @@ void GameObjectApplication::Initialise()
 
 void GameObjectApplication::Update(double deltaTime)
 {
-	const float angle = -90;
-	quaternion q,q2,q3;
-
-	const quaternion qStart(1, vec3(0, 0, 0));
-	const quaternion qEnd(cos(radians(angle) / 2), vec3(0, 0, 1 * sin(radians(angle) / 2)));
-	const quaternion qEnd2(cos(radians(-angle) / 2), vec3(0, 1*sin(radians(-angle) / 2), 0));
-	const quaternion qEnd3(cos(radians(-angle) / 2), vec3(1 * sin(radians(-angle) / 2), 0, 0));
-	const double fLoopTime = 3;
-	static double elapsed = 0;
-	
-	float t = (float)(elapsed - (int)(elapsed));
-
-	if ((int)(elapsed) & 1)
-	{
-		q = Slerp(qEnd, qStart, t);
-		q2 = Slerp(qEnd2, qStart, t);
-		q3 = Slerp(qEnd3, qStart, t);
-	}
-	else
-	{
-		q = Slerp(qStart, qEnd, t);
-		q2 = Slerp(qStart, qEnd2, t);
-		q3 = Slerp(qStart, qEnd3, t);
-	}
 
 	m_kCamera.UpdateAllTransformsInHierarchy();
 	kGameObjects[0].UpdateAllTransformsInHierarchy();
-	elapsed += deltaTime * 0.001 / fLoopTime;
 
 	ImGuiIO &io = ImGui::GetIO();
 	

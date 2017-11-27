@@ -138,6 +138,9 @@
     <ClInclude Include="MeshRendererComponent.h">
       <Filter>Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -223,6 +226,9 @@
     </ClCompile>
     <ClCompile Include="MeshRendererComponent.cpp">
       <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
