@@ -20,6 +20,8 @@ void Camera::Init(float fovy, float aspectRation, float n, float f)
 	ComputeProjection();
 
 	ComputeLookAt();
+
+	InitialiseProjectionBuffer();
 }
 
 void Camera::OnResize(unsigned int width, unsigned int height)
@@ -35,9 +37,15 @@ void Camera::OnResize(unsigned int width, unsigned int height)
 	ComputeProjection();
 }
 
-void Camera::LoadProjectionOnGraphics(GLuint m_hiProjectionLocation)
+void Camera::LoadProjectionOnGraphics(GLuint bufferIndex)
 {
-	glUniformMatrix4fv(m_hiProjectionLocation, 1, GL_FALSE, m_kProjectionMatrice);
+	vmath::mat4 proj[2];
+	proj[0] = m_kLookAtMatrix;
+	proj[1] = m_kProjectionMatrice;
+
+	m_kProjectionBuffer.UpdateData(GL_UNIFORM_BUFFER, 2 * sizeof(mat4), (void*)proj, GL_WRITE_ONLY);
+
+	m_kProjectionBuffer.BindToBindingPoint(bufferIndex);
 }
 
 void Camera::UpdateAllTransformsInHierarchy()
@@ -132,4 +140,12 @@ void Camera::ComputeProjection()
 
 		break;
 	}
+}
+
+void Camera::InitialiseProjectionBuffer()
+{
+	vmath::mat4 proj[2];
+	proj[0] = m_kLookAtMatrix;
+	proj[1] = m_kProjectionMatrice;
+	m_kProjectionBuffer.Init(GL_UNIFORM_BUFFER, sizeof(vmath::mat4) * 2, proj, GL_MAP_WRITE_BIT);
 }

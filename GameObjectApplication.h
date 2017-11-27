@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "GameObject.h"
 #include "Camera.h"
+#include "Renderer.h"
 
 class GameObjectApplication :
 	public Application
@@ -24,12 +25,10 @@ public:
 	void LoadAndCompileProgram();
 
 private:
+	Renderer m_kRenderer;
 	Camera m_kCamera;
 	GameObject kGameObjects[3];
 	Mesh m_kMesh;
-	OGLProgram m_kProgram;
-	GLuint m_hiMoveMatrixUniformLocation;
-	GLuint m_hiProjMatrixUniformLocation;
-
+	Material m_kMaterial;
 };
 

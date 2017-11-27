@@ -13,6 +13,9 @@ GameObjectApplication::~GameObjectApplication()
 
 void GameObjectApplication::Initialise()
 {
+	//Init the Renderer System
+	m_kRenderer.Init();
+
 	//create the mesh
 	BMesh kBMesh;
 	MakeCube kMakeCube(vec3(0.2f));
@@ -22,18 +25,12 @@ void GameObjectApplication::Initialise()
 
 	LoadAndCompileProgram();
 
-	/*m_kLookAtMatrix = vmath::lookat(vmath::vec3(0, 0, 20), vmath::vec3(0, 0, 0), vmath::vec3(0, 1, 0));
-	m_kProjectionMatrice = vmath::perspective(50.0f,
-		(float)m_window.getSize().x / (float)m_window.getSize().y,
-		0.1f,
-		1000.0f);*/
-
 	m_kCamera.Init(50, (float)m_window.getSize().x / (float)m_window.getSize().y,
 		0.1f,
 		1000.0f);
 
-	m_kCamera.UpdateAllTransformsInHierarchy();
-	//m_kCamera.AddChild(&kGameObjects[0]);
+	
+	//init objects and hierarchy
 	kGameObjects[0].SetName("BaseObject");
 	kGameObjects[1].SetName("Middle");
 	kGameObjects[2].SetName("LeafObject");
@@ -41,6 +38,7 @@ void GameObjectApplication::Initialise()
 	kGameObjects[0].AddChild(&kGameObjects[1]);
 	kGameObjects[1].AddChild(&kGameObjects[2]);
 
+	//init positional stuff
 	kGameObjects[0].m_kTransform.SetLocalPosition(vec3(0, 0, 20));
 	kGameObjects[1].m_kTransform.SetLocalPosition(vec3(1, 0, 0));
 	kGameObjects[2].m_kTransform.SetLocalPosition(vec3(1, 0, 0));
@@ -50,21 +48,18 @@ void GameObjectApplication::Initialise()
 	m_kCamera.UpdateAllTransformsInHierarchy();
 	kGameObjects[0].UpdateAllTransformsInHierarchy();
 
-
-	/*std::cout << "---------------------------------------------------------------\n";
-	std::cout << "INIT LOOP\n";
-	for (int i = 0; i < 3; ++i)
-	{
-		std::cout << "Game object " << i << "\n";
-		kGameObjects[i].m_kTransform.WriteIntoStream(std::cout);
-	}*/
+	//init rendering stuff
+	kGameObjects[0].m_kMeshRenderer.m_kMesh = m_kMesh;
+	kGameObjects[0].m_kMeshRenderer.m_kMaterial = m_kMaterial;
+	kGameObjects[1].m_kMeshRenderer.m_kMesh = m_kMesh;
+	kGameObjects[1].m_kMeshRenderer.m_kMaterial = m_kMaterial;
+	kGameObjects[2].m_kMeshRenderer.m_kMesh = m_kMesh;
+	kGameObjects[2].m_kMeshRenderer.m_kMaterial = m_kMaterial;
 }
 
 void GameObjectApplication::Update(double deltaTime)
 {
 	const float angle = -90;
-	//float sAngle = sin(radians(angle) / 2);
-	//float cAngle = cos(radians(angle) / 2);
 	quaternion q,q2,q3;
 
 	const quaternion qStart(1, vec3(0, 0, 0));
@@ -81,45 +76,27 @@ void GameObjectApplication::Update(double deltaTime)
 		q = Slerp(qEnd, qStart, t);
 		q2 = Slerp(qEnd2, qStart, t);
 		q3 = Slerp(qEnd3, qStart, t);
-		//q = (1 - t) * qEnd + t * qStart;
-		//q = mix(qEnd, qStart, t);
 	}
 	else
 	{
 		q = Slerp(qStart, qEnd, t);
 		q2 = Slerp(qStart, qEnd2, t);
 		q3 = Slerp(qStart, qEnd3, t);
-		//q = (1 - t) * qStart + t * qEnd;
-		//q = mix(qStart, qEnd, t);
 	}
-	
-	//m_kCamera.UpdateAllTransformsInHierarchy();
-	/*kGameObjects[0].m_kTransform.SetLocalOrientation(normalize(q));
-	kGameObjects[1].m_kTransform.SetLocalOrientation(normalize(q2));
-	kGameObjects[2].m_kTransform.SetLocalOrientation(normalize(q3));*/
+
 	m_kCamera.UpdateAllTransformsInHierarchy();
 	kGameObjects[0].UpdateAllTransformsInHierarchy();
 	elapsed += deltaTime * 0.001 / fLoopTime;
-//	++tick;
-	/*std::cout << "---------------------------------------------------------------\n";
-	std::cout << "UPDATE LOOP: delta: " << deltaTime << "\n";
-	std::cout << "q: " << q[0] << "\t" << q[1] << "\t" << q[2] << "\t" << q[3] << "\n";
-	for (int i = 0; i < 3; ++i)
-	{
-		std::cout << "Game object " << i << "\n";
-		kGameObjects[i].m_kTransform.WriteIntoStream(std::cout);
-	}*/
 
 	ImGuiIO &io = ImGui::GetIO();
 	
 
 	ImGui::Begin("Hierarchy");
-	static GameObject* node_clicked;// = nullptr;
-	//ImGui::PushStyleVar(ImGuiStyleVar_IndentSpacing, ImGui::GetFontSize() * 3); // Increase spacing to differentiate leaves from expanded contents.
+	static GameObject* node_clicked;
+
 	m_kCamera.ImGUIHierarchy(node_clicked);
 	kGameObjects[0].ImGUIHierarchy(node_clicked);
-	//ImGui::PopStyleVar();
-	//ImGui::TreePop();
+
 	ImGui::End();
 
 
@@ -139,30 +116,23 @@ void GameObjectApplication::Update(double deltaTime)
 
 void GameObjectApplication::Render(double currentTime)
 {
-	//draw
+	std::vector<GameObjectRenderData> visibleList;
 
-    static const GLfloat one = 1.0f;
+	GameObjectRenderData data1;
+	data1.m_pkTransform = &kGameObjects[0].m_kTransform;
+	data1.m_pkMeshRenderer = &kGameObjects[0].m_kMeshRenderer;
+	GameObjectRenderData data2;
+	data2.m_pkTransform = &kGameObjects[1].m_kTransform;
+	data2.m_pkMeshRenderer = &kGameObjects[1].m_kMeshRenderer;
+	GameObjectRenderData data3;
+	data3.m_pkTransform = &kGameObjects[2].m_kTransform;
+	data3.m_pkMeshRenderer = &kGameObjects[2].m_kMeshRenderer;
 
-	//clear buffer
-	glClearBufferfv(GL_COLOR, 0, vmath::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-	glClearBufferfv(GL_DEPTH, 0, &one);
+	visibleList.push_back(data1);
+	visibleList.push_back(data2);
+	visibleList.push_back(data3);
 
-	//use program
-	m_kProgram.UseProgram();
-	m_kMesh.BindForDrawing();
-
-	m_kCamera.LoadProjectionOnGraphics(m_hiProjMatrixUniformLocation);
-
-	for (int i = 0; i < 3; ++i)
-	{
-		//set modelview and proj matrix
-		glUniformMatrix4fv(m_hiMoveMatrixUniformLocation, 1, GL_FALSE, m_kCamera.GetLookAt() * kGameObjects[i].m_kTransform.GetWorldSpaceTransform());
-
-		//draw call
-		glDrawElements(GL_TRIANGLES, m_kMesh.m_aiIndices.size(), GL_UNSIGNED_INT, 0);
-	}
-
-	ImGui::Render();
+	m_kRenderer.Render(visibleList, m_kCamera);
 
 	m_window.display();
 }
@@ -170,7 +140,8 @@ void GameObjectApplication::Render(double currentTime)
 void GameObjectApplication::Terminate()
 {
 	ImGui::SFML::Shutdown();
-	m_kProgram.DeleteProgram();
+	m_kMaterial.Delete();
+	m_kRenderer.Terminate();
 }
 
 void GameObjectApplication::OnResize(unsigned int width, unsigned int height)
@@ -181,13 +152,11 @@ void GameObjectApplication::OnResize(unsigned int width, unsigned int height)
 
 void GameObjectApplication::LoadAndCompileProgram()
 {
-	OGLShader akShaders[2];// hiVertexShader, hiFragmentShader;
+	std::vector<std::string> shaders; std::vector<GLenum> shadersTypes;
+	shaders.push_back("media/shaders/StandardMeshShader.vert.glsl"); shadersTypes.push_back(GL_VERTEX_SHADER);
+	shaders.push_back("media/shaders/StandardMeshShader.frag.glsl"); shadersTypes.push_back(GL_FRAGMENT_SHADER);
+	
+	m_kMaterial.InitFromFile(shaders, shadersTypes);
 
-	akShaders[0].InitFromFile("media/shaders/StandardMeshShader.vert.glsl", GL_VERTEX_SHADER);
-	akShaders[1].InitFromFile("media/shaders/StandardMeshShader.frag.glsl", GL_FRAGMENT_SHADER);
-
-	m_kProgram.LinkProgram(akShaders, 2, false);
-
-	m_hiMoveMatrixUniformLocation = glGetUniformLocation(m_kProgram, "mv_matrix");
-	m_hiProjMatrixUniformLocation = glGetUniformLocation(m_kProgram, "proj_matrix");
+	GLuint m_hiProjectionDataIndex = glGetUniformBlockIndex(m_kMaterial.m_kProgram, "ProjectionData");
 }

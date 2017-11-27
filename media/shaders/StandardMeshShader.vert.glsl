@@ -19,13 +19,21 @@ out VS_OUT
 	vec2 UV;
 } vs_out;
 
-uniform mat4 mv_matrix;
-uniform mat4 proj_matrix;
-uniform vec3 lightPosition = vec3(0,0,10);
+//uniforms
+uniform layout(location = 0) mat4 modelToWorldMatrix;
+uniform layout(location = 1) vec3 lightPosition = vec3(0,0,10);
+
+layout(std140, binding = 0) uniform ProjectionData
+{
+	mat4 worldViewMatrix;
+	mat4 projectionMatrix;
+} projData;
+
+
 
 void main(void)
 {
-	
+	mat4 mv_matrix = projData.worldViewMatrix * modelToWorldMatrix;
 	vec4 P = mv_matrix * position;
 	vs_out.N = mat3(mv_matrix) * normal;
 	vs_out.L = lightPosition - P.xyz;
@@ -33,6 +41,6 @@ void main(void)
 
 	vs_out.UV = UV;
 	vs_out.color = color;
-	gl_Position = proj_matrix * P;
+	gl_Position = projData.projectionMatrix * P;
 	
 }

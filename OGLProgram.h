@@ -2,9 +2,9 @@
 #include "OGLUtilities.h"
 #include "OGLShader.h"
 
-struct ActiveProgramVertexAttributes
+struct ActiveProgramInformations
 {
-	ActiveProgramVertexAttributes(): m_pcName(nullptr) {}
+	ActiveProgramInformations(): m_pcName(nullptr) {}
 	GLsizei m_iLength;
 	GLint m_iSize;
 	GLenum m_eType;
@@ -28,7 +28,8 @@ public:
 	operator GLuint() const { return m_hProgram; }
 private:
 	GLuint m_hProgram;
-	std::vector<ActiveProgramVertexAttributes> m_akAttributesInfo;
+	std::vector<ActiveProgramInformations> m_akAttributesInfo;
+	std::vector<ActiveProgramInformations> m_akUniformsInfo;
 };
 
 

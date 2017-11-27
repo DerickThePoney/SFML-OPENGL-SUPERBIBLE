@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+#include "OGLRendering.h"
 using namespace vmath;
 
 enum CameraType
@@ -15,7 +16,7 @@ public:
 	void Init(float fovy, float aspectRation, float n, float f);
 
 	void OnResize(unsigned int width, unsigned int height);
-	void LoadProjectionOnGraphics(GLuint m_hiProjectionLocation);
+	void LoadProjectionOnGraphics(GLuint bufferIndex);
 
 	const vmath::mat4& GetLookAt() const { return m_kLookAtMatrix; }
 
@@ -25,6 +26,7 @@ public:
 private:
 	void ComputeLookAt();
 	void ComputeProjection();
+	void InitialiseProjectionBuffer();
 
 private:
 	CameraType m_eType;
@@ -35,6 +37,8 @@ private:
 
 	float m_top, m_bottom, m_left, m_right;
 
+
+	OGLBuffer m_kProjectionBuffer;
 	vmath::mat4 m_kProjectionMatrice;
 	vmath::mat4 m_kLookAtMatrix;
 };

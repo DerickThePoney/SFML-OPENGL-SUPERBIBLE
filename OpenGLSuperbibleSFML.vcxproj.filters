@@ -19,6 +19,9 @@
     <Filter Include="IMGUI">
       <UniqueIdentifier>{73b24347-50f6-4f66-be9f-130a0f251e17}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Rendering\OGLObjects">
+      <UniqueIdentifier>{9ed34e72-36b1-400b-8398-71550253d595}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -54,9 +57,6 @@
     <ClInclude Include="BezierCurve.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Material.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="BezierSpline.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
@@ -83,9 +83,6 @@
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="OGLShader.h">
-      <Filter>Rendering</Filter>
     </ClInclude>
     <ClInclude Include="imgui\stb_rect_pack.h">
       <Filter>IMGUI</Filter>
@@ -114,19 +111,31 @@
     <ClInclude Include="imgui\imconfig.h">
       <Filter>IMGUI</Filter>
     </ClInclude>
-    <ClInclude Include="OGLProgram.h">
-      <Filter>Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="OGLRendering.h">
-      <Filter>Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="OGLBuffer.h">
       <Filter>Rendering</Filter>
     </ClInclude>
     <ClInclude Include="OGLUtilities.h">
       <Filter>Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="OGLBuffer.h">
+      <Filter>Rendering\OGLObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="OGLProgram.h">
+      <Filter>Rendering\OGLObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="OGLShader.h">
+      <Filter>Rendering\OGLObjects</Filter>
+    </ClInclude>
     <ClInclude Include="OGLVertexArray.h">
+      <Filter>Rendering\OGLObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshRendererComponent.h">
       <Filter>Rendering</Filter>
     </ClInclude>
   </ItemGroup>
@@ -158,9 +167,6 @@
     <ClCompile Include="BezierCurve.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="Material.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="Intersection.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
@@ -185,9 +191,6 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="OGLShader.cpp">
-      <Filter>Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="imgui\imgui.cpp">
       <Filter>IMGUI</Filter>
     </ClCompile>
@@ -197,16 +200,28 @@
     <ClCompile Include="imgui\imgui_draw.cpp">
       <Filter>IMGUI</Filter>
     </ClCompile>
-    <ClCompile Include="OGLProgram.cpp">
-      <Filter>Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="OGLBuffer.cpp">
-      <Filter>Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="OGLUtilities.cpp">
       <Filter>Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="OGLBuffer.cpp">
+      <Filter>Rendering\OGLObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="OGLProgram.cpp">
+      <Filter>Rendering\OGLObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="OGLShader.cpp">
+      <Filter>Rendering\OGLObjects</Filter>
+    </ClCompile>
     <ClCompile Include="OGLVertexArray.cpp">
+      <Filter>Rendering\OGLObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshRendererComponent.cpp">
       <Filter>Rendering</Filter>
     </ClCompile>
   </ItemGroup>

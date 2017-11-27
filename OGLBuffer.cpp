@@ -61,6 +61,11 @@ void OGLBuffer::Bind(GLenum eTarget)
 	glBindBuffer(eTarget, m_hiBuffer);
 }
 
+void OGLBuffer::BindToBindingPoint(GLint iBindingIndex)
+{
+	glBindBufferBase(GL_UNIFORM_BUFFER, iBindingIndex, m_hiBuffer);
+}
+
 void OGLBuffer::InitFromHandle()
 {
 #if OGL_4_5

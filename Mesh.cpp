@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Mesh.h"
 
+UI32 Mesh::s_uiMaxMeshID = 0;
 
 Mesh::Mesh()
 {
@@ -9,12 +10,7 @@ Mesh::Mesh()
 
 Mesh::~Mesh()
 {
-	m_kOGLBindings.m_kVertices.Delete();
-	m_kOGLBindings.m_kNormals.Delete();
-	m_kOGLBindings.m_kColor.Delete();
-	m_kOGLBindings.m_kUVs.Delete();
-	m_kOGLBindings.m_kIndices.Delete();
-	m_kOGLBindings.m_hkVao.Delete();
+	Delete();
 }
 
 bool Mesh::LoadFromFile(const std::string & kFilename)
@@ -50,6 +46,7 @@ void Mesh::LoadBuffersOnGraphicsCard()
 	OGLBuffer justForTest((GLuint)m_kOGLBindings.m_kIndices);
 
 	SetAttributes();
+	m_uiMeshID = s_uiMaxMeshID++;
 }
 
 void Mesh::SetAttributes()
@@ -75,4 +72,14 @@ void Mesh::SetAttributes()
 	m_kOGLBindings.m_hkVao.SetAttribute(3, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 
 	m_kOGLBindings.m_hkVao.UnBind();
+}
+
+void Mesh::Delete()
+{
+	m_kOGLBindings.m_kVertices.Delete();
+	m_kOGLBindings.m_kNormals.Delete();
+	m_kOGLBindings.m_kColor.Delete();
+	m_kOGLBindings.m_kUVs.Delete();
+	m_kOGLBindings.m_kIndices.Delete();
+	m_kOGLBindings.m_hkVao.Delete();
 }

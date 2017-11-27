@@ -11,10 +11,10 @@ in VS_OUT
 
 layout (location = 0) out vec4 color;
 
-uniform vec3 ambiant_light = vec3(0.2,0.2,0.2);
-uniform vec3 diffuse_albedo = vec3(0.8,0.8,0.8);
-uniform vec3 specular_albedo = vec3(0.7);
-uniform float specular_power = 8.0;
+uniform layout(location = 3) vec3 ambiant_light = vec3(0.2,0.2,0.2);
+uniform layout(location = 4) vec3 diffuse_albedo = vec3(0.8,0.8,0.8);
+uniform layout(location = 5) vec3 specular_albedo = vec3(0.7);
+uniform layout(location = 6) float specular_power = 8.0;
 
 void main(void)
 {

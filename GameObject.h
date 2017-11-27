@@ -1,5 +1,6 @@
 #pragma once
 #include "Transform.h"
+#include "MeshRendererComponent.h"
 
 class GameObject
 {
@@ -50,5 +51,8 @@ protected:
 public:
 	//positional stuff
 	Transform m_kTransform;
+
+	//Visuals
+	MeshRendererComponent m_kMeshRenderer;
 };
 

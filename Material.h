@@ -1,13 +1,7 @@
 #pragma once
 #include <vector>
 #include "Utility.h"
-
-enum ShaderAttrib
-{
-	VERTEX,
-	NORMAL,
-	UVs
-};
+#include "OGLRendering.h"
 
 class Material
 {
@@ -15,13 +9,19 @@ public:
 	Material();
 	~Material();
 
-	void Initialise(const GLuint& hiProgram, const GLuint& hiTexture);
+	bool InitFromFile(const std::vector<std::string>& filenames, const std::vector<GLenum> eShaderTypes);
+	void Delete();
+
 	void Use();
 
-	GLuint GetAttribLocation(const ShaderAttrib& eAttrib);
-private:
-	GLuint m_hiProgram;
-	GLuint m_hiTexture;
-	static const GLuint AttribIndexes[];
+	bool operator==(const Material& other) { return m_uiMaterialID == other.m_uiMaterialID; }
+
+	//id stuff
+	static UI32 s_uiMaxMaterialID;
+	UI32 m_uiMaterialID;
+
+	//underlying handle
+	OGLProgram m_kProgram;
+		
 };
 
