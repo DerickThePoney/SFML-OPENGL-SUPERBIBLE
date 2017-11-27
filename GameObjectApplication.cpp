@@ -25,10 +25,6 @@ void GameObjectApplication::Initialise()
 
 	LoadAndCompileProgram();
 
-	m_kCamera.Init(50, (float)m_window.getSize().x / (float)m_window.getSize().y,
-		0.1f,
-		1000.0f);
-
 	
 	//init objects and hierarchy
 	kGameObjects[0].SetName("BaseObject");
@@ -43,10 +39,7 @@ void GameObjectApplication::Initialise()
 	kGameObjects[1].m_kTransform.SetLocalPosition(vec3(1, 0, 0));
 	kGameObjects[2].m_kTransform.SetLocalPosition(vec3(1, 0, 0));
 
-	kGameObjects[0].m_kTransform.SetLocalOrientation(quaternion(-1, 0, 0, 0));
-
-	m_kCamera.UpdateAllTransformsInHierarchy();
-	kGameObjects[0].UpdateAllTransformsInHierarchy();
+	kGameObjects[0].m_kTransform.SetLocalOrientation(quaternion(1, 0, 0, 0));
 
 	//init rendering stuff
 	kGameObjects[0].m_kMeshRenderer.m_kMesh = m_kMesh;
@@ -55,65 +48,46 @@ void GameObjectApplication::Initialise()
 	kGameObjects[1].m_kMeshRenderer.m_kMaterial = m_kMaterial;
 	kGameObjects[2].m_kMeshRenderer.m_kMesh = m_kMesh;
 	kGameObjects[2].m_kMeshRenderer.m_kMaterial = m_kMaterial;
+
+	//Init Scene
+	m_kScene.Initialise();
+	m_kScene.AddRootObject(kGameObjects);
 }
 
 void GameObjectApplication::Update(double deltaTime)
 {
-
-	m_kCamera.UpdateAllTransformsInHierarchy();
-	kGameObjects[0].UpdateAllTransformsInHierarchy();
-
-	ImGuiIO &io = ImGui::GetIO();
-	
-
-	ImGui::Begin("Hierarchy");
-	static GameObject* node_clicked;
-
-	m_kCamera.ImGUIHierarchy(node_clicked);
-	kGameObjects[0].ImGUIHierarchy(node_clicked);
-
-	ImGui::End();
-
-
-	ImGui::Begin("Inspector");
-
-	if (node_clicked != nullptr)
-	{
-		node_clicked->Inspector();
-	}
-
-	ImGui::End();
-
-
+	m_kScene.Update(deltaTime);
 }
 
 
 
 void GameObjectApplication::Render(double currentTime)
 {
-	std::vector<GameObjectRenderData> visibleList;
+	std::vector<GameObject*> visibleObjectList;
+	std::vector<GameObjectRenderData> visibleDataList;
 
-	GameObjectRenderData data1;
-	data1.m_pkTransform = &kGameObjects[0].m_kTransform;
-	data1.m_pkMeshRenderer = &kGameObjects[0].m_kMeshRenderer;
-	GameObjectRenderData data2;
-	data2.m_pkTransform = &kGameObjects[1].m_kTransform;
-	data2.m_pkMeshRenderer = &kGameObjects[1].m_kMeshRenderer;
-	GameObjectRenderData data3;
-	data3.m_pkTransform = &kGameObjects[2].m_kTransform;
-	data3.m_pkMeshRenderer = &kGameObjects[2].m_kMeshRenderer;
+	// scene culling
+	m_kScene.ExtractVisibleObjectList(visibleObjectList);
 
-	visibleList.push_back(data1);
-	visibleList.push_back(data2);
-	visibleList.push_back(data3);
+	//extract render data
+	for (size_t i = 0; i < visibleObjectList.size(); ++i)
+	{
+		GameObjectRenderData data;
+		data.m_pkMeshRenderer = &visibleObjectList[i]->m_kMeshRenderer;
+		data.m_pkTransform = &visibleObjectList[i]->m_kTransform;
+		visibleDataList.push_back(data);
+	}
+	
+	//render
+	m_kRenderer.Render(visibleDataList, m_kScene.GetCamera());
 
-	m_kRenderer.Render(visibleList, m_kCamera);
-
+	//swap display
 	m_window.display();
 }
 
 void GameObjectApplication::Terminate()
 {
+	m_kScene.Terminate();
 	ImGui::SFML::Shutdown();
 	m_kMaterial.Delete();
 	m_kRenderer.Terminate();
@@ -122,7 +96,7 @@ void GameObjectApplication::Terminate()
 void GameObjectApplication::OnResize(unsigned int width, unsigned int height)
 {
 	Application::OnResize(width, height);
-	m_kCamera.OnResize(width, height);
+	m_kScene.OnResize(width, height);
 }
 
 void GameObjectApplication::LoadAndCompileProgram()

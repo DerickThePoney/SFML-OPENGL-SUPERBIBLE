@@ -46,6 +46,31 @@ void Scene::Update(double deltaTime)
 	{
 		m_akRootObjects[i]->UpdateAllTransformsInHierarchy();
 	}
+
+	//IM GUI Stuff
+	ImGuiIO &io = ImGui::GetIO();
+
+
+	ImGui::Begin("Hierarchy");
+	static GameObject* node_clicked;
+
+	m_kCamera.ImGUIHierarchy(node_clicked);
+	for (I32 i = 0; i < m_akRootObjects.size(); ++i)
+	{
+		m_akRootObjects[i]->ImGUIHierarchy(node_clicked);
+	}
+
+	ImGui::End();
+
+
+	ImGui::Begin("Inspector");
+
+	if (node_clicked != nullptr)
+	{
+		node_clicked->Inspector();
+	}
+
+	ImGui::End();
 }
 
 void Scene::OnResize(unsigned int width, unsigned int height)

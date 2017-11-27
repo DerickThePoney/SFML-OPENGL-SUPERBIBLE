@@ -38,3 +38,4 @@ Debug/
 *.db
 *.bak
 Release/
+*.psess

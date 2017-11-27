@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "Camera.h"
 #include "Renderer.h"
+#include "Scene.h"
 
 class GameObjectApplication :
 	public Application
@@ -26,9 +27,10 @@ public:
 
 private:
 	Renderer m_kRenderer;
-	Camera m_kCamera;
+	//Camera m_kCamera;
 	GameObject kGameObjects[3];
 	Mesh m_kMesh;
 	Material m_kMaterial;
+	Scene m_kScene;
 };
 
