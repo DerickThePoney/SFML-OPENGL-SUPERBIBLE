@@ -28,21 +28,21 @@ void Scene::Update(double deltaTime)
 	//update transformss
 	m_kCamera.UpdateAllTransformsInHierarchy();
 		
-	for (I32 i = 0; i < m_akRootObjects.size(); ++i)
+	for (std::size_t i = 0; i < m_akRootObjects.size(); ++i)
 	{
 		m_akRootObjects[i]->UpdateAllTransformsInHierarchy();
 	}
 	
 	//update loop
 	m_kCamera.Update(deltaTime);
-	for (I32 i = 0; i < m_akRootObjects.size(); ++i)
+	for (std::size_t i = 0; i < m_akRootObjects.size(); ++i)
 	{
 		m_akRootObjects[i]->Update(deltaTime);
 	}
 
 	//update transforms a second time to be sure that components did modify those too much...
 	m_kCamera.UpdateAllTransformsInHierarchy();
-	for (I32 i = 0; i < m_akRootObjects.size(); ++i)
+	for (std::size_t i = 0; i < m_akRootObjects.size(); ++i)
 	{
 		m_akRootObjects[i]->UpdateAllTransformsInHierarchy();
 	}
@@ -55,7 +55,7 @@ void Scene::Update(double deltaTime)
 	static GameObject* node_clicked;
 
 	m_kCamera.ImGUIHierarchy(node_clicked);
-	for (I32 i = 0; i < m_akRootObjects.size(); ++i)
+	for (std::size_t i = 0; i < m_akRootObjects.size(); ++i)
 	{
 		m_akRootObjects[i]->ImGUIHierarchy(node_clicked);
 	}
@@ -81,7 +81,7 @@ void Scene::OnResize(unsigned int width, unsigned int height)
 void Scene::ExtractVisibleObjectList(std::vector<GameObject*>& akObjects)
 {
 	//no frustum cull for the moment
-	for (I32 i = 0; i < m_akRootObjects.size(); ++i)
+	for (std::size_t i = 0; i < m_akRootObjects.size(); ++i)
 	{
 		akObjects.push_back(m_akRootObjects[i]);
 		ExtractVisibleObjectsInHierarchy(m_akRootObjects[i], akObjects);
