@@ -8,6 +8,9 @@
 #define TIME_MSEC_DOUBLE(x) ((double)(x).count() / 1000000.0)
 #define TIME_SEC_DOUBLE(x) ((double)(x).count() / 1000000000.0)
 
+#define TIME_MSEC_FLOAT(x) ((float)TIME_MSEC_DOUBLE(x))
+#define TIME_SEC_FLOAT(x) ((float)TIME_SEC_DOUBLE(x))
+
 class Application
 {
 public:

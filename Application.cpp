@@ -88,7 +88,7 @@ void Application::MainLoop()
 
 		bool tmp = true;
 		ImGui::Begin("Time Information: ", &tmp);
-		float tmpF = 1.0 / TIME_SEC_DOUBLE(elapsedFrame);
+		float tmpF = 1.0f / TIME_SEC_FLOAT(elapsedFrame);
 		ImGui::InputFloat("fps", &tmpF);
 		ImGui::End();
 
