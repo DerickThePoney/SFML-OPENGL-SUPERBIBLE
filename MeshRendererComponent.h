@@ -7,6 +7,8 @@ class MeshRendererComponent
 {
 public:
 	void Init(Mesh kMesh, Material kMaterial);
+
+	void Inspect();
 	
 	Mesh m_kMesh;
 	Material m_kMaterial;

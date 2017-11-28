@@ -183,4 +183,5 @@ void GameObject::Inspector()
 	ImGui::InputText("Name", buff, 100);
 	m_kName = buff;
 	m_kTransform.Inspect();
+	m_kMeshRenderer.Inspect();
 }
