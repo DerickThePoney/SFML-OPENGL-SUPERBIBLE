@@ -39,3 +39,4 @@ Debug/
 *.bak
 Release/
 *.psess
+*.pdb

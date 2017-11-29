@@ -14,7 +14,7 @@ GameObjectApplication::~GameObjectApplication()
 void GameObjectApplication::Initialise()
 {
 	//Init the Renderer System
-	m_kRenderer.Init();
+	m_kRenderer.Init(&m_window);
 
 	//create the mesh
 	BMesh kBMesh;
@@ -80,9 +80,6 @@ void GameObjectApplication::Render(double currentTime)
 	
 	//render
 	m_kRenderer.Render(visibleDataList, m_kScene.GetCamera());
-
-	//swap display
-	m_window.display();
 }
 
 void GameObjectApplication::Terminate()

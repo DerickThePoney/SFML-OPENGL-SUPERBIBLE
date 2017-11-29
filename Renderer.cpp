@@ -11,9 +11,19 @@ Renderer::~Renderer()
 {
 }
 
-void Renderer::Init()
+void Renderer::Init(sf::RenderWindow* m_window)
 {
+	this->m_window = m_window;
+	ExtractGLContextInformation();
 	InitDefaultState();
+}
+
+void Renderer::ExtractGLContextInformation()
+{
+	glGetIntegerv(GL_MAJOR_VERSION, &m_kRendererData.m_iGLMajorVersion);
+	glGetIntegerv(GL_MINOR_VERSION, &m_kRendererData.m_iGLMinorVersion);
+	m_kRendererData.m_kHardwareVendor = glGetString(GL_VENDOR);
+	m_kRendererData.m_kRendererName = glGetString(GL_RENDERER);
 }
 
 void Renderer::InitDefaultState()
@@ -79,6 +89,9 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 
 	//Render ImGUI
 	ImGui::Render();
+
+	//swap buffers
+	m_window->display();
 }
 
 

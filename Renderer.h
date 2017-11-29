@@ -11,6 +11,14 @@ struct GameObjectRenderData
 };
 
 
+struct RendererStateData
+{
+	I32 m_iGLMajorVersion;
+	I32 m_iGLMinorVersion;
+	const GLubyte* m_kHardwareVendor;
+	const GLubyte*  m_kRendererName;
+};
+
 enum RENDER_STATE
 {
 	MATERIAL = 0,
@@ -25,7 +33,8 @@ public:
 	~Renderer();
 
 	//init functions
-	void Init();
+	void Init(sf::RenderWindow* m_window);
+	void ExtractGLContextInformation();
 	void InitDefaultState();
 
 	//terminate function
@@ -39,12 +48,18 @@ public:
 	void ApplyGameObjectRenderData(GameObjectRenderData& data);
 
 private:
-	
+	//window stuff
+	sf::RenderWindow* m_window;
+	RendererStateData m_kRendererData;
+
+	//current rendering state
 	UI32 m_auiRenderingState[2];
 
+	//Default rendering state 
 	Mesh m_kDefaultMesh;
 	Material m_kDefaultMaterial;
 
+	//Projection block index
 	GLuint m_hiProjectionDataIndex;
 };
 
