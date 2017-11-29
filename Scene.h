@@ -27,5 +27,7 @@ private:
 private:
 	Camera m_kCamera;
 	std::vector<GameObject*> m_akRootObjects;
+
+	GLuint texture;
 };
 
