@@ -1,22 +1,26 @@
 #pragma once
 #include "Utility.h"
-#include "Mesh.h"
 
+class Mesh;
 class MeshManager
 {
 public:
-	static MeshManager& Instance();
+	static MeshManager* Instance();
+	static void Delete();
 
 protected:
-	static MeshManager s_kInstance;
+	static MeshManager* s_kInstance;
 	MeshManager();
 	~MeshManager();
 
 public:
-	bool LoadMeshesFromFile(const std::vector<std::string> akFilenames);
-	Mesh* GetMesh(std::string kMeshName);
+	
+	void AddMesh(const std::string kMeshName, Mesh* pkMesh);
 
+	Mesh* GetMesh(const std::string& kMeshName);
+	Mesh* GetMesh(UI32 uiMeshID);
 private:
-	std::unordered_map<std::string, Mesh*> m_akMeshes;
+	std::unordered_map<UI32, Mesh*> m_akMeshes;
+	std::unordered_map<std::string, UI32> m_akMeshesNames;
 };
 

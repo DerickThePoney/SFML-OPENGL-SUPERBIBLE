@@ -3,6 +3,7 @@
 #include "Utility.h"
 
 #include "OGLRendering.h"
+#include "MeshManager.h"
 
 using namespace vmath;
 
@@ -13,6 +14,8 @@ enum Attributes
 	COLOR,
 	UVS
 };
+
+class MeshManager;
 
 class Mesh
 {
@@ -29,6 +32,8 @@ public:
 	void SetAttributes();
 
 	void Delete();
+
+	void RegisterMesh();
 
 	std::vector<vec3> m_akVertices;
 	std::vector<vec3> m_akNormals;

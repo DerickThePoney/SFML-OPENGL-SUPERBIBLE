@@ -28,6 +28,6 @@ private:
 	Camera m_kCamera;
 	std::vector<GameObject*> m_akRootObjects;
 
-	GLuint texture;
+	OGLTexture2D m_kTexture;
 };
 

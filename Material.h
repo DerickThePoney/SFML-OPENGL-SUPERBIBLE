@@ -16,6 +16,8 @@ public:
 
 	bool operator==(const Material& other) { return m_uiMaterialID == other.m_uiMaterialID; }
 
+	void Inspect();
+
 	//id stuff
 	static UI32 s_uiMaxMaterialID;
 	UI32 m_uiMaterialID;

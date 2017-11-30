@@ -48,7 +48,7 @@ void Application::InterpretMessage(sf::Event event)
 
 void Application::MainLoop()
 {
-	sf::ContextSettings context(24, 8, 16, 4, 5, 0U);
+	sf::ContextSettings context(24, 8, 16, 4, 5, sf::ContextSettings::Attribute::Debug);
 
 	
 	// create the window
@@ -63,6 +63,8 @@ void Application::MainLoop()
 		fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
 	}
 	fprintf(stdout, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
+
+	glDebugMessageCallback(&OGLUtilities::DebugCallback, NULL);
 
 	//intialise stuff
 	Initialise();

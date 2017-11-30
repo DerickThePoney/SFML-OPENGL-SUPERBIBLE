@@ -45,7 +45,7 @@ void Camera::LoadProjectionOnGraphics(GLuint bufferIndex)
 
 	m_kProjectionBuffer.UpdateData(GL_UNIFORM_BUFFER, 2 * sizeof(mat4), (void*)proj, GL_WRITE_ONLY);
 
-	m_kProjectionBuffer.BindToBindingPoint(bufferIndex);
+	m_kProjectionBuffer.BindToUniformBindingPoint(bufferIndex);
 }
 
 void Camera::UpdateAllTransformsInHierarchy()

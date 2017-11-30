@@ -4,3 +4,4 @@
 #include "OGLProgram.h"
 #include "OGLVertexArray.h"
 #include "OGLBuffer.h"
+#include "OGLTexture2D.h"

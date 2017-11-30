@@ -42,13 +42,10 @@ void GameObjectApplication::Initialise()
 	kGameObjects[0].m_kTransform.SetLocalOrientation(quaternion(1, 0, 0, 0));
 
 	//init rendering stuff
-	kGameObjects[0].m_kMeshRenderer.m_kMesh = m_kMesh;
-	kGameObjects[0].m_kMeshRenderer.m_kMaterial = m_kMaterial;
-	kGameObjects[1].m_kMeshRenderer.m_kMesh = m_kMesh;
-	kGameObjects[1].m_kMeshRenderer.m_kMaterial = m_kMaterial;
-	kGameObjects[2].m_kMeshRenderer.m_kMesh = m_kMesh;
-	kGameObjects[2].m_kMeshRenderer.m_kMaterial = m_kMaterial;
-
+	kGameObjects[0].m_kMeshRenderer.Init(&m_kMesh, &m_kMaterial);
+	kGameObjects[1].m_kMeshRenderer.Init(&m_kMesh, &m_kMaterial);
+	kGameObjects[2].m_kMeshRenderer.Init(&m_kMesh, &m_kMaterial);
+	
 	//Init Scene
 	m_kScene.Initialise();
 	m_kScene.AddRootObject(kGameObjects);

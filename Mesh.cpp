@@ -83,3 +83,8 @@ void Mesh::Delete()
 	m_kOGLBindings.m_kIndices.Delete();
 	m_kOGLBindings.m_hkVao.Delete();
 }
+
+void Mesh::RegisterMesh()
+{
+	MeshManager::Instance()->AddMesh("", this);
+}

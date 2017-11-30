@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "OGLProgram.h"
 
 
@@ -16,7 +16,17 @@ OGLProgram::~OGLProgram()
 	m_akAttributesInfo.clear();
 
 
-	for (std::size_t i = 0; i < m_akAttributesInfo.size(); ++i)
+	for (std::size_t i = 0; i < m_akUniformBlockInfo.size(); ++i)
+	{
+		SAFE_DELETE_ARRAY(m_akUniformBlockInfo[i].m_pcName);
+		SAFE_DELETE_ARRAY(m_akUniformBlockInfo[i].m_piUniformsIndexes);
+	}
+
+	m_akUniformBlockInfo.clear();
+
+
+
+	for (std::size_t i = 0; i < m_akUniformsInfo.size(); ++i)
 	{
 		SAFE_DELETE_ARRAY(m_akUniformsInfo[i].m_pcName);
 	}
@@ -57,7 +67,7 @@ bool OGLProgram::LinkProgram(OGLShader * uiShaders, int iShaderCount, bool bDele
 		delete[] uiShaders;
 	}
 
-	//ExtractInformation();
+	ExtractInformation();
 
 	return true;
 }
@@ -72,6 +82,21 @@ void OGLProgram::DeleteProgram()
 	glDeleteProgram(m_hProgram);
 }
 
+const std::vector<ActiveProgramInformations>& OGLProgram::GetVectorAttributesInformation()
+{
+	return m_akAttributesInfo;
+}
+
+const std::vector<ActiveProgramInformations>& OGLProgram::GetUniformsInformation()
+{
+	return m_akUniformsInfo;
+}
+
+const std::vector<ActiveUniformBlockInformation>& OGLProgram::GetUniformBlocksInformation()
+{
+	return m_akUniformBlockInfo;
+}
+
 void OGLProgram::ExtractInformation()
 {
 	//get the vertex input location
@@ -79,8 +104,9 @@ void OGLProgram::ExtractInformation()
 	glGetProgramiv(m_hProgram, GL_ACTIVE_ATTRIBUTES, &value);
 	glGetProgramiv(m_hProgram, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxlength);
 
+	std::cout << "-----------------------------------------------------" << std::endl;
 	std::cout << "List of Active vertex attibutes" << std::endl;
-	for (int i = 0; i < value; ++i)
+	for (I32 i = 0; i < value; ++i)
 	{
 		ActiveProgramInformations att;
 		att.m_pcName = new GLchar[maxlength];
@@ -97,7 +123,7 @@ void OGLProgram::ExtractInformation()
 
 	std::cout << "-----------------------------------------------------" << std::endl 
 		<< "List of Active uniforms" << std::endl;
-	for (int i = 0; i < value; ++i)
+	for (I32 i = 0; i < value; ++i)
 	{
 		ActiveProgramInformations att;
 		att.m_pcName = new GLchar[maxlength];
@@ -108,4 +134,32 @@ void OGLProgram::ExtractInformation()
 		m_akUniformsInfo.push_back(att);
 	}
 
+	//get the uniforms blocks
+	std::cout << "-----------------------------------------------------" << std::endl
+		<< "List of Active uniform blocks" << std::endl;
+	glGetProgramiv(m_hProgram, GL_ACTIVE_UNIFORM_BLOCKS, &value);
+	for (I32 i = 0; i < value; ++i)
+	{
+		ActiveUniformBlockInformation actUB;
+		glGetActiveUniformBlockiv(m_hProgram, i, GL_UNIFORM_BLOCK_NAME_LENGTH, &maxlength);
+
+		actUB.m_pcName = new GLchar[maxlength];
+		actUB.m_iLength = maxlength;
+		glGetActiveUniformBlockName(m_hProgram, i, maxlength, NULL, actUB.m_pcName);
+		glGetActiveUniformBlockiv(m_hProgram, i, GL_UNIFORM_BLOCK_ACTIVE_UNIFORMS, &maxlength);
+		
+		actUB.m_iNbUniform = maxlength;
+		actUB.m_piUniformsIndexes = new GLint[maxlength];
+		glGetActiveUniformBlockiv(m_hProgram, i, GL_UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES, actUB.m_piUniformsIndexes);
+
+		std::cout << "Uniform Blocks: " << i << "\t" << actUB.m_iLength << "\t" << actUB.m_pcName << std::endl;
+
+		for (I32 j = 0; j < actUB.m_iNbUniform; ++j)
+		{
+			m_akUniformsInfo[actUB.m_piUniformsIndexes[j]].m_bIsFromBlock = true;
+			std::cout << "\t" << actUB.m_piUniformsIndexes[j] << std::endl;
+		}
+
+		m_akUniformBlockInfo.push_back(actUB);
+	}
 }

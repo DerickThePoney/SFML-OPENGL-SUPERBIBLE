@@ -192,7 +192,7 @@
     <ClInclude Include="OGLApplication.h" />
     <ClInclude Include="OGLBuffer.h" />
     <ClInclude Include="OGLProgram.h" />
-    <ClInclude Include="OGLTexture.h" />
+    <ClInclude Include="OGLTexture2D.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="OGLRendering.h" />
     <ClInclude Include="OGLShader.h" />
@@ -226,7 +226,7 @@
     <ClCompile Include="OGLApplication.cpp" />
     <ClCompile Include="OGLBuffer.cpp" />
     <ClCompile Include="OGLProgram.cpp" />
-    <ClCompile Include="OGLTexture.cpp" />
+    <ClCompile Include="OGLTexture2D.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="OGLShader.cpp" />
     <ClCompile Include="OGLUtilities.cpp" />

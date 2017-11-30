@@ -52,3 +52,28 @@ void Material::Use()
 {
 	m_kProgram.UseProgram();
 }
+
+void Material::Inspect()
+{
+	ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+	// Node
+	std::stringstream sstr;
+	sstr << "Material ID " << m_uiMaterialID;
+	bool node_open = ImGui::TreeNodeEx(sstr.str().c_str(), node_flags);
+
+
+	if (node_open)
+	{
+		const std::vector<ActiveProgramInformations>& uniforms = m_kProgram.GetUniformsInformation();
+		for (I32 i = 0; i < uniforms.size(); ++i)
+		{
+			if (uniforms[i].m_bIsFromBlock) continue;
+			ImGui::Bullet();
+			ImGui::Text("%s", uniforms[i].m_pcName);			
+			ImGui::LabelText("Type", "\t%s", OGLUtilities::GLTypeEnumToCString(uniforms[i].m_eType));
+
+		}
+		ImGui::TreePop();
+	}
+	
+}

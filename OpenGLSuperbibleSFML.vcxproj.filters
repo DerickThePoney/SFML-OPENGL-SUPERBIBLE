@@ -22,6 +22,15 @@
     <Filter Include="Rendering\OGLObjects">
       <UniqueIdentifier>{9ed34e72-36b1-400b-8398-71550253d595}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Rendering\Mesh">
+      <UniqueIdentifier>{6f85c62d-7f45-4f63-84e4-e518d2a5e2a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rendering\Mesh\Procedural">
+      <UniqueIdentifier>{fbf51ca3-8b55-471b-8ab5-a2628a6e8a2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Applications">
+      <UniqueIdentifier>{76466a84-d51f-4798-adbe-730a0b77cc06}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -33,19 +42,7 @@
     <ClInclude Include="targetver.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Application.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="OGLApplication.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="SinningCubeApplication.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="vmath.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="TestVesselApplication.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="Utility.h">
@@ -63,22 +60,10 @@
     <ClInclude Include="Intersection.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshManager.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="BMesh.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="GameObject.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="Transform.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObjectApplication.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
@@ -111,12 +96,6 @@
     <ClInclude Include="imgui\imconfig.h">
       <Filter>IMGUI</Filter>
     </ClInclude>
-    <ClInclude Include="OGLRendering.h">
-      <Filter>Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="OGLUtilities.h">
-      <Filter>Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="OGLBuffer.h">
       <Filter>Rendering\OGLObjects</Filter>
     </ClInclude>
@@ -141,8 +120,38 @@
     <ClInclude Include="Scene.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="OGLTexture.h">
+    <ClInclude Include="OGLTexture2D.h">
       <Filter>Rendering\OGLObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="OGLRendering.h">
+      <Filter>Rendering\OGLObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="OGLUtilities.h">
+      <Filter>Rendering\OGLObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Rendering\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshManager.h">
+      <Filter>Rendering\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="BMesh.h">
+      <Filter>Rendering\Mesh\Procedural</Filter>
+    </ClInclude>
+    <ClInclude Include="TestVesselApplication.h">
+      <Filter>Applications</Filter>
+    </ClInclude>
+    <ClInclude Include="SinningCubeApplication.h">
+      <Filter>Applications</Filter>
+    </ClInclude>
+    <ClInclude Include="OGLApplication.h">
+      <Filter>Applications</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObjectApplication.h">
+      <Filter>Applications</Filter>
+    </ClInclude>
+    <ClInclude Include="Application.h">
+      <Filter>Applications</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -150,18 +159,6 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="SFML_Project.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Application.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="OGLApplication.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="SinningCubeApplication.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="TestVesselApplication.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="Utility.cpp">
@@ -176,22 +173,10 @@
     <ClCompile Include="Intersection.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshManager.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="BMesh.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="GameObject.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="Transform.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObjectApplication.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
@@ -205,9 +190,6 @@
     </ClCompile>
     <ClCompile Include="imgui\imgui_draw.cpp">
       <Filter>IMGUI</Filter>
-    </ClCompile>
-    <ClCompile Include="OGLUtilities.cpp">
-      <Filter>Rendering</Filter>
     </ClCompile>
     <ClCompile Include="OGLBuffer.cpp">
       <Filter>Rendering\OGLObjects</Filter>
@@ -233,8 +215,35 @@
     <ClCompile Include="Scene.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="OGLTexture.cpp">
+    <ClCompile Include="OGLTexture2D.cpp">
       <Filter>Rendering\OGLObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="OGLUtilities.cpp">
+      <Filter>Rendering\OGLObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Rendering\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="BMesh.cpp">
+      <Filter>Rendering\Mesh\Procedural</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObjectApplication.cpp">
+      <Filter>Applications</Filter>
+    </ClCompile>
+    <ClCompile Include="OGLApplication.cpp">
+      <Filter>Applications</Filter>
+    </ClCompile>
+    <ClCompile Include="Application.cpp">
+      <Filter>Applications</Filter>
+    </ClCompile>
+    <ClCompile Include="SinningCubeApplication.cpp">
+      <Filter>Applications</Filter>
+    </ClCompile>
+    <ClCompile Include="TestVesselApplication.cpp">
+      <Filter>Applications</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshManager.cpp">
+      <Filter>Rendering\Mesh</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

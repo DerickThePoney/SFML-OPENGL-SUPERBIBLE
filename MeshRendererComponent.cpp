@@ -1,10 +1,10 @@
 #include "stdafx.h"
 #include "MeshRendererComponent.h"
 
-void MeshRendererComponent::Init(Mesh kMesh, Material kMaterial)
+void MeshRendererComponent::Init(Mesh* kMesh, Material* kMaterial)
 {
-	m_kMaterial = kMaterial;
-	m_kMesh = kMesh;
+	m_pkMaterial = kMaterial;
+	m_pkMesh = kMesh;
 }
 
 void MeshRendererComponent::Inspect()
@@ -26,8 +26,9 @@ void MeshRendererComponent::Inspect()
 
 	if (ImGui::CollapsingHeader("MeshRendererComponent"))
 	{
-		ImGui::LabelText("Mesh ID", "%d", m_kMesh.m_uiMeshID);
-		ImGui::LabelText("Material ID", "%d", m_kMaterial.m_uiMaterialID);		
+		if(m_pkMesh)	ImGui::LabelText("Mesh ID", "%d", m_pkMesh->m_uiMeshID);
+		//ImGui::LabelText("Material ID", "%d", m_kMaterial->m_uiMaterialID);		
+		if (m_pkMaterial) m_pkMaterial->Inspect();
 	}
 }
 

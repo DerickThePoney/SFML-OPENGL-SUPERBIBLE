@@ -83,3 +83,9 @@ GLenum OGLUtilities::GetErrors()
 
 	return error;
 }
+
+void APIENTRY OGLUtilities::DebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar * message, const GLvoid * userParam)
+{
+	//printf("Debug message with source=0x%04X type=0x%04X, id %u, severity 0x%0X, '%s'\n" , source, type, id, severity, length, message);
+	std::cout << message << std::endl;
+}

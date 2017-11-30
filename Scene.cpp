@@ -9,7 +9,7 @@ Scene::Scene()
 
 Scene::~Scene()
 {
-	glDeleteTextures(1, &texture);
+	m_kTexture.Delete();
 }
 
 void Scene::Initialise()
@@ -17,27 +17,22 @@ void Scene::Initialise()
 	m_kCamera.Init(50, (float)800 / (float)600,
 		0.1f,
 		1000.0f);
+
+	//Just make a simple texture
 	static I32 size = 16;
 	char* data = new char[size * size * 4];
-	memset(data, 150, size * size * 4);
+	//memset(data, 255, size * size * 4);
+
+	for (I32 i = 0; i < size*size * 4; ++i)
+	{
+		char value = rand() & 0xFF;
+		data[i] = value;
+	}
 	
-	glGenTextures(1, &texture);
-
-	glBindTexture(GL_TEXTURE_2D, texture);
-
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	OGLUtilities::GetErrors();
-
-	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, size, size);
+	m_kTexture.Initialise();
+	m_kTexture.InitialiseStorage(size, size, 1, GL_RGBA32F);
+	m_kTexture.SetData(0, 0, 0, size, size, GL_RGBA, GL_UNSIGNED_BYTE, data, false);
 	
-	OGLUtilities::GetErrors();
-
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, size, size, GL_RGBA, GL_UNSIGNED_BYTE, data);
-
-	OGLUtilities::GetErrors();
-
 	delete[] data;
 }
 
@@ -97,7 +92,7 @@ void Scene::Update(double deltaTime)
 
 	ImGui::Begin("Test with images");
 
-	ImGui::Image((void *)(intptr_t)texture, ImVec2(512, 512), ImVec2(0, 0), ImVec2(1, 1), ImVec4(1, 1, 1, 1), ImColor(255, 255, 255, 255));
+	ImGui::Image((void *)(intptr_t)m_kTexture, ImVec2(512, 512), ImVec2(0, 0), ImVec2(1, 1), ImVec4(1, 1, 1, 1), ImColor(255, 255, 255, 255));
 
 	ImGui::End();
 

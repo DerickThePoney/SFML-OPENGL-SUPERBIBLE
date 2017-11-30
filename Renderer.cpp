@@ -84,7 +84,7 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 		glUniformMatrix4fv(0, 1, GL_FALSE, kVisibleObjectsList[i].m_pkTransform->GetWorldSpaceTransform());
 
 		//draw call
-		glDrawElements(GL_TRIANGLES, kVisibleObjectsList[i].m_pkMeshRenderer->m_kMesh.m_aiIndices.size(), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, kVisibleObjectsList[i].m_pkMeshRenderer->m_pkMesh->m_aiIndices.size(), GL_UNSIGNED_INT, 0);
 	}
 
 	//Render ImGUI
@@ -109,15 +109,15 @@ void Renderer::ApplyDefaultState()
 
 void Renderer::ApplyGameObjectRenderData(GameObjectRenderData & data)
 {
-	if (data.m_pkMeshRenderer->m_kMaterial.m_uiMaterialID != m_auiRenderingState[MATERIAL])
+	if (data.m_pkMeshRenderer->m_pkMaterial->m_uiMaterialID != m_auiRenderingState[MATERIAL])
 	{
-		data.m_pkMeshRenderer->m_kMaterial.Use();
-		m_auiRenderingState[MATERIAL] = data.m_pkMeshRenderer->m_kMaterial.m_uiMaterialID;
+		data.m_pkMeshRenderer->m_pkMaterial->Use();
+		m_auiRenderingState[MATERIAL] = data.m_pkMeshRenderer->m_pkMaterial->m_uiMaterialID;
 	}
 
-	if (data.m_pkMeshRenderer->m_kMesh.m_uiMeshID != m_auiRenderingState[MESH])
+	if (data.m_pkMeshRenderer->m_pkMesh->m_uiMeshID != m_auiRenderingState[MESH])
 	{
-		data.m_pkMeshRenderer->m_kMesh.BindForDrawing();
-		m_auiRenderingState[MESH] = data.m_pkMeshRenderer->m_kMesh.m_uiMeshID;
+		data.m_pkMeshRenderer->m_pkMesh->BindForDrawing();
+		m_auiRenderingState[MESH] = data.m_pkMeshRenderer->m_pkMesh->m_uiMeshID;
 	}
 }

@@ -61,7 +61,7 @@ void OGLBuffer::Bind(GLenum eTarget)
 	glBindBuffer(eTarget, m_hiBuffer);
 }
 
-void OGLBuffer::BindToBindingPoint(GLint iBindingIndex)
+void OGLBuffer::BindToUniformBindingPoint(GLint iBindingIndex)
 {
 	glBindBufferBase(GL_UNIFORM_BUFFER, iBindingIndex, m_hiBuffer);
 }
