@@ -10,6 +10,7 @@
 #endif // WIN32
 
 //#include "Macros.h"
+#include <cereal/cereal.hpp>
 #include <iostream>
 #include <sstream>
 #include <SFML\Graphics.hpp>
