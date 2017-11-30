@@ -31,6 +31,12 @@
     <Filter Include="Applications">
       <UniqueIdentifier>{76466a84-d51f-4798-adbe-730a0b77cc06}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameObjects">
+      <UniqueIdentifier>{9e43eb11-8861-45d9-bce1-9fa61f2a929d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SceneManagement">
+      <UniqueIdentifier>{4e14fbd1-c38a-4b26-8e9c-dcf8267fe0c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -58,9 +64,6 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="Intersection.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="Transform.h">
@@ -117,9 +120,6 @@
     <ClInclude Include="MeshRendererComponent.h">
       <Filter>Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="OGLTexture2D.h">
       <Filter>Rendering\OGLObjects</Filter>
     </ClInclude>
@@ -153,6 +153,12 @@
     <ClInclude Include="Application.h">
       <Filter>Applications</Filter>
     </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>SceneManagement</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -171,9 +177,6 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="Intersection.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="Transform.cpp">
@@ -212,9 +215,6 @@
     <ClCompile Include="MeshRendererComponent.cpp">
       <Filter>Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="Scene.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="OGLTexture2D.cpp">
       <Filter>Rendering\OGLObjects</Filter>
     </ClCompile>
@@ -244,6 +244,12 @@
     </ClCompile>
     <ClCompile Include="MeshManager.cpp">
       <Filter>Rendering\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>SceneManagement</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
