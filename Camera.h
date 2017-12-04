@@ -23,6 +23,13 @@ public:
 	virtual void UpdateAllTransformsInHierarchy() override;
 	virtual void Inspector() override;
 
+	template<class Archive>
+	void serialize(Archive & archive)
+	{
+		archive(CEREAL_NVP(m_eType), CEREAL_NVP(focal), CEREAL_NVP(fNearPlane), CEREAL_NVP(fFarPlane));
+	}
+
+
 private:
 	void ComputeLookAt();
 	void ComputeProjection();

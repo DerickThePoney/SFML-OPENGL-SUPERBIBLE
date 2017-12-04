@@ -37,6 +37,18 @@ public:
 
 	void SetName(const std::string& rkName) { m_kName = rkName; }
 
+	template<class Archive>
+	void serialize(Archive & archive)
+	{
+		archive(CEREAL_NVP(m_kName));
+		for (size_t i = 0; i < m_apkChildren.size(); ++i)
+		{
+			std::stringstream sstr;
+			sstr << "GameObject_CHILD_" << i;
+			archive(cereal::make_nvp(sstr.str(), (*m_apkChildren[i])));
+		}
+	}
+
 private:
 	bool CheckPresenceInChildren(GameObject* pkGameObject);
 

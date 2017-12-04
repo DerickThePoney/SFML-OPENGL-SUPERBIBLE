@@ -11,6 +11,7 @@
 
 //#include "Macros.h"
 #include <cereal/cereal.hpp>
+#include <cereal/archives/xml.hpp>
 #include <iostream>
 #include <sstream>
 #include <SFML\Graphics.hpp>

@@ -49,6 +49,10 @@ void GameObjectApplication::Initialise()
 	//Init Scene
 	m_kScene.Initialise();
 	m_kScene.AddRootObject(kGameObjects);
+
+	//test scene serialisation
+	cereal::XMLOutputArchive output(std::cout);
+	output(cereal::make_nvp("My first scene", m_kScene));
 }
 
 void GameObjectApplication::Update(double deltaTime)
