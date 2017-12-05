@@ -2,9 +2,12 @@
 #include "Transform.h"
 #include "MeshRendererComponent.h"
 
+
 class GameObject
 {
-public:
+
+	friend class GameObjectManager;
+protected:
 	GameObject();
 	GameObject(GameObject* pkParent);
 	GameObject(GameObject* pkParent, const std::string& rkName);
@@ -17,6 +20,7 @@ public:
 	GameObject& operator=(const GameObject& other) = delete;
 	GameObject& operator=(GameObject&& other) = delete;
 
+public:
 	//hierarchy functions
 	bool AddChild(GameObject* pkObject);
 	bool RemoveChild(const UI32 iIndex);
@@ -37,15 +41,33 @@ public:
 
 	void SetName(const std::string& rkName) { m_kName = rkName; }
 
+	UI32 GetID() const { return m_uiID; }
+
 	template<class Archive>
-	void serialize(Archive & archive)
+	void save(Archive & archive) const
 	{
 		archive(CEREAL_NVP(m_kName));
-		for (size_t i = 0; i < m_apkChildren.size(); ++i)
+		std::size_t uiNbChildren = m_apkChildren.size();
+		archive(CEREAL_NVP(uiNbChildren));
+
+		for (size_t i = 0; i < uiNbChildren; ++i)
 		{
-			std::stringstream sstr;
-			sstr << "GameObject_CHILD_" << i;
-			archive(cereal::make_nvp(sstr.str(), (*m_apkChildren[i])));
+			archive(cereal::make_nvp("GameObject", (*m_apkChildren[i])));
+		}
+	}
+
+	template<class Archive>
+	void load(Archive& archive)
+	{
+		archive(CEREAL_NVP(m_kName));
+		std::size_t uiNbChildren = m_apkChildren.size();
+		archive(CEREAL_NVP(uiNbChildren));
+
+		for (size_t i = 0; i < uiNbChildren; ++i)
+		{
+			GameObject * obj = GameObjectManager::Instance()->Instantiate();
+			archive(cereal::make_nvp("GameObject", (*obj)));
+			AddChild(obj);
 		}
 	}
 
@@ -53,6 +75,10 @@ private:
 	bool CheckPresenceInChildren(GameObject* pkGameObject);
 
 protected:
+	//ID stuff
+	static UI32 s_uiIDCounter;
+	UI32 m_uiID;
+
 	//tag
 	std::string m_kName;
 

@@ -25,34 +25,46 @@ void GameObjectApplication::Initialise()
 
 	LoadAndCompileProgram();
 
+	{
+		std::ifstream ifstr("MyFirstScene.xml");
+		Scene testLoading;
+		cereal::XMLInputArchive output(ifstr);
+		output(testLoading);
+	}
 	
 	//init objects and hierarchy
-	kGameObjects[0].SetName("BaseObject");
-	kGameObjects[1].SetName("Middle");
-	kGameObjects[2].SetName("LeafObject");
+	m_pkGameObjects = GameObjectManager::Instance()->Instantiate();
+	m_pkGameObjects->SetName("BaseObject");
 
-	kGameObjects[0].AddChild(&kGameObjects[1]);
-	kGameObjects[1].AddChild(&kGameObjects[2]);
+	GameObject* middleObject = GameObjectManager::Instance()->Instantiate();
+	middleObject->SetName("Middle");
+
+	GameObject* leafObject = GameObjectManager::Instance()->Instantiate();
+	leafObject->SetName("LeafObject");
+
+	m_pkGameObjects->AddChild(middleObject);
+	middleObject->AddChild(leafObject);
 
 	//init positional stuff
-	kGameObjects[0].m_kTransform.SetLocalPosition(vec3(0, 0, 20));
-	kGameObjects[1].m_kTransform.SetLocalPosition(vec3(1, 0, 0));
-	kGameObjects[2].m_kTransform.SetLocalPosition(vec3(1, 0, 0));
+	m_pkGameObjects->m_kTransform.SetLocalPosition(vec3(0, 0, 20));
+	middleObject->m_kTransform.SetLocalPosition(vec3(1, 0, 0));
+	leafObject->m_kTransform.SetLocalPosition(vec3(1, 0, 0));
 
-	kGameObjects[0].m_kTransform.SetLocalOrientation(quaternion(1, 0, 0, 0));
+	m_pkGameObjects->m_kTransform.SetLocalOrientation(quaternion(1, 0, 0, 0));
 
 	//init rendering stuff
-	kGameObjects[0].m_kMeshRenderer.Init(&m_kMesh, &m_kMaterial);
-	kGameObjects[1].m_kMeshRenderer.Init(&m_kMesh, &m_kMaterial);
-	kGameObjects[2].m_kMeshRenderer.Init(&m_kMesh, &m_kMaterial);
+	m_pkGameObjects->m_kMeshRenderer.Init(&m_kMesh, &m_kMaterial);
+	middleObject->m_kMeshRenderer.Init(&m_kMesh, &m_kMaterial);
+	leafObject->m_kMeshRenderer.Init(&m_kMesh, &m_kMaterial);
 	
 	//Init Scene
 	m_kScene.Initialise();
-	m_kScene.AddRootObject(kGameObjects);
+	m_kScene.AddRootObject(m_pkGameObjects);
 
 	//test scene serialisation
-	cereal::XMLOutputArchive output(std::cout);
-	output(cereal::make_nvp("My first scene", m_kScene));
+	std::ofstream ofstr("MyFirstScene.xml");
+	cereal::XMLOutputArchive output(ofstr);
+	output(cereal::make_nvp("MyFirstScene", m_kScene));
 }
 
 void GameObjectApplication::Update(double deltaTime)
@@ -86,6 +98,7 @@ void GameObjectApplication::Render(double currentTime)
 void GameObjectApplication::Terminate()
 {
 	m_kScene.Terminate();
+	GameObjectManager::Delete();
 	ImGui::SFML::Shutdown();
 	m_kMaterial.Delete();
 	m_kRenderer.Terminate();

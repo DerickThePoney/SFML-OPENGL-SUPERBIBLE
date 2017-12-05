@@ -24,11 +24,16 @@ public:
 	virtual void Inspector() override;
 
 	template<class Archive>
-	void serialize(Archive & archive)
+	void save(Archive & archive) const 
 	{
 		archive(CEREAL_NVP(m_eType), CEREAL_NVP(focal), CEREAL_NVP(fNearPlane), CEREAL_NVP(fFarPlane));
 	}
 
+	template<class Archive>
+	void load(Archive & archive)
+	{
+		archive(CEREAL_NVP(m_eType), CEREAL_NVP(focal), CEREAL_NVP(fNearPlane), CEREAL_NVP(fFarPlane));
+	}
 
 private:
 	void ComputeLookAt();

@@ -1,4 +1,5 @@
 #pragma once
+#include "GameObjectManager.h"
 #include "GameObject.h"
 #include "Camera.h"
 
@@ -22,15 +23,32 @@ public:
 	void ExtractVisibleObjectList(std::vector<GameObject *>& akObjects);
 
 	template<class Archive>
-	void serialize(Archive & archive)
+	void save(Archive & archive) const
 	{
 		archive(CEREAL_NVP(m_kCamera));
 
-		for (size_t i = 0; i < m_akRootObjects.size(); ++i)
+		std::size_t uiNbChildren = m_akRootObjects.size();
+		archive(CEREAL_NVP(uiNbChildren));
+
+		for (size_t i = 0; i < uiNbChildren; ++i)
 		{
-			std::stringstream sstr;
-			sstr << "GameObject_" << i;
-			archive(cereal::make_nvp(sstr.str(), (*m_akRootObjects[i])));
+			archive(cereal::make_nvp("GameObject", (*m_akRootObjects[i])));
+		}
+	}
+
+	template<class Archive>
+	void load(Archive& archive)
+	{
+		archive(CEREAL_NVP(m_kCamera));
+
+		std::size_t uiNbChildren = m_akRootObjects.size();
+		archive(CEREAL_NVP(uiNbChildren));
+
+		for (size_t i = 0; i < uiNbChildren; ++i)
+		{
+			GameObject * obj = GameObjectManager::Instance()->Instantiate();
+			archive(cereal::make_nvp("GameObject", (*obj)));
+			m_akRootObjects.push_back(obj);
 		}
 	}
 

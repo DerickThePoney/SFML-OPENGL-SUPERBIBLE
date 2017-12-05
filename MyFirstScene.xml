@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cereal>
+	<MyFirstScene>
+		<m_kCamera>
+			<m_eType>1</m_eType>
+			<focal>50</focal>
+			<fNearPlane>0.10000000149011612</fNearPlane>
+			<fFarPlane>1000</fFarPlane>
+		</m_kCamera>
+		<uiNbChildren>1</uiNbChildren>
+		<GameObject>
+			<m_kName>BaseObject</m_kName>
+			<uiNbChildren>1</uiNbChildren>
+			<GameObject>
+				<m_kName>Middle</m_kName>
+				<uiNbChildren>1</uiNbChildren>
+				<GameObject>
+					<m_kName>LeafObject</m_kName>
+					<uiNbChildren>0</uiNbChildren>
+				</GameObject>
+			</GameObject>
+		</GameObject>
+	</MyFirstScene>
+</cereal>
+

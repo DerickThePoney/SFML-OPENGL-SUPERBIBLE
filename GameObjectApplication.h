@@ -1,5 +1,6 @@
 #pragma once
 #include "Application.h"
+#include "GameObjectManager.h"
 #include "GameObject.h"
 #include "Camera.h"
 #include "Renderer.h"
@@ -28,7 +29,7 @@ public:
 private:
 	Renderer m_kRenderer;
 	//Camera m_kCamera;
-	GameObject kGameObjects[3];
+	GameObject* m_pkGameObjects;
 	Mesh m_kMesh;
 	Material m_kMaterial;
 	Scene m_kScene;

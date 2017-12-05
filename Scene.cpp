@@ -9,6 +9,11 @@ Scene::Scene()
 
 Scene::~Scene()
 {
+	for (size_t i = 0; i < m_akRootObjects.size(); ++i)
+	{
+		GameObjectManager::Instance()->Destroy(m_akRootObjects[i]);
+	}
+
 	m_kTexture.Delete();
 }
 

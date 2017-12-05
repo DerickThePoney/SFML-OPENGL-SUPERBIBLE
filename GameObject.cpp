@@ -1,24 +1,26 @@
 #include "stdafx.h"
 #include "GameObject.h"
 
+UI32 GameObject::s_uiIDCounter = 0;
+
 
 GameObject::GameObject()
-	: m_pkParent(nullptr), m_kName("")
+	: m_pkParent(nullptr), m_kName(""), m_uiID(s_uiIDCounter++)
 {
 }
 
 GameObject::GameObject(GameObject * pkParent)
-	: m_pkParent(pkParent), m_kName("")
+	: m_pkParent(pkParent), m_kName(""), m_uiID(s_uiIDCounter++)
 {
 }
 
 GameObject::GameObject(GameObject * pkParent, const std::string & rkName)
-	: m_pkParent(pkParent), m_kName(rkName)
+	: m_pkParent(pkParent), m_kName(rkName), m_uiID(s_uiIDCounter++)
 {
 }
 
 GameObject::GameObject(const std::string & rkName)
-	: m_pkParent(nullptr), m_kName(rkName)
+	: m_pkParent(nullptr), m_kName(rkName), m_uiID(s_uiIDCounter++)
 {
 }
 
@@ -27,7 +29,7 @@ GameObject::~GameObject()
 {
 	/*for (size_t i = 0; i < m_apkChildren.size(); ++i)
 	{
-		SAFE_DELETE(m_apkChildren[i]);
+		GameObjectManager::Instance()->Destroy();
 	}*/
 
 	m_apkChildren.clear();
