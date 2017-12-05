@@ -40,7 +40,39 @@ const char * OGLUtilities::GLTypeEnumToCString(GLenum eType)
 	case GL_DOUBLE_MAT4x2: return "GL_DOUBLE_MAT4x2";
 	case GL_DOUBLE_MAT4x3: return "GL_DOUBLE_MAT4x3";
 	default:
-		return "Unknown";
+		return "Unknown type";
+	}
+}
+
+const char * OGLUtilities::GLDebugEnumToCString(GLenum eType)
+{
+	switch (eType)
+	{
+
+	case GL_DEBUG_SOURCE_API: return "GL_DEBUG_SOURCE_API";
+	case GL_DEBUG_SOURCE_WINDOW_SYSTEM: return "GL_DEBUG_SOURCE_WINDOW_SYSTEM";
+	case GL_DEBUG_SOURCE_SHADER_COMPILER: return "GL_DEBUG_SOURCE_SHADER_COMPILER";
+	case GL_DEBUG_SOURCE_THIRD_PARTY: return "GL_DEBUG_SOURCE_THIRD_PARTY";
+	case GL_DEBUG_SOURCE_APPLICATION: return "GL_DEBUG_SOURCE_APPLICATION";
+	case GL_DEBUG_SOURCE_OTHER: return "GL_DEBUG_SOURCE_OTHER";
+
+	case GL_DEBUG_TYPE_ERROR: return "GL_DEBUG_TYPE_ERROR";
+	case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: return "GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR";
+	case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR: return "GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR";
+	case GL_DEBUG_TYPE_PORTABILITY: return "GL_DEBUG_TYPE_PORTABILITY";
+	case GL_DEBUG_TYPE_PERFORMANCE: return "GL_DEBUG_TYPE_PERFORMANCE";
+	case GL_DEBUG_TYPE_MARKER: return "GL_DEBUG_TYPE_MARKER";
+	case GL_DEBUG_TYPE_PUSH_GROUP: return "GL_DEBUG_TYPE_PUSH_GROUP";
+	case GL_DEBUG_TYPE_POP_GROUP: return "GL_DEBUG_TYPE_POP_GROUP";
+	case GL_DEBUG_TYPE_OTHER: return "GL_DEBUG_TYPE_OTHER";
+
+	case GL_DEBUG_SEVERITY_HIGH: return "GL_DEBUG_SEVERITY_HIGH";
+	case GL_DEBUG_SEVERITY_MEDIUM: return "GL_DEBUG_SEVERITY_MEDIUM";
+	case GL_DEBUG_SEVERITY_LOW: return "GL_DEBUG_SEVERITY_LOW";
+	case GL_DEBUG_SEVERITY_NOTIFICATION: return "GL_DEBUG_SEVERITY_NOTIFICATION";
+
+	default:
+		return "Unknown debug enum entry";
 	}
 }
 
@@ -86,6 +118,10 @@ GLenum OGLUtilities::GetErrors()
 
 void APIENTRY OGLUtilities::DebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar * message, const GLvoid * userParam)
 {
-	//printf("Debug message with source=0x%04X type=0x%04X, id %u, severity 0x%0X, '%s'\n" , source, type, id, severity, length, message);
-	std::cout << message << std::endl;
+	//printf("Debug message with source=0x%04X type=0x%04X, id %u, severity 0x%0X, '%s'\n" , source, type, id, severity, message);
+	std::cout << "Debug message:\n"
+			<< "\tSource: " << OGLUtilities::GLDebugEnumToCString(source) << "\n"
+			<< "\tType: " << OGLUtilities::GLDebugEnumToCString(type) << "\n"
+			<< "\tSeverity: " << OGLUtilities::GLDebugEnumToCString(severity) << "\n"
+			<< "\tMessage: " << message << std::endl;
 }

@@ -5,6 +5,7 @@ class OGLUtilities
 {
 public:
 	static const char* GLTypeEnumToCString(GLenum eType);
+	static const char* GLDebugEnumToCString(GLenum eType);
 
 	static GLenum GetErrors();
 

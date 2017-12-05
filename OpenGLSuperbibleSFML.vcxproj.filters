@@ -7,9 +7,6 @@
     <Filter Include="IMGUI">
       <UniqueIdentifier>{73b24347-50f6-4f66-be9f-130a0f251e17}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Rendering\OGLObjects">
-      <UniqueIdentifier>{9ed34e72-36b1-400b-8398-71550253d595}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Rendering\Mesh">
       <UniqueIdentifier>{6f85c62d-7f45-4f63-84e4-e518d2a5e2a8}</UniqueIdentifier>
     </Filter>
@@ -39,6 +36,12 @@
     <Filter Include="PCHSTUFF\Fichiers de ressources">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Rendering\OGLImplementations">
+      <UniqueIdentifier>{9ed34e72-36b1-400b-8398-71550253d595}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rendering\OGLImplementations\OGLObjects">
+      <UniqueIdentifier>{2d35f671-8f78-493c-8355-d36b0a41ceba}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -102,18 +105,6 @@
     <ClInclude Include="imgui\imconfig.h">
       <Filter>IMGUI</Filter>
     </ClInclude>
-    <ClInclude Include="OGLBuffer.h">
-      <Filter>Rendering\OGLObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="OGLProgram.h">
-      <Filter>Rendering\OGLObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="OGLShader.h">
-      <Filter>Rendering\OGLObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="OGLVertexArray.h">
-      <Filter>Rendering\OGLObjects</Filter>
-    </ClInclude>
     <ClInclude Include="Material.h">
       <Filter>Rendering</Filter>
     </ClInclude>
@@ -123,14 +114,11 @@
     <ClInclude Include="MeshRendererComponent.h">
       <Filter>Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="OGLTexture2D.h">
-      <Filter>Rendering\OGLObjects</Filter>
-    </ClInclude>
     <ClInclude Include="OGLRendering.h">
-      <Filter>Rendering\OGLObjects</Filter>
+      <Filter>Rendering\OGLImplementations</Filter>
     </ClInclude>
     <ClInclude Include="OGLUtilities.h">
-      <Filter>Rendering\OGLObjects</Filter>
+      <Filter>Rendering\OGLImplementations</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>Rendering\Mesh</Filter>
@@ -164,6 +152,21 @@
     </ClInclude>
     <ClInclude Include="GameObjectManager.h">
       <Filter>GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="OGLBuffer.h">
+      <Filter>Rendering\OGLImplementations\OGLObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="OGLProgram.h">
+      <Filter>Rendering\OGLImplementations\OGLObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="OGLShader.h">
+      <Filter>Rendering\OGLImplementations\OGLObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="OGLTexture2D.h">
+      <Filter>Rendering\OGLImplementations\OGLObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="OGLVertexArray.h">
+      <Filter>Rendering\OGLImplementations\OGLObjects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -200,18 +203,6 @@
     <ClCompile Include="imgui\imgui_draw.cpp">
       <Filter>IMGUI</Filter>
     </ClCompile>
-    <ClCompile Include="OGLBuffer.cpp">
-      <Filter>Rendering\OGLObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="OGLProgram.cpp">
-      <Filter>Rendering\OGLObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="OGLShader.cpp">
-      <Filter>Rendering\OGLObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="OGLVertexArray.cpp">
-      <Filter>Rendering\OGLObjects</Filter>
-    </ClCompile>
     <ClCompile Include="Material.cpp">
       <Filter>Rendering</Filter>
     </ClCompile>
@@ -221,11 +212,8 @@
     <ClCompile Include="MeshRendererComponent.cpp">
       <Filter>Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="OGLTexture2D.cpp">
-      <Filter>Rendering\OGLObjects</Filter>
-    </ClCompile>
     <ClCompile Include="OGLUtilities.cpp">
-      <Filter>Rendering\OGLObjects</Filter>
+      <Filter>Rendering\OGLImplementations</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
       <Filter>Rendering\Mesh</Filter>
@@ -259,6 +247,21 @@
     </ClCompile>
     <ClCompile Include="GameObjectManager.cpp">
       <Filter>GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="OGLBuffer.cpp">
+      <Filter>Rendering\OGLImplementations\OGLObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="OGLProgram.cpp">
+      <Filter>Rendering\OGLImplementations\OGLObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="OGLShader.cpp">
+      <Filter>Rendering\OGLImplementations\OGLObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="OGLTexture2D.cpp">
+      <Filter>Rendering\OGLImplementations\OGLObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="OGLVertexArray.cpp">
+      <Filter>Rendering\OGLImplementations\OGLObjects</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
