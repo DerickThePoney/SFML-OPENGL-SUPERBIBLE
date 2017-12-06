@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Object.h"
+#include "MeshManager.h"
 
 
 Object::Object()
@@ -45,7 +46,7 @@ void Object::Initialise()
 	//kSpaceShip.Apply(kBMesh);
 	kSpaceShip2.Apply(kBMesh);
 
-	m_pkMesh = new Mesh();
+	m_pkMesh = MeshManager::Instance()->Instantiate();
 
 	kBMesh.BuildMesh(*m_pkMesh);
 	//create vao
@@ -251,7 +252,7 @@ void Object::Render()
 
 void Object::Terminate()
 {
-	delete m_pkMesh;
+	MeshManager::Delete();// m_pkMesh;
 	/*glDeleteVertexArrays(1, &m_hiVao);
 	glDeleteBuffers(1, &m_hiDataBuffer);
 	glDeleteBuffers(1, &m_hiNormalBuffer);

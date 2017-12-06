@@ -3,7 +3,6 @@
 #include "Utility.h"
 
 #include "OGLRendering.h"
-#include "MeshManager.h"
 
 using namespace vmath;
 
@@ -15,14 +14,17 @@ enum Attributes
 	UVS
 };
 
-class MeshManager;
+
 
 class Mesh
 {
-public:
+	friend class MeshManager;
+
+protected:
 	Mesh();
 	~Mesh();
 
+public:
 	bool operator==(const Mesh& other) { return m_uiMeshID == other.m_uiMeshID; }
 
 
@@ -32,8 +34,6 @@ public:
 	void SetAttributes();
 
 	void Delete();
-
-	void RegisterMesh();
 
 	std::vector<vec3> m_akVertices;
 	std::vector<vec3> m_akNormals;

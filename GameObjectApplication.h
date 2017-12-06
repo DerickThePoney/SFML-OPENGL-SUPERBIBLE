@@ -1,6 +1,7 @@
 #pragma once
 #include "Application.h"
 #include "GameObjectManager.h"
+#include "MeshManager.h"
 #include "GameObject.h"
 #include "Camera.h"
 #include "Renderer.h"
@@ -30,7 +31,7 @@ private:
 	Renderer m_kRenderer;
 	//Camera m_kCamera;
 	GameObject* m_pkGameObjects;
-	Mesh m_kMesh;
+	Mesh* m_pkMesh;
 	Material m_kMaterial;
 	Scene m_kScene;
 };

@@ -65,6 +65,7 @@ void Application::MainLoop()
 	fprintf(stdout, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
 
 	glDebugMessageCallback(&OGLUtilities::DebugCallback, NULL);
+	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, GL_FALSE);
 
 	//intialise stuff
 	Initialise();

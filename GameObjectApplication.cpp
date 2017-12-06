@@ -17,11 +17,12 @@ void GameObjectApplication::Initialise()
 	m_kRenderer.Init(&m_window);
 
 	//create the mesh
+	m_pkMesh = MeshManager::Instance()->Instantiate();
 	BMesh kBMesh;
 	MakeCube kMakeCube(vec3(0.2f));
 	kMakeCube.Apply(kBMesh);
-	kBMesh.BuildMesh(m_kMesh);
-	m_kMesh.LoadBuffersOnGraphicsCard();
+	kBMesh.BuildMesh(*m_pkMesh);
+	m_pkMesh->LoadBuffersOnGraphicsCard();
 
 	LoadAndCompileProgram();
 
@@ -53,9 +54,9 @@ void GameObjectApplication::Initialise()
 	m_pkGameObjects->m_kTransform.SetLocalOrientation(quaternion(1, 0, 0, 0));
 
 	//init rendering stuff
-	m_pkGameObjects->m_kMeshRenderer.Init(&m_kMesh, &m_kMaterial);
-	middleObject->m_kMeshRenderer.Init(&m_kMesh, &m_kMaterial);
-	leafObject->m_kMeshRenderer.Init(&m_kMesh, &m_kMaterial);
+	m_pkGameObjects->m_kMeshRenderer.Init(m_pkMesh, &m_kMaterial);
+	middleObject->m_kMeshRenderer.Init(m_pkMesh, &m_kMaterial);
+	leafObject->m_kMeshRenderer.Init(m_pkMesh, &m_kMaterial);
 	
 	//Init Scene
 	m_kScene.Initialise();
@@ -98,6 +99,8 @@ void GameObjectApplication::Render(double currentTime)
 void GameObjectApplication::Terminate()
 {
 	m_kScene.Terminate();
+	MeshManager::Instance()->Destroy(m_pkMesh);
+	MeshManager::Delete();
 	GameObjectManager::Delete();
 	ImGui::SFML::Shutdown();
 	m_kMaterial.Delete();

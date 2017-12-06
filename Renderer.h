@@ -56,7 +56,7 @@ private:
 	UI32 m_auiRenderingState[2];
 
 	//Default rendering state 
-	Mesh m_kDefaultMesh;
+	Mesh* m_pkDefaultMesh;
 	Material m_kDefaultMaterial;
 
 	//Projection block index

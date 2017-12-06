@@ -38,12 +38,13 @@ void Renderer::InitDefaultState()
 	m_hiProjectionDataIndex = glGetUniformBlockIndex(m_kDefaultMaterial.m_kProgram, "ProjectionData");
 
 	//init the default mesh (a cube)
+	m_pkDefaultMesh = MeshManager::Instance()->Instantiate();
 	BMesh bmesh;
 	MakeCube makeCube;
 	makeCube.Apply(bmesh);
 	
-	bmesh.BuildMesh(m_kDefaultMesh);
-	m_kDefaultMesh.LoadBuffersOnGraphicsCard();
+	bmesh.BuildMesh(*m_pkDefaultMesh);
+	m_pkDefaultMesh->LoadBuffersOnGraphicsCard();
 }
 
 void Renderer::Terminate()
@@ -53,7 +54,7 @@ void Renderer::Terminate()
 
 void Renderer::TerminateDefaultState()
 {
-	m_kDefaultMesh.Delete();
+	MeshManager::Instance()->Destroy(m_pkDefaultMesh);
 	m_kDefaultMaterial.Delete();
 }
 
@@ -103,8 +104,8 @@ void Renderer::ApplyDefaultState()
 	m_auiRenderingState[MATERIAL] = m_kDefaultMaterial.m_uiMaterialID;
 
 	//default mesh
-	m_kDefaultMesh.BindForDrawing();
-	m_auiRenderingState[MESH] = m_kDefaultMesh.m_uiMeshID;
+	m_pkDefaultMesh->BindForDrawing();
+	m_auiRenderingState[MESH] = m_pkDefaultMesh->m_uiMeshID;
 }
 
 void Renderer::ApplyGameObjectRenderData(GameObjectRenderData & data)

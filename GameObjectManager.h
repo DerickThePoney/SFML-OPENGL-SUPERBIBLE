@@ -19,6 +19,6 @@ public:
 
 
 private:
-	std::unordered_map<I32, GameObject*> m_akGameObjectsMap;
+	std::unordered_map<UI32, GameObject*> m_akGameObjectsMap;
 };
 

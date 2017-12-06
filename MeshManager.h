@@ -1,7 +1,7 @@
 #pragma once
 #include "Utility.h"
+#include "Mesh.h"
 
-class Mesh;
 class MeshManager
 {
 public:
@@ -14,13 +14,12 @@ protected:
 	~MeshManager();
 
 public:
-	
-	void AddMesh(const std::string kMeshName, Mesh* pkMesh);
+	Mesh* Instantiate();
+	bool Destroy(Mesh* pkObj);
 
-	Mesh* GetMesh(const std::string& kMeshName);
-	Mesh* GetMesh(UI32 uiMeshID);
+	Mesh* FindFromID(UI32 uiID);
+
 private:
 	std::unordered_map<UI32, Mesh*> m_akMeshes;
-	std::unordered_map<std::string, UI32> m_akMeshesNames;
 };
 
