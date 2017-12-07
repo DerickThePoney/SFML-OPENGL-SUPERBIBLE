@@ -743,6 +743,18 @@ public:
         };
         T               a[4];
     };
+
+	template<class Archive>
+	void save(Archive & archive) const
+	{
+		archive(a[0], a[1], a[2], a[3]);
+	}
+
+	template<class Archive>
+	void load(Archive& archive)
+	{
+		archive(a[0], a[1], a[2], a[3]);
+	}
 };
 
 typedef Tquaternion<float> quaternion;

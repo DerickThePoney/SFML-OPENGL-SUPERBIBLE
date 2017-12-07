@@ -46,7 +46,9 @@ public:
 	template<class Archive>
 	void save(Archive & archive) const
 	{
-		archive(CEREAL_NVP(m_kName));
+		archive(CEREAL_NVP(m_kName), m_kTransform, m_kMeshRenderer);
+		
+		//dump children
 		std::size_t uiNbChildren = m_apkChildren.size();
 		archive(CEREAL_NVP(uiNbChildren));
 
@@ -59,7 +61,8 @@ public:
 	template<class Archive>
 	void load(Archive& archive)
 	{
-		archive(CEREAL_NVP(m_kName));
+		archive(CEREAL_NVP(m_kName), m_kTransform, m_kMeshRenderer);
+
 		std::size_t uiNbChildren = m_apkChildren.size();
 		archive(CEREAL_NVP(uiNbChildren));
 

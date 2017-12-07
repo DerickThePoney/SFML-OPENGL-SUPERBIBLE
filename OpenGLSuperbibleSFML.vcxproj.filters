@@ -43,6 +43,9 @@
     <Filter Include="Rendering\OGLImplementations\OGLObjects">
       <UniqueIdentifier>{2d35f671-8f78-493c-8355-d36b0a41ceba}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameObjects\Components">
+      <UniqueIdentifier>{3d142f70-2f81-4487-9891-d8bc91607d94}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -70,12 +73,6 @@
       <Filter>PCHSTUFF\Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="Intersection.h">
-      <Filter>PCHSTUFF\Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="Transform.h">
-      <Filter>PCHSTUFF\Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
       <Filter>PCHSTUFF\Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="imgui\stb_rect_pack.h">
@@ -109,9 +106,6 @@
       <Filter>Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Renderer.h">
-      <Filter>Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshRendererComponent.h">
       <Filter>Rendering</Filter>
     </ClInclude>
     <ClInclude Include="OGLRendering.h">
@@ -168,6 +162,15 @@
     <ClInclude Include="OGLVertexArray.h">
       <Filter>Rendering\OGLImplementations\OGLObjects</Filter>
     </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>GameObjects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshRendererComponent.h">
+      <Filter>GameObjects\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -188,12 +191,6 @@
     <ClCompile Include="Intersection.cpp">
       <Filter>PCHSTUFF\Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="Transform.cpp">
-      <Filter>PCHSTUFF\Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>PCHSTUFF\Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="imgui\imgui.cpp">
       <Filter>IMGUI</Filter>
     </ClCompile>
@@ -207,9 +204,6 @@
       <Filter>Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Renderer.cpp">
-      <Filter>Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshRendererComponent.cpp">
       <Filter>Rendering</Filter>
     </ClCompile>
     <ClCompile Include="OGLUtilities.cpp">
@@ -262,6 +256,15 @@
     </ClCompile>
     <ClCompile Include="OGLVertexArray.cpp">
       <Filter>Rendering\OGLImplementations\OGLObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>GameObjects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshRendererComponent.cpp">
+      <Filter>GameObjects\Components</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

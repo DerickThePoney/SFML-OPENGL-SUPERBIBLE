@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "Transform.h"
 
-Transform::Transform(vec3 kPosition, quaternion kOrientation)
-	: m_kLocalPosition(kPosition), m_kLocalOrientation(kOrientation), m_bUpToDate(false)
+Transform::Transform(vec3 kPosition, vec3 kScale, quaternion kOrientation)
+	: m_kLocalPosition(kPosition), m_kScale(kScale), m_kLocalOrientation(kOrientation), m_bUpToDate(false)
 {
 }
 
@@ -24,7 +24,7 @@ void Transform::UpdateWorldSpaceTransform(Transform * pkParent)
 	kLocalTranslation = translate(m_kLocalPosition);
 
 	//compute the world space position
-	m_kWorlspaceTransform = kLocalTranslation * kLocalRotation;
+	m_kWorlspaceTransform = kLocalTranslation * scale(m_kScale) * kLocalRotation;
 
 	if (pkParent != nullptr)
 	{
@@ -40,6 +40,8 @@ void Transform::Inspect()
 	{
 		if (ImGui::InputFloat3("Local position: ", m_kLocalPosition.GetData())) m_bUpToDate = false;
 		if (ImGui::InputFloat4("Local orientation: ", m_kLocalOrientation.GetData())) m_bUpToDate = false;
+		if (ImGui::InputFloat3("Local Scale: ", m_kScale.GetData())) m_bUpToDate = false;
+
 		ImGui::Checkbox("Show world space matrix", &showWorldSpace);
 		if(showWorldSpace)
 		{

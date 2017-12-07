@@ -38,11 +38,16 @@ void GameObjectApplication::Initialise()
 
 	LoadAndCompileProgram();
 
+	try
 	{
 		std::ifstream ifstr("MyFirstScene.xml");
 		Scene testLoading;
 		cereal::XMLInputArchive output(ifstr);
 		output(testLoading);
+	}
+	catch (std::exception& e)
+	{
+		std::cout << e.what() << std::endl;
 	}
 	
 	//init objects and hierarchy
