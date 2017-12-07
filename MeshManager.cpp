@@ -43,6 +43,25 @@ Mesh * MeshManager::Instantiate()
 	return newObj;
 }
 
+Mesh * MeshManager::InstantiateFromFile(const std::string & kFilename)
+{
+	Mesh* newObj = Instantiate();
+	std::ifstream ifstr(kFilename);
+
+	if (kFilename.find(".bin") != kFilename.npos)
+	{
+		cereal::BinaryInputArchive output(ifstr);
+		output(*newObj);
+	}
+	else if (kFilename.find(".xml") != kFilename.npos)
+	{
+		cereal::XMLInputArchive output(ifstr);
+		output(*newObj);
+	}
+
+	return newObj;
+}
+
 bool MeshManager::Destroy(Mesh * pkObj)
 {
 	if (pkObj == nullptr)

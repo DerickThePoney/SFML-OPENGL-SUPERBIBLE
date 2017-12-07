@@ -274,6 +274,18 @@ public:
         base::data[0] = x;
         base::data[1] = y;
     }
+
+	template<class Archive>
+	void save(Archive & archive) const
+	{
+		archive(base::data[0], base::data[1]);
+	}
+
+	template<class Archive>
+	void load(Archive& archive)
+	{
+		archive(base::data[0], base::data[1]);
+	}
 };
 
 template <typename T>
@@ -311,6 +323,18 @@ public:
         base::data[1] = v[0];
         base::data[2] = v[1];
     }
+
+	template<class Archive>
+	void save(Archive & archive) const
+	{
+		archive(base::data[0], base::data[1], base::data[2]);
+	}
+
+	template<class Archive>
+	void load(Archive& archive)
+	{
+		archive(base::data[0], base::data[1], base::data[2]);
+	}
 };
 
 template <typename T>
@@ -387,6 +411,18 @@ public:
         base::data[2] = v[1];
         base::data[3] = v[2];
     }
+
+	template<class Archive>
+	void save(Archive & archive) const
+	{
+		archive(base::data[0], base::data[1], base::data[2], base::data[3]);
+	}
+
+	template<class Archive>
+	void load(Archive& archive)
+	{
+		archive(base::data[0], base::data[1], base::data[2], base::data[3]);
+	}
 };
 
 // These types don't exist in GLSL and don't have full implementations

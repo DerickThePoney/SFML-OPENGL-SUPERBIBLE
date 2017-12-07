@@ -47,6 +47,8 @@ public:
 	void ApplyDefaultState();
 	void ApplyGameObjectRenderData(GameObjectRenderData& data);
 
+	const Mesh& GetDefaultMesh() const { return *m_pkDefaultMesh; }
+
 private:
 	//window stuff
 	sf::RenderWindow* m_window;

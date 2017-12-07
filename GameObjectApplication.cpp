@@ -24,6 +24,18 @@ void GameObjectApplication::Initialise()
 	kBMesh.BuildMesh(*m_pkMesh);
 	m_pkMesh->LoadBuffersOnGraphicsCard();
 
+	/*{
+		std::ofstream ofstr("media/meshes/default_cube_mesh.xml");
+		cereal::XMLOutputArchive output(ofstr);
+		output(m_kRenderer.GetDefaultMesh());
+	}
+
+	{
+		std::ofstream ofstr("media/meshes/default_cube_mesh.bin");
+		cereal::BinaryOutputArchive output(ofstr);
+		output(m_kRenderer.GetDefaultMesh());
+	}*/
+
 	LoadAndCompileProgram();
 
 	{

@@ -65,7 +65,7 @@ void Material::Inspect()
 	if (node_open)
 	{
 		const std::vector<ActiveProgramInformations>& uniforms = m_kProgram.GetUniformsInformation();
-		for (I32 i = 0; i < uniforms.size(); ++i)
+		for (size_t i = 0; i < uniforms.size(); ++i)
 		{
 			if (uniforms[i].m_bIsFromBlock) continue;
 			ImGui::Bullet();

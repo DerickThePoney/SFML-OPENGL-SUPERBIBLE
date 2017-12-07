@@ -12,6 +12,9 @@
 //#include "Macros.h"
 #include <cereal/cereal.hpp>
 #include <cereal/archives/xml.hpp>
+#include <cereal/archives/binary.hpp>
+#include <cereal/types/map.hpp>
+#include <cereal/types/vector.hpp>
 #include <iostream>
 #include <sstream>
 #include <SFML\Graphics.hpp>

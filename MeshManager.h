@@ -15,6 +15,7 @@ protected:
 
 public:
 	Mesh* Instantiate();
+	Mesh* InstantiateFromFile(const std::string& kFilename);
 	bool Destroy(Mesh* pkObj);
 
 	Mesh* FindFromID(UI32 uiID);

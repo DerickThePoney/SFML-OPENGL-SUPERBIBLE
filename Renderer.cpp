@@ -38,12 +38,13 @@ void Renderer::InitDefaultState()
 	m_hiProjectionDataIndex = glGetUniformBlockIndex(m_kDefaultMaterial.m_kProgram, "ProjectionData");
 
 	//init the default mesh (a cube)
-	m_pkDefaultMesh = MeshManager::Instance()->Instantiate();
+	m_pkDefaultMesh = MeshManager::Instance()->InstantiateFromFile("media/meshes/default_cube_mesh.bin");
+	/*m_pkDefaultMesh = MeshManager::Instance()->Instantiate();
 	BMesh bmesh;
 	MakeCube makeCube;
 	makeCube.Apply(bmesh);
 	
-	bmesh.BuildMesh(*m_pkDefaultMesh);
+	bmesh.BuildMesh(*m_pkDefaultMesh);*/
 	m_pkDefaultMesh->LoadBuffersOnGraphicsCard();
 }
 

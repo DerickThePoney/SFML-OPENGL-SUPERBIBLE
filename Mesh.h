@@ -35,6 +35,33 @@ public:
 
 	void Delete();
 
+	template<class Archive>
+	void save(Archive & archive) const
+	{
+		archive(cereal::make_nvp("IsProcedural", false),
+			CEREAL_NVP(m_akVertices),
+			CEREAL_NVP(m_akNormals),
+			CEREAL_NVP(m_akColor),
+			CEREAL_NVP(m_aiIndices),
+			CEREAL_NVP(m_akUVs));
+	}
+
+	template<class Archive>
+	void load(Archive& archive)
+	{
+		bool bIsProcedural = false;
+		archive(cereal::make_nvp("IsProcedural", bIsProcedural));
+
+		if (!bIsProcedural)
+		{
+			archive(CEREAL_NVP(m_akVertices),
+				CEREAL_NVP(m_akNormals),
+				CEREAL_NVP(m_akColor),
+				CEREAL_NVP(m_aiIndices),
+				CEREAL_NVP(m_akUVs));
+		}
+	}
+
 	std::vector<vec3> m_akVertices;
 	std::vector<vec3> m_akNormals;
 	std::vector<vec4> m_akColor;
