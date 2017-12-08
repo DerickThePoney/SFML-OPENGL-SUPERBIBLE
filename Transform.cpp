@@ -18,13 +18,15 @@ void Transform::UpdateWorldSpaceTransform(Transform * pkParent)
 	}
 
 	//set local transform matrix
-	mat4 kLocalRotation, kLocalTranslation;
+	mat4 kLocalRotation, kLocalTranslation, kScale;
 	quaternionToMatrix(m_kLocalOrientation, kLocalRotation);
 
 	kLocalTranslation = translate(m_kLocalPosition);
 
+	kScale = scale(m_kScale);
+
 	//compute the world space position
-	m_kWorlspaceTransform = kLocalTranslation * scale(m_kScale) * kLocalRotation;
+	m_kWorlspaceTransform = kLocalTranslation * kLocalRotation * kScale;
 
 	if (pkParent != nullptr)
 	{

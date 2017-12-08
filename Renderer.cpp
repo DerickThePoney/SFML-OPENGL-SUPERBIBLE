@@ -111,15 +111,21 @@ void Renderer::ApplyDefaultState()
 
 void Renderer::ApplyGameObjectRenderData(GameObjectRenderData & data)
 {
-	if (data.m_pkMeshRenderer->m_pkMaterial->m_uiMaterialID != m_auiRenderingState[MATERIAL])
+	if (data.m_pkMeshRenderer->m_pkMaterial != nullptr)
 	{
-		data.m_pkMeshRenderer->m_pkMaterial->Use();
-		m_auiRenderingState[MATERIAL] = data.m_pkMeshRenderer->m_pkMaterial->m_uiMaterialID;
+		if (data.m_pkMeshRenderer->m_pkMaterial->m_uiMaterialID != m_auiRenderingState[MATERIAL])
+		{
+			data.m_pkMeshRenderer->m_pkMaterial->Use();
+			m_auiRenderingState[MATERIAL] = data.m_pkMeshRenderer->m_pkMaterial->m_uiMaterialID;
+		}
 	}
 
-	if (data.m_pkMeshRenderer->m_pkMesh->m_uiMeshID != m_auiRenderingState[MESH])
+	if (data.m_pkMeshRenderer->m_pkMesh != nullptr)
 	{
-		data.m_pkMeshRenderer->m_pkMesh->BindForDrawing();
-		m_auiRenderingState[MESH] = data.m_pkMeshRenderer->m_pkMesh->m_uiMeshID;
+		if (data.m_pkMeshRenderer->m_pkMesh->m_uiMeshID != m_auiRenderingState[MESH])
+		{
+			data.m_pkMeshRenderer->m_pkMesh->BindForDrawing();
+			m_auiRenderingState[MESH] = data.m_pkMeshRenderer->m_pkMesh->m_uiMeshID;
+		}
 	}
 }

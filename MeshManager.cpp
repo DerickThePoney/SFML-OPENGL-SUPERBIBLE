@@ -45,18 +45,32 @@ Mesh * MeshManager::Instantiate()
 
 Mesh * MeshManager::InstantiateFromFile(const std::string & kFilename)
 {
-	Mesh* newObj = Instantiate();
-	std::ifstream ifstr(kFilename);
+	//check if is it not already loaded
+	auto itFind = m_akRessourceToID.find(kFilename);
+	Mesh* newObj;
+	
+	if (itFind == m_akRessourceToID.end())
+	{
+		//instantiate it
+		newObj = Instantiate();
+		std::ifstream ifstr(kFilename);
 
-	if (kFilename.find(".bin") != kFilename.npos)
-	{
-		cereal::BinaryInputArchive output(ifstr);
-		output(*newObj);
+		if (kFilename.find(".bin") != kFilename.npos)
+		{
+			cereal::BinaryInputArchive output(ifstr);
+			output(*newObj);
+		}
+		else if (kFilename.find(".xml") != kFilename.npos)
+		{
+			cereal::XMLInputArchive output(ifstr);
+			output(*newObj);
+		}
+
+		m_akRessourceToID[kFilename] = newObj->m_uiMeshID;
 	}
-	else if (kFilename.find(".xml") != kFilename.npos)
+	else
 	{
-		cereal::XMLInputArchive output(ifstr);
-		output(*newObj);
+		newObj = m_akMeshes[itFind->second];
 	}
 
 	return newObj;
@@ -72,6 +86,8 @@ bool MeshManager::Destroy(Mesh * pkObj)
 	auto itFind = m_akMeshes.find(pkObj->m_uiMeshID);
 	if (itFind != m_akMeshes.end())
 	{
+		ReleaseRessourceFromID(itFind->second->m_uiMeshID);
+		
 		SAFE_DELETE(itFind->second);
 		m_akMeshes.erase(itFind);
 	}
@@ -83,5 +99,19 @@ Mesh * MeshManager::FindFromID(UI32 uiID)
 {
 	auto itFind = m_akMeshes.find(uiID);
 	return (itFind == m_akMeshes.end()) ? nullptr : itFind->second;
+}
+
+void MeshManager::ReleaseRessourceFromID(const UI32 & id)
+{
+	auto it = m_akRessourceToID.begin();
+	for (; it != m_akRessourceToID.end(); ++it)
+	{
+		if (it->second == id)
+		{
+			m_akRessourceToID.erase(it);
+			return;
+		}
+	}
+	return;
 }
 

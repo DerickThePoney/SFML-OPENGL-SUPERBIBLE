@@ -3,6 +3,7 @@
 
 
 GameObjectApplication::GameObjectApplication()
+	: m_pkMesh(nullptr)
 {
 }
 
@@ -17,12 +18,12 @@ void GameObjectApplication::Initialise()
 	m_kRenderer.Init(&m_window);
 
 	//create the mesh
-	m_pkMesh = MeshManager::Instance()->Instantiate();
+	/*m_pkMesh = MeshManager::Instance()->Instantiate();
 	BMesh kBMesh;
 	MakeCube kMakeCube(vec3(0.2f));
 	kMakeCube.Apply(kBMesh);
 	kBMesh.BuildMesh(*m_pkMesh);
-	m_pkMesh->LoadBuffersOnGraphicsCard();
+	m_pkMesh->LoadBuffersOnGraphicsCard();*/
 
 	/*{
 		std::ofstream ofstr("media/meshes/default_cube_mesh.xml");
@@ -41,9 +42,9 @@ void GameObjectApplication::Initialise()
 	try
 	{
 		std::ifstream ifstr("MyFirstScene.xml");
-		Scene testLoading;
+		//Scene testLoading;
 		cereal::XMLInputArchive output(ifstr);
-		output(testLoading);
+		output(m_kScene);
 	}
 	catch (std::exception& e)
 	{
@@ -51,7 +52,7 @@ void GameObjectApplication::Initialise()
 	}
 	
 	//init objects and hierarchy
-	m_pkGameObjects = GameObjectManager::Instance()->Instantiate();
+	/*m_pkGameObjects = GameObjectManager::Instance()->Instantiate();
 	m_pkGameObjects->SetName("BaseObject");
 
 	GameObject* middleObject = GameObjectManager::Instance()->Instantiate();
@@ -65,15 +66,23 @@ void GameObjectApplication::Initialise()
 
 	//init positional stuff
 	m_pkGameObjects->m_kTransform.SetLocalPosition(vec3(0, 0, 20));
-	middleObject->m_kTransform.SetLocalPosition(vec3(1, 0, 0));
-	leafObject->m_kTransform.SetLocalPosition(vec3(1, 0, 0));
+	m_pkGameObjects->m_kTransform.SetScale(vec3(0.2f));
+	middleObject->m_kTransform.SetLocalPosition(vec3(1/0.2f, 0, 0));
+	leafObject->m_kTransform.SetLocalPosition(vec3(1 / 0.2f, 0, 0));
 
 	m_pkGameObjects->m_kTransform.SetLocalOrientation(quaternion(1, 0, 0, 0));
 
 	//init rendering stuff
-	m_pkGameObjects->m_kMeshRenderer.Init(m_pkMesh, &m_kMaterial);
-	middleObject->m_kMeshRenderer.Init(m_pkMesh, &m_kMaterial);
-	leafObject->m_kMeshRenderer.Init(m_pkMesh, &m_kMaterial);
+	m_pkGameObjects->m_kMeshRenderer.InitMeshFromRessource("media/meshes/default_cube_mesh.bin");
+	m_pkGameObjects->m_kMeshRenderer.m_pkMaterial = &m_kMaterial;
+	middleObject->m_kMeshRenderer.InitMeshFromRessource("media/meshes/default_cube_mesh.bin");
+	middleObject->m_kMeshRenderer.m_pkMaterial = &m_kMaterial;
+	leafObject->m_kMeshRenderer.InitMeshFromRessource("media/meshes/default_cube_mesh.bin");
+	leafObject->m_kMeshRenderer.m_pkMaterial = &m_kMaterial;
+	
+	//m_pkGameObjects->m_kMeshRenderer.Init(m_pkMesh, &m_kMaterial);
+	//middleObject->m_kMeshRenderer.Init(m_pkMesh, &m_kMaterial);
+	//leafObject->m_kMeshRenderer.Init(m_pkMesh, &m_kMaterial);
 	
 	//Init Scene
 	m_kScene.Initialise();
@@ -82,7 +91,8 @@ void GameObjectApplication::Initialise()
 	//test scene serialisation
 	std::ofstream ofstr("MyFirstScene.xml");
 	cereal::XMLOutputArchive output(ofstr);
-	output(cereal::make_nvp("MyFirstScene", m_kScene));
+	output(cereal::make_nvp("MyFirstScene", m_kScene));*/
+	m_kScene.Initialise();
 }
 
 void GameObjectApplication::Update(double deltaTime)
@@ -103,10 +113,13 @@ void GameObjectApplication::Render(double currentTime)
 	//extract render data
 	for (size_t i = 0; i < visibleObjectList.size(); ++i)
 	{
-		GameObjectRenderData data;
-		data.m_pkMeshRenderer = &visibleObjectList[i]->m_kMeshRenderer;
-		data.m_pkTransform = &visibleObjectList[i]->m_kTransform;
-		visibleDataList.push_back(data);
+		if (visibleObjectList[i]->m_kMeshRenderer.m_pkMesh != nullptr) // no data to display...
+		{
+			GameObjectRenderData data;
+			data.m_pkMeshRenderer = &visibleObjectList[i]->m_kMeshRenderer;
+			data.m_pkTransform = &visibleObjectList[i]->m_kTransform;
+			visibleDataList.push_back(data);
+		}
 	}
 	
 	//render

@@ -17,9 +17,9 @@
 					<value2>20</value2>
 				</m_kLocalPosition>
 				<m_kScale>
-					<value0>1</value0>
-					<value1>1</value1>
-					<value2>1</value2>
+					<value0>0.20000000298023224</value0>
+					<value1>0.20000000298023224</value1>
+					<value2>0.20000000298023224</value2>
 				</m_kScale>
 				<m_kLocalOrientation>
 					<value0>1</value0>
@@ -29,14 +29,15 @@
 				</m_kLocalOrientation>
 			</value0>
 			<value1>
-				<MeshID>1</MeshID>
+				<m_kMeshFilename>media/meshes/default_cube_mesh.bin</m_kMeshFilename>
+				<MeshID>0</MeshID>
 			</value1>
 			<uiNbChildren>1</uiNbChildren>
 			<GameObject>
 				<m_kName>Middle</m_kName>
 				<value0>
 					<m_kLocalPosition>
-						<value0>1</value0>
+						<value0>5</value0>
 						<value1>0</value1>
 						<value2>0</value2>
 					</m_kLocalPosition>
@@ -53,14 +54,15 @@
 					</m_kLocalOrientation>
 				</value0>
 				<value1>
-					<MeshID>1</MeshID>
+					<m_kMeshFilename>media/meshes/default_cube_mesh.bin</m_kMeshFilename>
+					<MeshID>0</MeshID>
 				</value1>
 				<uiNbChildren>1</uiNbChildren>
 				<GameObject>
 					<m_kName>LeafObject</m_kName>
 					<value0>
 						<m_kLocalPosition>
-							<value0>1</value0>
+							<value0>5</value0>
 							<value1>0</value1>
 							<value2>0</value2>
 						</m_kLocalPosition>
@@ -77,7 +79,8 @@
 						</m_kLocalOrientation>
 					</value0>
 					<value1>
-						<MeshID>1</MeshID>
+						<m_kMeshFilename>media/meshes/default_cube_mesh.bin</m_kMeshFilename>
+						<MeshID>0</MeshID>
 					</value1>
 					<uiNbChildren>0</uiNbChildren>
 				</GameObject>

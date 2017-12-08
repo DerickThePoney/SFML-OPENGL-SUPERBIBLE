@@ -21,6 +21,10 @@ public:
 	Mesh* FindFromID(UI32 uiID);
 
 private:
+	void ReleaseRessourceFromID(const UI32& id);
+
+private:
 	std::unordered_map<UI32, Mesh*> m_akMeshes;
+	std::map<std::string, UI32> m_akRessourceToID;
 };
 

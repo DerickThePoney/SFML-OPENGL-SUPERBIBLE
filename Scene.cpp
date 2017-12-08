@@ -49,12 +49,7 @@ void Scene::Terminate()
 void Scene::Update(double deltaTime)
 {
 	//update transformss
-	m_kCamera.UpdateAllTransformsInHierarchy();
-		
-	for (std::size_t i = 0; i < m_akRootObjects.size(); ++i)
-	{
-		m_akRootObjects[i]->UpdateAllTransformsInHierarchy();
-	}
+	TransformsUpdate();
 	
 	//update loop
 	m_kCamera.Update(deltaTime);
@@ -64,45 +59,10 @@ void Scene::Update(double deltaTime)
 	}
 
 	//update transforms a second time to be sure that components did modify those too much...
-	m_kCamera.UpdateAllTransformsInHierarchy();
-	for (std::size_t i = 0; i < m_akRootObjects.size(); ++i)
-	{
-		m_akRootObjects[i]->UpdateAllTransformsInHierarchy();
-	}
+	TransformsUpdate();
 
 	//IM GUI Stuff
-	ImGuiIO &io = ImGui::GetIO();
-
-
-	ImGui::Begin("Hierarchy");
-	static GameObject* node_clicked;
-
-	m_kCamera.ImGUIHierarchy(node_clicked);
-	for (std::size_t i = 0; i < m_akRootObjects.size(); ++i)
-	{
-		m_akRootObjects[i]->ImGUIHierarchy(node_clicked);
-	}
-
-	ImGui::End();
-
-
-	ImGui::Begin("Inspector");
-
-	if (node_clicked != nullptr)
-	{
-		node_clicked->Inspector();
-	}
-
-	ImGui::End();
-
-	ImGui::Begin("Test with images");
-
-	ImGui::Image((void *)(intptr_t)m_kTexture, ImVec2(512, 512), ImVec2(0, 0), ImVec2(1, 1), ImVec4(1, 1, 1, 1), ImColor(255, 255, 255, 255));
-
-	ImGui::End();
-
-	static bool pOpen = true;
-	ImGui::ShowTestWindow(&pOpen);
+	IMGuiStuffs();
 }
 
 void Scene::OnResize(unsigned int width, unsigned int height)
@@ -129,6 +89,81 @@ void Scene::ExtractVisibleObjectsInHierarchy(GameObject* base, std::vector<GameO
 		akObjects.push_back(base->GetChild(j));
 		ExtractVisibleObjectsInHierarchy(base->GetChild(j), akObjects);
 	}
+}
+
+void Scene::TransformsUpdate()
+{
+	m_kCamera.UpdateAllTransformsInHierarchy();
+	for (std::size_t i = 0; i < m_akRootObjects.size(); ++i)
+	{
+		m_akRootObjects[i]->UpdateAllTransformsInHierarchy();
+	}
+}
+
+void Scene::IMGuiStuffs()
+{
+	ImGuiIO &io = ImGui::GetIO();
+
+
+	ImGui::Begin("Hierarchy");
+	static GameObject* node_clicked = nullptr;
+	
+	//Add -- remove -- and all that
+	if (ImGui::Button("+"))
+	{
+		GameObject* newObj = GameObjectManager::Instance()->Instantiate();
+		newObj->SetName("New Game Object");
+		if (node_clicked != nullptr)
+		{
+			node_clicked->AddChild(newObj);
+		}
+		else
+		{
+			m_akRootObjects.push_back(newObj);
+		}
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("-"))
+	{
+		if (node_clicked != nullptr)
+		{
+			//if(node_clicked->)
+			//node_clicked->AddChild(newObj);
+		}
+	}
+
+	ImGui::SameLine();
+	if (ImGui::Button("Save"))
+	{
+	}
+
+	//objects inspection
+	m_kCamera.ImGUIHierarchy(node_clicked);
+	for (std::size_t i = 0; i < m_akRootObjects.size(); ++i)
+	{
+		m_akRootObjects[i]->ImGUIHierarchy(node_clicked);
+	}
+
+	ImGui::End();
+
+
+	ImGui::Begin("Inspector");
+
+	if (node_clicked != nullptr)
+	{
+		node_clicked->Inspector();
+	}
+
+	ImGui::End();
+
+	ImGui::Begin("Test with images");
+
+	ImGui::Image((void *)(intptr_t)m_kTexture, ImVec2(512, 512), ImVec2(0, 0), ImVec2(1, 1), ImVec4(1, 1, 1, 1), ImColor(255, 255, 255, 255));
+
+	ImGui::End();
+
+	static bool pOpen = true;
+	ImGui::ShowTestWindow(&pOpen);
 }
 
 

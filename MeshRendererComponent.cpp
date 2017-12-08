@@ -7,6 +7,12 @@ void MeshRendererComponent::Init(Mesh* kMesh, Material* kMaterial)
 	m_pkMesh = kMesh;
 }
 
+void MeshRendererComponent::InitMeshFromRessource(const std::string & kFilename)
+{
+	m_kMeshFilename = kFilename;
+	m_pkMesh = MeshManager::Instance()->InstantiateFromFile(m_kMeshFilename);
+}
+
 void MeshRendererComponent::Inspect()
 {
 	static bool showWorldSpace = false;

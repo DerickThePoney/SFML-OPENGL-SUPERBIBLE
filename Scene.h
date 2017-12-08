@@ -56,6 +56,9 @@ public:
 private:
 	void ExtractVisibleObjectsInHierarchy(GameObject* base, std::vector<GameObject *>& akObjects);
 
+	void TransformsUpdate();
+	void IMGuiStuffs();
+
 private:
 
 	
