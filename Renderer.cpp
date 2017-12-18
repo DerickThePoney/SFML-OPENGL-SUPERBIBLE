@@ -33,7 +33,7 @@ void Renderer::InitDefaultState()
 	shaders.push_back("media/shaders/DefaultShader.vert.glsl"); shadersTypes.push_back(GL_VERTEX_SHADER);
 	shaders.push_back("media/shaders/DefaultShader.frag.glsl"); shadersTypes.push_back(GL_FRAGMENT_SHADER);
 
-	m_kDefaultMaterial.InitFromFile(shaders, shadersTypes);
+	m_kDefaultMaterial.InitFromFiles(shaders, shadersTypes);
 
 	m_hiProjectionDataIndex = glGetUniformBlockIndex(m_kDefaultMaterial.m_kProgram, "ProjectionData");
 

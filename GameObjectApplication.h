@@ -1,6 +1,7 @@
 #pragma once
 #include "Application.h"
 #include "GameObjectManager.h"
+#include "MaterialCompiler.h"
 #include "MeshManager.h"
 #include "GameObject.h"
 #include "Camera.h"

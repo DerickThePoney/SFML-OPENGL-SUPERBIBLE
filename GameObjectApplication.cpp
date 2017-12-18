@@ -18,26 +18,11 @@ void GameObjectApplication::Initialise()
 	m_kRenderer.Init(&m_window);
 
 	//create the mesh
-	/*m_pkMesh = MeshManager::Instance()->Instantiate();
-	BMesh kBMesh;
-	MakeCube kMakeCube(vec3(0.2f));
-	kMakeCube.Apply(kBMesh);
-	kBMesh.BuildMesh(*m_pkMesh);
-	m_pkMesh->LoadBuffersOnGraphicsCard();*/
-
-	/*{
-		std::ofstream ofstr("media/meshes/default_cube_mesh.xml");
-		cereal::XMLOutputArchive output(ofstr);
-		output(m_kRenderer.GetDefaultMesh());
-	}
-
-	{
-		std::ofstream ofstr("media/meshes/default_cube_mesh.bin");
-		cereal::BinaryOutputArchive output(ofstr);
-		output(m_kRenderer.GetDefaultMesh());
-	}*/
-
 	LoadAndCompileProgram();
+
+	//
+	std::vector<MaterialInformation> infos;
+	MaterialCompiler::instance.RetrieveShaders(infos, "media/Materials/DefaultMaterial.material");
 
 	try
 	{
@@ -51,47 +36,7 @@ void GameObjectApplication::Initialise()
 		std::cout << e.what() << std::endl;
 	}
 	
-	//init objects and hierarchy
-	/*m_pkGameObjects = GameObjectManager::Instance()->Instantiate();
-	m_pkGameObjects->SetName("BaseObject");
-
-	GameObject* middleObject = GameObjectManager::Instance()->Instantiate();
-	middleObject->SetName("Middle");
-
-	GameObject* leafObject = GameObjectManager::Instance()->Instantiate();
-	leafObject->SetName("LeafObject");
-
-	m_pkGameObjects->AddChild(middleObject);
-	middleObject->AddChild(leafObject);
-
-	//init positional stuff
-	m_pkGameObjects->m_kTransform.SetLocalPosition(vec3(0, 0, 20));
-	m_pkGameObjects->m_kTransform.SetScale(vec3(0.2f));
-	middleObject->m_kTransform.SetLocalPosition(vec3(1/0.2f, 0, 0));
-	leafObject->m_kTransform.SetLocalPosition(vec3(1 / 0.2f, 0, 0));
-
-	m_pkGameObjects->m_kTransform.SetLocalOrientation(quaternion(1, 0, 0, 0));
-
-	//init rendering stuff
-	m_pkGameObjects->m_kMeshRenderer.InitMeshFromRessource("media/meshes/default_cube_mesh.bin");
-	m_pkGameObjects->m_kMeshRenderer.m_pkMaterial = &m_kMaterial;
-	middleObject->m_kMeshRenderer.InitMeshFromRessource("media/meshes/default_cube_mesh.bin");
-	middleObject->m_kMeshRenderer.m_pkMaterial = &m_kMaterial;
-	leafObject->m_kMeshRenderer.InitMeshFromRessource("media/meshes/default_cube_mesh.bin");
-	leafObject->m_kMeshRenderer.m_pkMaterial = &m_kMaterial;
-	
-	//m_pkGameObjects->m_kMeshRenderer.Init(m_pkMesh, &m_kMaterial);
-	//middleObject->m_kMeshRenderer.Init(m_pkMesh, &m_kMaterial);
-	//leafObject->m_kMeshRenderer.Init(m_pkMesh, &m_kMaterial);
-	
-	//Init Scene
-	m_kScene.Initialise();
-	m_kScene.AddRootObject(m_pkGameObjects);
-
-	//test scene serialisation
-	std::ofstream ofstr("MyFirstScene.xml");
-	cereal::XMLOutputArchive output(ofstr);
-	output(cereal::make_nvp("MyFirstScene", m_kScene));*/
+	//Initialise the scene
 	m_kScene.Initialise();
 }
 
@@ -149,7 +94,7 @@ void GameObjectApplication::LoadAndCompileProgram()
 	shaders.push_back("media/shaders/StandardMeshShader.vert.glsl"); shadersTypes.push_back(GL_VERTEX_SHADER);
 	shaders.push_back("media/shaders/StandardMeshShader.frag.glsl"); shadersTypes.push_back(GL_FRAGMENT_SHADER);
 	
-	m_kMaterial.InitFromFile(shaders, shadersTypes);
+	m_kMaterial.InitFromFiles(shaders, shadersTypes);
 
 	GLuint m_hiProjectionDataIndex = glGetUniformBlockIndex(m_kMaterial.m_kProgram, "ProjectionData");
 }

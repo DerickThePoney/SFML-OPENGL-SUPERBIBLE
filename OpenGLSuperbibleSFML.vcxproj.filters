@@ -46,6 +46,9 @@
     <Filter Include="GameObjects\Components">
       <UniqueIdentifier>{3d142f70-2f81-4487-9891-d8bc91607d94}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Rendering\Materials">
+      <UniqueIdentifier>{7fb9827e-4533-4415-a670-14e418e06521}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -101,9 +104,6 @@
     </ClInclude>
     <ClInclude Include="imgui\imconfig.h">
       <Filter>IMGUI</Filter>
-    </ClInclude>
-    <ClInclude Include="Material.h">
-      <Filter>Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Renderer.h">
       <Filter>Rendering</Filter>
@@ -171,6 +171,15 @@
     <ClInclude Include="MeshRendererComponent.h">
       <Filter>GameObjects\Components</Filter>
     </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Rendering\Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="MaterialManager.h">
+      <Filter>Rendering\Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="MaterialCompiler.h">
+      <Filter>Rendering\Materials</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -199,9 +208,6 @@
     </ClCompile>
     <ClCompile Include="imgui\imgui_draw.cpp">
       <Filter>IMGUI</Filter>
-    </ClCompile>
-    <ClCompile Include="Material.cpp">
-      <Filter>Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Renderer.cpp">
       <Filter>Rendering</Filter>
@@ -265,6 +271,15 @@
     </ClCompile>
     <ClCompile Include="MeshRendererComponent.cpp">
       <Filter>GameObjects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Rendering\Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="MaterialManager.cpp">
+      <Filter>Rendering\Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="MaterialCompiler.cpp">
+      <Filter>Rendering\Materials</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

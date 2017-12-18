@@ -9,7 +9,8 @@ public:
 	Material();
 	~Material();
 
-	bool InitFromFile(const std::vector<std::string>& filenames, const std::vector<GLenum> eShaderTypes);
+	bool InitFromFiles(const std::vector<std::string>& filenames, const std::vector<GLenum> eShaderTypes);
+	bool InitMaterialFromRessource(const std::string& kFilename);
 	void Delete();
 
 	void Use();
@@ -18,9 +19,32 @@ public:
 
 	void Inspect();
 
+	template<class Archive>
+	void save(Archive & archive) const
+	{
+		archive(CEREAL_NVP(m_kMeshFilename), cereal::make_nvp("MeshID", m_pkMesh->m_uiMeshID));
+	}
+
+	template<class Archive>
+	void load(Archive& archive)
+	{
+		UI32 uiMeshID;
+		archive(CEREAL_NVP(m_kMeshFilename), cereal::make_nvp("MeshID", uiMeshID));
+
+		if (m_kMeshFilename == "")
+		{
+			m_pkMesh = MeshManager::Instance()->FindFromID(uiMeshID);
+		}
+		else
+		{
+			m_pkMesh = MeshManager::Instance()->InstantiateFromFile(m_kMeshFilename);
+		}
+	}
+
 	//id stuff
 	static UI32 s_uiMaxMaterialID;
 	UI32 m_uiMaterialID;
+	std::string m_kFilename;
 
 	//underlying handle
 	OGLProgram m_kProgram;

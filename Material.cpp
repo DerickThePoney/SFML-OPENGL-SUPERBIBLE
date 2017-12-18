@@ -12,7 +12,7 @@ Material::~Material()
 {
 }
 
-bool Material::InitFromFile(const std::vector<std::string>& filenames, const std::vector<GLenum> eShaderTypes)
+bool Material::InitFromFiles(const std::vector<std::string>& filenames, const std::vector<GLenum> eShaderTypes)
 {
 	//create shaders objects
 	OGLShader* shaders = new OGLShader[filenames.size()];
@@ -41,6 +41,11 @@ bool Material::InitFromFile(const std::vector<std::string>& filenames, const std
 	m_uiMaterialID = Material::s_uiMaxMaterialID++;
 
 	return res;
+}
+
+bool Material::InitMaterialFromRessource(const std::string & kFilename)
+{
+	return false;
 }
 
 void Material::Delete()
