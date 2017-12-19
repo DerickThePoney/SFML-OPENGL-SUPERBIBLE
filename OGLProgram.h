@@ -46,6 +46,8 @@ public:
 	const std::vector<ActiveProgramInformations>& GetUniformsInformation();
 	const std::vector<ActiveUniformBlockInformation>& GetUniformBlocksInformation();
 
+	void InspectUniformProgramInformation(const ActiveProgramInformations& info, I32 index);
+
 private:
 	void ExtractInformation();
 

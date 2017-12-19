@@ -36,9 +36,6 @@ public:
 		if(m_kFilename != "") InitMaterialFromRessource(m_kFilename);		
 	}
 
-private:
-	
-
 public:
 
 	//id stuff

@@ -163,3 +163,143 @@ void OGLProgram::ExtractInformation()
 		m_akUniformBlockInfo.push_back(actUB);
 	}
 }
+
+
+void OGLProgram::InspectUniformProgramInformation(const ActiveProgramInformations & info, I32 index)
+{
+	switch (info.m_eType)
+	{
+	case GL_FLOAT:
+	{
+		float valuef;
+		glGetUniformfv(m_hProgram, index, &valuef);
+		if (ImGui::InputFloat(info.m_pcName, &valuef)) glUniform1f(index, valuef);
+		break;
+	}
+	case GL_FLOAT_VEC2:
+	{
+		vmath::vec2 valuef2;
+		glGetUniformfv(m_hProgram, index, valuef2.GetData());
+		if (ImGui::InputFloat2(info.m_pcName, valuef2.GetData())) glUniform2fv(index, 1, valuef2.GetData());
+		break;
+	}
+	case GL_FLOAT_VEC3:
+	{
+		vmath::vec3 valuef2;
+		glGetUniformfv(m_hProgram, index, valuef2.GetData());
+		if (ImGui::InputFloat3(info.m_pcName, valuef2.GetData())) glUniform3fv(index, 1, valuef2.GetData());
+		break;
+	}
+	case GL_FLOAT_VEC4:
+	{
+		vmath::vec4 valuef2;
+		glGetUniformfv(m_hProgram, index, valuef2.GetData());
+		if (ImGui::InputFloat3(info.m_pcName, valuef2.GetData())) glUniform4fv(index, 1, valuef2.GetData());
+		break;
+	}
+	case GL_FLOAT_MAT2: 
+	case GL_FLOAT_MAT3: 
+	case GL_FLOAT_MAT4: 
+	case GL_FLOAT_MAT2x3: 
+	case GL_FLOAT_MAT2x4: 
+	case GL_FLOAT_MAT3x2: 
+	case GL_FLOAT_MAT3x4: 
+	case GL_FLOAT_MAT4x2: 
+	case GL_FLOAT_MAT4x3: {break; }
+	case GL_INT:
+	{
+		int value;
+		glGetUniformiv(m_hProgram, index, &value);
+		if (ImGui::InputInt(info.m_pcName, &value)) glUniform1i(index, value);
+		break;
+	}
+	case GL_INT_VEC2:
+	{
+		vmath::ivec2 value;
+		glGetUniformiv(m_hProgram, index, value.GetData());
+		if (ImGui::InputInt2(info.m_pcName, value.GetData())) glUniform2iv(index, 1, value.GetData());
+		break;
+	}
+	case GL_INT_VEC3:
+	{
+		vmath::ivec3 value;
+		glGetUniformiv(m_hProgram, index, value.GetData());
+		if (ImGui::InputInt3(info.m_pcName, value.GetData())) glUniform3iv(index, 1, value.GetData());
+		break;
+	}
+	case GL_INT_VEC4:
+	{
+		vmath::ivec4 value;
+		glGetUniformiv(m_hProgram, index, value.GetData());
+		if (ImGui::InputInt4(info.m_pcName, value.GetData())) glUniform4iv(index, 1, value.GetData());
+		break;
+	}
+	case GL_UNSIGNED_INT:
+	{
+		UI32 value;
+		glGetUniformuiv(m_hProgram, index, &value);
+		if (ImGui::InputInt(info.m_pcName, (I32*)&value)) glUniform1ui(index, value);
+		break;
+	}
+	case GL_UNSIGNED_INT_VEC2:
+	{
+		vmath::uvec2 value;
+		glGetUniformuiv(m_hProgram, index, value.GetData());
+		if (ImGui::InputInt2(info.m_pcName, (I32*) value.GetData())) glUniform2uiv(index, 1, value.GetData());
+		break;
+	}
+	case GL_UNSIGNED_INT_VEC3:
+	{
+		vmath::uvec3 value;
+		glGetUniformuiv(m_hProgram, index, value.GetData());
+		if (ImGui::InputInt3(info.m_pcName, (I32*)value.GetData())) glUniform3uiv(index, 1, value.GetData());
+		break;
+	}
+	case GL_UNSIGNED_INT_VEC4:
+	{
+		vmath::uvec4 value;
+		glGetUniformuiv(m_hProgram, index, value.GetData());
+		if (ImGui::InputInt4(info.m_pcName, (I32*)value.GetData())) glUniform4uiv(index, 1, value.GetData());
+		break;
+	}
+	/*case GL_DOUBLE:
+	{
+		F64 value;
+		glGetUniformuiv(m_hProgram, index, &value);
+		if (ImGui::InputInt(info.m_pcName, (I32*)&value)) glUniform1ui(index, value);
+		break;
+	}
+	case GL_DOUBLE_VEC2:
+	{
+		float value;
+		glGetUniformfv(m_hProgram, index, &value);
+		if (ImGui::InputFloat(info.m_pcName, &value)) glUniform1f(index, value);
+		break;
+	}
+	case GL_DOUBLE_VEC3:
+	{
+		float value;
+		glGetUniformfv(m_hProgram, index, &value);
+		if (ImGui::InputFloat(info.m_pcName, &value)) glUniform1f(index, value);
+		break;
+	}
+	case GL_DOUBLE_VEC4:
+	{
+		float value;
+		glGetUniformfv(m_hProgram, index, &value);
+		if (ImGui::InputFloat(info.m_pcName, &value)) glUniform1f(index, value);
+		break;
+	}*/
+	case GL_DOUBLE_MAT2: 
+	case GL_DOUBLE_MAT3:
+	case GL_DOUBLE_MAT4: 
+	case GL_DOUBLE_MAT2x3: 
+	case GL_DOUBLE_MAT2x4: 
+	case GL_DOUBLE_MAT3x2:
+	case GL_DOUBLE_MAT3x4:
+	case GL_DOUBLE_MAT4x2:
+	case GL_DOUBLE_MAT4x3:
+	default:
+		{break; }
+	}
+}

@@ -105,10 +105,7 @@ void Material::Inspect()
 		for (size_t i = 0; i < uniforms.size(); ++i)
 		{
 			if (uniforms[i].m_bIsFromBlock) continue;
-			ImGui::Bullet();
-			ImGui::Text("%s", uniforms[i].m_pcName);			
-			ImGui::LabelText("Type", "\t%s", OGLUtilities::GLTypeEnumToCString(uniforms[i].m_eType));
-
+			m_kProgram.InspectUniformProgramInformation(uniforms[i], i);
 		}
 		ImGui::TreePop();
 	}
