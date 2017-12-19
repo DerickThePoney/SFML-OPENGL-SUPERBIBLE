@@ -1,14 +1,17 @@
 #pragma once
 #include <vector>
 #include "Utility.h"
+#include "MaterialCompiler.h"
 #include "OGLRendering.h"
 
 class Material
 {
-public:
+	friend class MaterialManager;
+protected:
 	Material();
 	~Material();
 
+public:
 	bool InitFromFiles(const std::vector<std::string>& filenames, const std::vector<GLenum> eShaderTypes);
 	bool InitMaterialFromRessource(const std::string& kFilename);
 	void Delete();
@@ -22,24 +25,21 @@ public:
 	template<class Archive>
 	void save(Archive & archive) const
 	{
-		archive(CEREAL_NVP(m_kMeshFilename), cereal::make_nvp("MeshID", m_pkMesh->m_uiMeshID));
+		archive(CEREAL_NVP(m_kFilename), cereal::make_nvp("MaterialID", s_uiMaxMaterialID));
 	}
 
 	template<class Archive>
 	void load(Archive& archive)
 	{
-		UI32 uiMeshID;
-		archive(CEREAL_NVP(m_kMeshFilename), cereal::make_nvp("MeshID", uiMeshID));
+		archive(CEREAL_NVP(m_kFilename));
 
-		if (m_kMeshFilename == "")
-		{
-			m_pkMesh = MeshManager::Instance()->FindFromID(uiMeshID);
-		}
-		else
-		{
-			m_pkMesh = MeshManager::Instance()->InstantiateFromFile(m_kMeshFilename);
-		}
+		if(m_kFilename != "") InitMaterialFromRessource(m_kFilename);		
 	}
+
+private:
+	
+
+public:
 
 	//id stuff
 	static UI32 s_uiMaxMaterialID;

@@ -49,6 +49,9 @@
     <Filter Include="Rendering\Materials">
       <UniqueIdentifier>{7fb9827e-4533-4415-a670-14e418e06521}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UtilityStuff">
+      <UniqueIdentifier>{29a23f8d-e76e-466b-bd4c-194dc66508d6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -179,6 +182,9 @@
     </ClInclude>
     <ClInclude Include="MaterialCompiler.h">
       <Filter>Rendering\Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="Singleton.h">
+      <Filter>UtilityStuff</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

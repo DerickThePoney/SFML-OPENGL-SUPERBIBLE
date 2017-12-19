@@ -59,7 +59,7 @@ private:
 
 	//Default rendering state 
 	Mesh* m_pkDefaultMesh;
-	Material m_kDefaultMaterial;
+	Material* m_pkDefaultMaterial;
 
 	//Projection block index
 	GLuint m_hiProjectionDataIndex;

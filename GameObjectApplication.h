@@ -33,7 +33,7 @@ private:
 	//Camera m_kCamera;
 	GameObject* m_pkGameObjects;
 	Mesh* m_pkMesh;
-	Material m_kMaterial;
+	//Material* m_pkMaterial;
 	Scene m_kScene;
 };
 

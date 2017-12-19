@@ -162,8 +162,8 @@ void Scene::IMGuiStuffs()
 
 	ImGui::End();
 
-	static bool pOpen = true;
-	ImGui::ShowTestWindow(&pOpen);
+	/*static bool pOpen = true;
+	ImGui::ShowTestWindow(&pOpen);*/
 }
 
 

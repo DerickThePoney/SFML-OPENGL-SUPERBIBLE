@@ -1,5 +1,5 @@
-#VERTEX 
-
+#sh VERTEX 
+#version 430 core
 //vertex attributes
 layout (location = 0) in vec4 position;
 
@@ -18,7 +18,8 @@ void main(void)
 	gl_Position = projData.projectionMatrix * projData.worldViewMatrix * modelToWorldMatrix * position;	
 }
 
-#FRAGMENT 
+#sh FRAGMENT 
+#version 430 core 
 
 layout (location = 0) out vec4 color;
 

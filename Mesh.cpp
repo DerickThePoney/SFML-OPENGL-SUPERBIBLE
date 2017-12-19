@@ -5,6 +5,7 @@ UI32 Mesh::s_uiMaxMeshID = 0;
 
 Mesh::Mesh()
 {
+	m_uiMeshID = s_uiMaxMeshID++;
 }
 
 
@@ -46,7 +47,6 @@ void Mesh::LoadBuffersOnGraphicsCard()
 	OGLBuffer justForTest((GLuint)m_kOGLBindings.m_kIndices);
 
 	SetAttributes();
-	m_uiMeshID = s_uiMaxMeshID++;
 }
 
 void Mesh::SetAttributes()

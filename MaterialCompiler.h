@@ -21,6 +21,8 @@ private:
 	char Peek();
 	void AdvanceToNext(char c);
 	bool IsAtEnd();
+	std::string NextWord();
+	void Rewind(int size);
 
 	bool ParseNextShader(MaterialInformation& kInfo);
 

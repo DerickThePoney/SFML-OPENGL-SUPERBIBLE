@@ -20,10 +20,6 @@ void GameObjectApplication::Initialise()
 	//create the mesh
 	LoadAndCompileProgram();
 
-	//
-	std::vector<MaterialInformation> infos;
-	MaterialCompiler::instance.RetrieveShaders(infos, "media/Materials/DefaultMaterial.material");
-
 	try
 	{
 		std::ifstream ifstr("MyFirstScene.xml");
@@ -76,9 +72,10 @@ void GameObjectApplication::Terminate()
 	m_kScene.Terminate();
 	MeshManager::Instance()->Destroy(m_pkMesh);
 	MeshManager::Delete();
+	MaterialManager::Delete();
 	GameObjectManager::Delete();
 	ImGui::SFML::Shutdown();
-	m_kMaterial.Delete();
+	//m_kMaterial.Delete();
 	m_kRenderer.Terminate();
 }
 
@@ -90,11 +87,11 @@ void GameObjectApplication::OnResize(unsigned int width, unsigned int height)
 
 void GameObjectApplication::LoadAndCompileProgram()
 {
-	std::vector<std::string> shaders; std::vector<GLenum> shadersTypes;
+	/*std::vector<std::string> shaders; std::vector<GLenum> shadersTypes;
 	shaders.push_back("media/shaders/StandardMeshShader.vert.glsl"); shadersTypes.push_back(GL_VERTEX_SHADER);
 	shaders.push_back("media/shaders/StandardMeshShader.frag.glsl"); shadersTypes.push_back(GL_FRAGMENT_SHADER);
 	
 	m_kMaterial.InitFromFiles(shaders, shadersTypes);
 
-	GLuint m_hiProjectionDataIndex = glGetUniformBlockIndex(m_kMaterial.m_kProgram, "ProjectionData");
+	GLuint m_hiProjectionDataIndex = glGetUniformBlockIndex(m_kMaterial.m_kProgram, "ProjectionData");*/
 }

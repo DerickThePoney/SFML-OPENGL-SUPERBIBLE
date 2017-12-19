@@ -5,8 +5,6 @@ MaterialCompiler MaterialCompiler::instance = MaterialCompiler();
 
 bool MaterialCompiler::RetrieveShaders(std::vector<MaterialInformation>& akShaderInformation, const std::string & kFilename)
 {
-	
-	
 	{
 		std::ifstream ifstr(kFilename);
 		std::stringstream sstr;
@@ -24,9 +22,12 @@ bool MaterialCompiler::RetrieveShaders(std::vector<MaterialInformation>& akShade
 		{
 		case '#':
 		{
-			MaterialInformation info;
-			ParseNextShader(info);
-			akShaderInformation.push_back(info);
+			if (NextWord() == "sh")
+			{
+				MaterialInformation info;
+				ParseNextShader(info);
+				akShaderInformation.push_back(info);
+			}
 			break;
 		}
 		default:
@@ -66,15 +67,28 @@ bool MaterialCompiler::IsAtEnd()
 	return m_iCurrent >= m_kFileSource.size();
 }
 
-bool MaterialCompiler::ParseNextShader(MaterialInformation& kInfo)
+std::string MaterialCompiler::NextWord()
 {
-	//look for next space
 	int thisChar = m_iCurrent;
 	AdvanceToNext(' ');
 
 	int size = m_iCurrent - thisChar;
-	std::string kToken = m_kFileSource.substr(thisChar, size);
+	return m_kFileSource.substr(thisChar, size);
+}
 
+void MaterialCompiler::Rewind(int size)
+{
+	m_iCurrent -= size;
+}
+
+bool MaterialCompiler::ParseNextShader(MaterialInformation& kInfo)
+{
+	//look for next space
+	Advance();
+	int thisChar = m_iCurrent;	
+	std::string kToken = NextWord();
+
+	//L
 	if (kToken == "VERTEX")
 	{
 		kInfo.m_eShaderType = GL_VERTEX_SHADER;
@@ -86,7 +100,11 @@ bool MaterialCompiler::ParseNextShader(MaterialInformation& kInfo)
 	thisChar = m_iCurrent;
 	
 	AdvanceToNext('#');
-	kInfo.m_kShaderCode = m_kFileSource.substr(thisChar, m_iCurrent - thisChar);
+	while (NextWord() != "#sh" && !IsAtEnd()) { AdvanceToNext('#'); }
 
+	if(!IsAtEnd()) Rewind(3);
+
+	kInfo.m_kShaderCode = m_kFileSource.substr(thisChar, m_iCurrent - thisChar);
+	
 	return true;
 }

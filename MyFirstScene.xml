@@ -31,6 +31,7 @@
 			<value1>
 				<m_kMeshFilename>media/meshes/default_cube_mesh.bin</m_kMeshFilename>
 				<MeshID>0</MeshID>
+				<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
 			</value1>
 			<uiNbChildren>1</uiNbChildren>
 			<GameObject>
@@ -56,6 +57,7 @@
 				<value1>
 					<m_kMeshFilename>media/meshes/default_cube_mesh.bin</m_kMeshFilename>
 					<MeshID>0</MeshID>
+					<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
 				</value1>
 				<uiNbChildren>1</uiNbChildren>
 				<GameObject>
@@ -81,6 +83,7 @@
 					<value1>
 						<m_kMeshFilename>media/meshes/default_cube_mesh.bin</m_kMeshFilename>
 						<MeshID>0</MeshID>
+						<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
 					</value1>
 					<uiNbChildren>0</uiNbChildren>
 				</GameObject>
