@@ -8,6 +8,7 @@ struct ActiveProgramInformations
 	GLsizei m_iLength;
 	GLint m_iSize;
 	GLenum m_eType;
+	GLint m_iLocation;
 	GLchar* m_pcName;
 	bool m_bIsFromBlock;
 };
@@ -18,6 +19,7 @@ struct ActiveUniformBlockInformation
 	ActiveUniformBlockInformation() : m_pcName(nullptr) {}
 	GLsizei m_iLength;
 	GLchar* m_pcName;
+	GLint m_iLocation;
 	GLint m_iNbUniform;
 	GLint* m_piUniformsIndexes;
 };
@@ -46,7 +48,7 @@ public:
 	const std::vector<ActiveProgramInformations>& GetUniformsInformation();
 	const std::vector<ActiveUniformBlockInformation>& GetUniformBlocksInformation();
 
-	void InspectUniformProgramInformation(const ActiveProgramInformations& info, I32 index);
+	void InspectUniformProgramInformation(const ActiveProgramInformations& info);
 
 private:
 	void ExtractInformation();

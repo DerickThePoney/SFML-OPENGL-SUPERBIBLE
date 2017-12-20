@@ -128,8 +128,9 @@ void OGLProgram::ExtractInformation()
 		ActiveProgramInformations att;
 		att.m_pcName = new GLchar[maxlength];
 		glGetActiveUniform(m_hProgram, i, maxlength, &att.m_iLength, &att.m_iSize, &att.m_eType, att.m_pcName);
+		att.m_iLocation = glGetUniformLocation(m_hProgram, att.m_pcName);
 
-		std::cout << "Uniform: " << i << "\t" << att.m_iLength << "\t" << att.m_iSize << "\t" << OGLUtilities::GLTypeEnumToCString(att.m_eType) << "\t" << att.m_pcName << std::endl;
+		std::cout << "Uniform: " << i << "\t" << att.m_iLocation << "\t" << att.m_iLength << "\t" << att.m_iSize << "\t" << OGLUtilities::GLTypeEnumToCString(att.m_eType) << "\t" << att.m_pcName << std::endl;
 
 		m_akUniformsInfo.push_back(att);
 	}
@@ -165,36 +166,36 @@ void OGLProgram::ExtractInformation()
 }
 
 
-void OGLProgram::InspectUniformProgramInformation(const ActiveProgramInformations & info, I32 index)
+void OGLProgram::InspectUniformProgramInformation(const ActiveProgramInformations & info)
 {
 	switch (info.m_eType)
 	{
 	case GL_FLOAT:
 	{
 		float valuef;
-		glGetUniformfv(m_hProgram, index, &valuef);
-		if (ImGui::InputFloat(info.m_pcName, &valuef)) glUniform1f(index, valuef);
+		glGetUniformfv(m_hProgram, info.m_iLocation, &valuef);
+		if (ImGui::InputFloat(info.m_pcName, &valuef)) glUniform1f(info.m_iLocation, valuef);
 		break;
 	}
 	case GL_FLOAT_VEC2:
 	{
 		vmath::vec2 valuef2;
-		glGetUniformfv(m_hProgram, index, valuef2.GetData());
-		if (ImGui::InputFloat2(info.m_pcName, valuef2.GetData())) glUniform2fv(index, 1, valuef2.GetData());
+		glGetUniformfv(m_hProgram, info.m_iLocation, valuef2.GetData());
+		if (ImGui::InputFloat2(info.m_pcName, valuef2.GetData())) glUniform2fv(info.m_iLocation, 1, valuef2.GetData());
 		break;
 	}
 	case GL_FLOAT_VEC3:
 	{
 		vmath::vec3 valuef2;
-		glGetUniformfv(m_hProgram, index, valuef2.GetData());
-		if (ImGui::InputFloat3(info.m_pcName, valuef2.GetData())) glUniform3fv(index, 1, valuef2.GetData());
+		glGetUniformfv(m_hProgram, info.m_iLocation, valuef2.GetData());
+		if (ImGui::InputFloat3(info.m_pcName, valuef2.GetData())) glUniform3fv(info.m_iLocation, 1, valuef2.GetData());
 		break;
 	}
 	case GL_FLOAT_VEC4:
 	{
 		vmath::vec4 valuef2;
-		glGetUniformfv(m_hProgram, index, valuef2.GetData());
-		if (ImGui::InputFloat3(info.m_pcName, valuef2.GetData())) glUniform4fv(index, 1, valuef2.GetData());
+		glGetUniformfv(m_hProgram, info.m_iLocation, valuef2.GetData());
+		if (ImGui::InputFloat3(info.m_pcName, valuef2.GetData())) glUniform4fv(info.m_iLocation, 1, valuef2.GetData());
 		break;
 	}
 	case GL_FLOAT_MAT2: 
@@ -209,57 +210,57 @@ void OGLProgram::InspectUniformProgramInformation(const ActiveProgramInformation
 	case GL_INT:
 	{
 		int value;
-		glGetUniformiv(m_hProgram, index, &value);
-		if (ImGui::InputInt(info.m_pcName, &value)) glUniform1i(index, value);
+		glGetUniformiv(m_hProgram, info.m_iLocation, &value);
+		if (ImGui::InputInt(info.m_pcName, &value)) glUniform1i(info.m_iLocation, value);
 		break;
 	}
 	case GL_INT_VEC2:
 	{
 		vmath::ivec2 value;
-		glGetUniformiv(m_hProgram, index, value.GetData());
-		if (ImGui::InputInt2(info.m_pcName, value.GetData())) glUniform2iv(index, 1, value.GetData());
+		glGetUniformiv(m_hProgram, info.m_iLocation, value.GetData());
+		if (ImGui::InputInt2(info.m_pcName, value.GetData())) glUniform2iv(info.m_iLocation, 1, value.GetData());
 		break;
 	}
 	case GL_INT_VEC3:
 	{
 		vmath::ivec3 value;
-		glGetUniformiv(m_hProgram, index, value.GetData());
-		if (ImGui::InputInt3(info.m_pcName, value.GetData())) glUniform3iv(index, 1, value.GetData());
+		glGetUniformiv(m_hProgram, info.m_iLocation, value.GetData());
+		if (ImGui::InputInt3(info.m_pcName, value.GetData())) glUniform3iv(info.m_iLocation, 1, value.GetData());
 		break;
 	}
 	case GL_INT_VEC4:
 	{
 		vmath::ivec4 value;
-		glGetUniformiv(m_hProgram, index, value.GetData());
-		if (ImGui::InputInt4(info.m_pcName, value.GetData())) glUniform4iv(index, 1, value.GetData());
+		glGetUniformiv(m_hProgram, info.m_iLocation, value.GetData());
+		if (ImGui::InputInt4(info.m_pcName, value.GetData())) glUniform4iv(info.m_iLocation, 1, value.GetData());
 		break;
 	}
 	case GL_UNSIGNED_INT:
 	{
 		UI32 value;
-		glGetUniformuiv(m_hProgram, index, &value);
-		if (ImGui::InputInt(info.m_pcName, (I32*)&value)) glUniform1ui(index, value);
+		glGetUniformuiv(m_hProgram, info.m_iLocation, &value);
+		if (ImGui::InputInt(info.m_pcName, (I32*)&value)) glUniform1ui(info.m_iLocation, value);
 		break;
 	}
 	case GL_UNSIGNED_INT_VEC2:
 	{
 		vmath::uvec2 value;
-		glGetUniformuiv(m_hProgram, index, value.GetData());
-		if (ImGui::InputInt2(info.m_pcName, (I32*) value.GetData())) glUniform2uiv(index, 1, value.GetData());
+		glGetUniformuiv(m_hProgram, info.m_iLocation, value.GetData());
+		if (ImGui::InputInt2(info.m_pcName, (I32*) value.GetData())) glUniform2uiv(info.m_iLocation, 1, value.GetData());
 		break;
 	}
 	case GL_UNSIGNED_INT_VEC3:
 	{
 		vmath::uvec3 value;
-		glGetUniformuiv(m_hProgram, index, value.GetData());
-		if (ImGui::InputInt3(info.m_pcName, (I32*)value.GetData())) glUniform3uiv(index, 1, value.GetData());
+		glGetUniformuiv(m_hProgram, info.m_iLocation, value.GetData());
+		if (ImGui::InputInt3(info.m_pcName, (I32*)value.GetData())) glUniform3uiv(info.m_iLocation, 1, value.GetData());
 		break;
 	}
 	case GL_UNSIGNED_INT_VEC4:
 	{
 		vmath::uvec4 value;
-		glGetUniformuiv(m_hProgram, index, value.GetData());
-		if (ImGui::InputInt4(info.m_pcName, (I32*)value.GetData())) glUniform4uiv(index, 1, value.GetData());
+		glGetUniformuiv(m_hProgram, info.m_iLocation, value.GetData());
+		if (ImGui::InputInt4(info.m_pcName, (I32*)value.GetData())) glUniform4uiv(info.m_iLocation, 1, value.GetData());
 		break;
 	}
 	/*case GL_DOUBLE:

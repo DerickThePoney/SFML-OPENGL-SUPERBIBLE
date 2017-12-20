@@ -105,7 +105,7 @@ void Material::Inspect()
 		for (size_t i = 0; i < uniforms.size(); ++i)
 		{
 			if (uniforms[i].m_bIsFromBlock) continue;
-			m_kProgram.InspectUniformProgramInformation(uniforms[i], i);
+			m_kProgram.InspectUniformProgramInformation(uniforms[i]);
 		}
 		ImGui::TreePop();
 	}
