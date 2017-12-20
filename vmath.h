@@ -1568,6 +1568,16 @@ static inline quaternion Slerp(const quaternion& qa, const quaternion& qb, float
 
 }
 
+static inline quaternion FromAngleAxis(float angle, vec3 axis)
+{
+	quaternion q;
+
+	q.r = cos(angle / 2);
+	q.v = sin(angle/2) * axis;
+	
+	return vmath::normalize(q);
+}
+
 };
 
 #endif /* __VMATH_H__ */

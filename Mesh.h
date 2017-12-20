@@ -1,7 +1,6 @@
 #pragma once
 #include "vmath.h"
 #include "Utility.h"
-
 #include "OGLRendering.h"
 
 using namespace vmath;
@@ -18,6 +17,7 @@ enum Attributes
 
 class Mesh
 {
+	friend class BMesh;
 	friend class MeshManager;
 
 protected:
@@ -49,10 +49,10 @@ public:
 	template<class Archive>
 	void load(Archive& archive)
 	{
-		bool bIsProcedural = false;
-		archive(cereal::make_nvp("IsProcedural", bIsProcedural));
+		//bool bIsProcedural = false;
+		archive(cereal::make_nvp("IsProcedural", m_bIsProcedural));
 
-		if (!bIsProcedural)
+		if (!m_bIsProcedural)
 		{
 			archive(CEREAL_NVP(m_akVertices),
 				CEREAL_NVP(m_akNormals),
@@ -83,6 +83,7 @@ public:
 	//ID stuffs
 	static UI32 s_uiMaxMeshID;
 	UI32 m_uiMeshID;
+	bool m_bIsProcedural;
 };
 
 

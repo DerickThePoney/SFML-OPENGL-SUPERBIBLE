@@ -113,6 +113,10 @@ GameObject * GameObject::GetChild(const std::string & rkName)
 
 void GameObject::Update(double fElapsedTime)
 {
+	const float speed = vmath::radians(20.0);
+	quaternion q = vmath::FromAngleAxis(speed*fElapsedTime, vec3(0,0,1));
+
+	m_kTransform.RotateInLocalSpace(q);
 }
 
 bool GameObject::CheckPresenceInChildren(GameObject * pkGameObject)

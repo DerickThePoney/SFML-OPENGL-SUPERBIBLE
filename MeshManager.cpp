@@ -64,7 +64,19 @@ Mesh * MeshManager::InstantiateFromFile(const std::string & kFilename)
 		{
 			cereal::XMLInputArchive output(ifstr);
 			output(*newObj);
+
+			if (newObj->m_bIsProcedural)
+			{
+				static std::default_random_engine skRNG(0);
+				
+				BMesh bmesh;
+				MakeSpaceShip kSpaceship(skRNG());
+				kSpaceship.Apply(bmesh);
+				bmesh.BuildMesh(*newObj);
+			}
 		}
+
+		newObj->LoadBuffersOnGraphicsCard();
 
 		m_akRessourceToID[kFilename] = newObj->m_uiMeshID;
 	}

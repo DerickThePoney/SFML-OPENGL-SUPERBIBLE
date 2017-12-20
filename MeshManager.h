@@ -1,5 +1,6 @@
 #pragma once
 #include "Utility.h"
+#include "BMesh.h"
 #include "Mesh.h"
 
 class MeshManager

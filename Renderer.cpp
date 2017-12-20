@@ -29,17 +29,12 @@ void Renderer::ExtractGLContextInformation()
 void Renderer::InitDefaultState()
 {
 	//init the default shaders
-	/*std::vector<std::string> shaders; std::vector<GLenum> shadersTypes;
-	shaders.push_back("media/shaders/DefaultShader.vert.glsl"); shadersTypes.push_back(GL_VERTEX_SHADER);
-	shaders.push_back("media/shaders/DefaultShader.frag.glsl"); shadersTypes.push_back(GL_FRAGMENT_SHADER);**/
-
 	m_pkDefaultMaterial = MaterialManager::Instance()->InstantiateFromFile("media/Materials/DefaultMaterial.material");
 
 	m_hiProjectionDataIndex = glGetUniformBlockIndex(m_pkDefaultMaterial->m_kProgram, "ProjectionData");
 
 	//init the default mesh (a cube)
 	m_pkDefaultMesh = MeshManager::Instance()->InstantiateFromFile("media/meshes/default_cube_mesh.bin");
-	m_pkDefaultMesh->LoadBuffersOnGraphicsCard();
 }
 
 void Renderer::Terminate()
@@ -51,6 +46,11 @@ void Renderer::TerminateDefaultState()
 {
 	MeshManager::Instance()->Destroy(m_pkDefaultMesh);
 	MaterialManager::Instance()->Destroy(m_pkDefaultMaterial);
+}
+
+void Renderer::Update()
+{
+	GraphicsSettings();
 }
 
 void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Camera& kCamera)
@@ -128,4 +128,50 @@ void Renderer::ApplyGameObjectRenderData(GameObjectRenderData & data)
 			m_auiRenderingState[MESH] = data.m_pkMeshRenderer->m_pkMesh->m_uiMeshID;
 		}
 	}
+}
+
+void Renderer::GraphicsSettings()
+{
+	ImGui::Begin("GraphicsSettings");
+	
+	bool cullFaces = glIsEnabled(GL_CULL_FACE);
+	if (ImGui::Checkbox("Faces culling", &cullFaces)) (cullFaces) ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
+
+	if (cullFaces)
+	{
+		static bool isCCW = true;
+		if (ImGui::Checkbox("isCounterClock", &isCCW)) (isCCW) ? glFrontFace(GL_CCW) : glFrontFace(GL_CW);
+
+		static bool CullBack = true;
+		static bool CullFront = false;
+		bool modif = false;
+
+		if (ImGui::Checkbox("Cull Front", &CullFront)) modif = true;
+		if (ImGui::Checkbox("Cull Back", &CullBack)) modif = true;
+		
+		if (modif)
+		{
+			if (CullBack && CullFront)
+			{
+				glCullFace(GL_FRONT_AND_BACK);
+			}
+			else if(CullBack && !CullFront)
+			{
+				glCullFace(GL_BACK);
+			}
+			else if (!CullBack && CullFront)
+			{
+				glCullFace(GL_FRONT);
+			}
+			else if (!CullBack && !!CullFront)
+			{
+				glDisable(GL_CULL_FACE);
+			}
+		}
+	}
+	
+
+
+
+	ImGui::End();
 }

@@ -38,6 +38,7 @@ void GameObjectApplication::Initialise()
 
 void GameObjectApplication::Update(double deltaTime)
 {
+	m_kRenderer.Update();
 	m_kScene.Update(deltaTime);
 }
 

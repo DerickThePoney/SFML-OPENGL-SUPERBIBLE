@@ -14,7 +14,7 @@
 				<m_kLocalPosition>
 					<value0>0</value0>
 					<value1>0</value1>
-					<value2>20</value2>
+					<value2>5</value2>
 				</m_kLocalPosition>
 				<m_kScale>
 					<value0>0.20000000298023224</value0>
@@ -29,9 +29,9 @@
 				</m_kLocalOrientation>
 			</value0>
 			<value1>
-				<m_kMeshFilename>media/meshes/default_cube_mesh.bin</m_kMeshFilename>
+				<m_kMeshFilename>media/meshes/default_cube_mesh.xml</m_kMeshFilename>
 				<MeshID>0</MeshID>
-				<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
+				<m_kMaterialFilename>media/Materials/StandardUnlitMeshMaterial.material</m_kMaterialFilename>
 			</value1>
 			<uiNbChildren>1</uiNbChildren>
 			<GameObject>
@@ -55,9 +55,9 @@
 					</m_kLocalOrientation>
 				</value0>
 				<value1>
-					<m_kMeshFilename>media/meshes/default_cube_mesh.bin</m_kMeshFilename>
+					<m_kMeshFilename>media/meshes/default_cube_mesh.xml</m_kMeshFilename>
 					<MeshID>0</MeshID>
-					<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
+					<m_kMaterialFilename>media/Materials/StandardUnlitMeshMaterial.material</m_kMaterialFilename>
 				</value1>
 				<uiNbChildren>1</uiNbChildren>
 				<GameObject>
@@ -81,9 +81,9 @@
 						</m_kLocalOrientation>
 					</value0>
 					<value1>
-						<m_kMeshFilename>media/meshes/default_cube_mesh.bin</m_kMeshFilename>
+						<m_kMeshFilename>media/meshes/default_cube_mesh.xml</m_kMeshFilename>
 						<MeshID>0</MeshID>
-						<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
+						<m_kMaterialFilename>media/Materials/StandardUnlitMeshMaterial.material</m_kMaterialFilename>
 					</value1>
 					<uiNbChildren>0</uiNbChildren>
 				</GameObject>

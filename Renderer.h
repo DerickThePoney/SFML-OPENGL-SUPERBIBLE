@@ -43,9 +43,12 @@ public:
 
 
 	//rendering functions
+	void Update();
 	void Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Camera& kCamera);
 	void ApplyDefaultState();
 	void ApplyGameObjectRenderData(GameObjectRenderData& data);
+
+	void GraphicsSettings();
 
 	const Mesh& GetDefaultMesh() const { return *m_pkDefaultMesh; }
 

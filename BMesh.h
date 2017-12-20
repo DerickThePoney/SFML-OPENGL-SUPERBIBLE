@@ -5,7 +5,7 @@
 #include <vector>
 #include <list>
 #include <set>
-#include "MeshManager.h"
+#include "Mesh.h"
 #include <random>
 using namespace vmath;
 
