@@ -1,7 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "OGLRendering.h"
-using namespace vmath;
+//using namespace vmath;
 
 enum CameraType
 {
@@ -26,12 +26,14 @@ public:
 	template<class Archive>
 	void save(Archive & archive) const 
 	{
+		archive(m_kTransform);
 		archive(CEREAL_NVP(m_eType), CEREAL_NVP(focal), CEREAL_NVP(fNearPlane), CEREAL_NVP(fFarPlane));
 	}
 
 	template<class Archive>
 	void load(Archive & archive)
 	{
+		archive(m_kTransform);
 		archive(CEREAL_NVP(m_eType), CEREAL_NVP(focal), CEREAL_NVP(fNearPlane), CEREAL_NVP(fFarPlane));
 	}
 

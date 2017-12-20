@@ -1,9 +1,9 @@
 #pragma once
-#include "vmath.h"
+//#include "vmath.h"
 #include "Utility.h"
 #include "OGLRendering.h"
 
-using namespace vmath;
+//using namespace vmath;
 
 enum Attributes
 {

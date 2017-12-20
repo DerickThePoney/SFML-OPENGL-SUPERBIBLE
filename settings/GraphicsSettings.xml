@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cereal>
+	<value0>
+		<bCullFaces>true</bCullFaces>
+		<bIsCCW>true</bIsCCW>
+		<bCullBack>true</bCullBack>
+		<bCullFront>false</bCullFront>
+		<ePolygonMode>6914</ePolygonMode>
+	</value0>
+</cereal>
+

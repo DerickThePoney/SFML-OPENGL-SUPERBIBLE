@@ -104,7 +104,7 @@ void Camera::ComputeLookAt()
 
 	vmath::vec3 eye(t[3][0], t[3][1], t[3][2]);
 
-	vmath::vec4 center4 = t * vmath::vec4(0, 0, 20, 0);
+	vmath::vec4 center4 = t * vmath::vec4(0, 0, -1, 0);
 	vmath::vec3 center = eye + vmath::vec3(center4[0], center4[1], center4[2]);
 
 	vmath::vec4 up4 = t * vmath::vec4(0, 1, 0, 0);

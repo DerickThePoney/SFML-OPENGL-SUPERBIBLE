@@ -1,6 +1,6 @@
 #pragma once
 #include "Application.h"
-#include "vmath.h"
+//#include "vmath.h"
 class SpinningCubeApplication :
 	public Application
 {

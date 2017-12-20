@@ -9,12 +9,20 @@
 #include "targetver.h"
 #endif // WIN32
 
+#if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 //#include "Macros.h"
 #include <cereal/cereal.hpp>
 #include <cereal/archives/xml.hpp>
 #include <cereal/archives/binary.hpp>
 #include <cereal/types/map.hpp>
 #include <cereal/types/vector.hpp>
+
+#define DEARCHIVE_WITH_DEFAULT(x, def) \
+	try{archive(CEREAL_NVP(x));}catch(std::exception e){x = def;}
+
 #include <iostream>
 #include <sstream>
 #include <SFML\Graphics.hpp>
@@ -26,7 +34,7 @@
 #include <vector>
 #include <map>
 #include "Utility.h"
-#include "vmath.h"
+#include "Math.h"
 
 #include "imgui.h"
 #include "imgui-events-SFML.h"

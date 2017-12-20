@@ -15,6 +15,9 @@ void Renderer::Init(sf::RenderWindow* m_window)
 {
 	this->m_window = m_window;
 	ExtractGLContextInformation();
+
+	LoadSettings();
+
 	InitDefaultState();
 }
 
@@ -56,6 +59,8 @@ void Renderer::Update()
 void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Camera& kCamera)
 {
 	/** Here we should keep a list of OGL State... **/
+
+	ApplyGraphicsSettings();
 
 	//init the state the default state
 	ApplyDefaultState();
@@ -130,48 +135,133 @@ void Renderer::ApplyGameObjectRenderData(GameObjectRenderData & data)
 	}
 }
 
-void Renderer::GraphicsSettings()
+void Renderer::ApplyGraphicsSettings()
 {
-	ImGui::Begin("GraphicsSettings");
+	(m_kGlobalRendererSettings.bCullFaces) ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
 	
-	bool cullFaces = glIsEnabled(GL_CULL_FACE);
-	if (ImGui::Checkbox("Faces culling", &cullFaces)) (cullFaces) ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
-
-	if (cullFaces)
+	if (m_kGlobalRendererSettings.bCullFaces)
 	{
-		static bool isCCW = true;
-		if (ImGui::Checkbox("isCounterClock", &isCCW)) (isCCW) ? glFrontFace(GL_CCW) : glFrontFace(GL_CW);
-
-		static bool CullBack = true;
-		static bool CullFront = false;
-		bool modif = false;
-
-		if (ImGui::Checkbox("Cull Front", &CullFront)) modif = true;
-		if (ImGui::Checkbox("Cull Back", &CullBack)) modif = true;
-		
-		if (modif)
+		(m_kGlobalRendererSettings.bIsCCW) ? glFrontFace(GL_CCW) : glFrontFace(GL_CW);
+		if (m_kGlobalRendererSettings.bCullBack && m_kGlobalRendererSettings.bCullFront)
 		{
-			if (CullBack && CullFront)
-			{
-				glCullFace(GL_FRONT_AND_BACK);
-			}
-			else if(CullBack && !CullFront)
-			{
-				glCullFace(GL_BACK);
-			}
-			else if (!CullBack && CullFront)
-			{
-				glCullFace(GL_FRONT);
-			}
-			else if (!CullBack && !!CullFront)
-			{
-				glDisable(GL_CULL_FACE);
-			}
+			glCullFace(GL_FRONT_AND_BACK);
+		}
+		else if (m_kGlobalRendererSettings.bCullBack && !m_kGlobalRendererSettings.bCullFront)
+		{
+			glCullFace(GL_BACK);
+		}
+		else if (!m_kGlobalRendererSettings.bCullBack && m_kGlobalRendererSettings.bCullFront)
+		{
+			glCullFace(GL_FRONT);
+		}
+		else if (!m_kGlobalRendererSettings.bCullBack && !m_kGlobalRendererSettings.bCullFront)
+		{
+			glDisable(GL_CULL_FACE);
 		}
 	}
+
+	glPolygonMode(GL_FRONT_AND_BACK, m_kGlobalRendererSettings.ePolygonMode);
+
+}
+
+void Renderer::GraphicsSettings()
+{
+	bool modif = false;
+	ImGui::Begin("GraphicsSettings");
+
+	if (ImGui::Button("Save settings"))
+	{
+		SaveSettings();
+	}
+
+	ImGui::SameLine();
+	if (ImGui::Button("Reload settings"))
+	{
+		LoadSettings();
+	}
+
 	
+	//bool cullFaces = glIsEnabled(GL_CULL_FACE);
+	if (ImGui::Checkbox("Faces culling", &m_kGlobalRendererSettings.bCullFaces)) modif = true;
 
+	if (m_kGlobalRendererSettings.bCullFaces)
+	{
+		ImGui::Indent(10);
+		
+		if (ImGui::Checkbox("Is Counterclock Wise", &m_kGlobalRendererSettings.bIsCCW)) modif = true; 
 
+		if (ImGui::Checkbox("Cull Front", &m_kGlobalRendererSettings.bCullFront)) modif = true;
+		if (ImGui::Checkbox("Cull Back", &m_kGlobalRendererSettings.bCullBack)) modif = true;
+		
+		ImGui::Unindent(10);
+	}
 
+	static char* polygonModes[3] = { "GL_POINT" , "GL_LINE" , "GL_FILL" };
+	int index = 0;
+	switch (m_kGlobalRendererSettings.ePolygonMode)
+	{
+	case GL_POINT:
+		index = 0;
+		break;
+	case GL_LINE:
+		index = 1;
+		break;
+	case GL_FILL:
+		index = 2;
+		break;
+	default:
+		break;
+	}
+
+	if (ImGui::Combo("Polygon mode", &index, polygonModes, 3))
+	{
+		switch (index)
+		{
+		case 0:
+			m_kGlobalRendererSettings.ePolygonMode = GL_POINT;
+			break;
+		case 1:
+			m_kGlobalRendererSettings.ePolygonMode = GL_LINE;
+			break;
+		case 2:
+			m_kGlobalRendererSettings.ePolygonMode = GL_FILL;
+			break;
+		}
+
+		modif = true;
+	}
+	
 	ImGui::End();
+
+	if (modif) ApplyGraphicsSettings();
+}
+
+void Renderer::SaveSettings()
+{
+	std::ofstream ofstr("settings/GraphicsSettings.xml");
+	cereal::XMLOutputArchive output(ofstr);
+	output(m_kGlobalRendererSettings);
+}
+
+void Renderer::LoadSettings()
+{
+	try
+	{
+		std::ifstream ifstr("settings/GraphicsSettings.xml");
+
+		if (!ifstr.good())
+		{
+			SaveSettings();
+		}
+		else
+		{
+			//Get Graphics settings
+			cereal::XMLInputArchive output(ifstr);
+			output(m_kGlobalRendererSettings);
+		}
+	}
+	catch (std::exception& e)
+	{
+		std::cout << e.what() << std::endl;
+	}
 }

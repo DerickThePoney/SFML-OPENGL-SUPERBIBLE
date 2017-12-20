@@ -25,6 +25,41 @@ enum RENDER_STATE
 	MESH = 1
 };
 
+struct RendererGlobalSettings
+{
+	bool bCullFaces;
+	bool bIsCCW;
+	bool bCullBack;
+	bool bCullFront;
+	GLenum ePolygonMode;
+
+	RendererGlobalSettings()
+		: bCullFaces(true), bIsCCW(true), bCullBack(true), bCullFront(false)
+	{}
+
+	template<class Archive>
+	void save(Archive & archive) const
+	{
+		archive(
+			CEREAL_NVP(bCullFaces),
+			CEREAL_NVP(bIsCCW),
+			CEREAL_NVP(bCullBack),
+			CEREAL_NVP(bCullFront),
+			CEREAL_NVP(ePolygonMode)
+		);
+	}
+
+	template<class Archive>
+	void load(Archive & archive)
+	{
+		DEARCHIVE_WITH_DEFAULT(bCullFaces, true);
+		DEARCHIVE_WITH_DEFAULT(bIsCCW, true);
+		DEARCHIVE_WITH_DEFAULT(bCullBack, true);
+		DEARCHIVE_WITH_DEFAULT(bCullFront, false);
+		DEARCHIVE_WITH_DEFAULT(ePolygonMode, GL_FILL);
+	}
+};
+
 
 class Renderer
 {
@@ -48,14 +83,21 @@ public:
 	void ApplyDefaultState();
 	void ApplyGameObjectRenderData(GameObjectRenderData& data);
 
+	void ApplyGraphicsSettings();
+
 	void GraphicsSettings();
 
 	const Mesh& GetDefaultMesh() const { return *m_pkDefaultMesh; }
 
 private:
+	void SaveSettings();
+	void LoadSettings();
+
+private:
 	//window stuff
 	sf::RenderWindow* m_window;
 	RendererStateData m_kRendererData;
+	RendererGlobalSettings m_kGlobalRendererSettings;
 
 	//current rendering state
 	UI32 m_auiRenderingState[2];

@@ -1,5 +1,5 @@
 #pragma once
-#include "vmath.h"
+//#include "vmath.h"
 #include "Utility.h"
 #include "Object.h"
 #include "OGLRendering.h"

@@ -2,6 +2,24 @@
 <cereal>
 	<MyFirstScene>
 		<m_kCamera>
+			<value0>
+				<m_kLocalPosition>
+					<value0>0</value0>
+					<value1>0</value1>
+					<value2>0</value2>
+				</m_kLocalPosition>
+				<m_kScale>
+					<value0>1</value0>
+					<value1>1</value1>
+					<value2>1</value2>
+				</m_kScale>
+				<m_kLocalOrientation>
+					<value0>1</value0>
+					<value1>0</value1>
+					<value2>0</value2>
+					<value3>0</value3>
+				</m_kLocalOrientation>
+			</value0>
 			<m_eType>1</m_eType>
 			<focal>50</focal>
 			<fNearPlane>0.10000000149011612</fNearPlane>
@@ -14,7 +32,7 @@
 				<m_kLocalPosition>
 					<value0>0</value0>
 					<value1>0</value1>
-					<value2>5</value2>
+					<value2>-5</value2>
 				</m_kLocalPosition>
 				<m_kScale>
 					<value0>0.20000000298023224</value0>

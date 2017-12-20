@@ -739,7 +739,7 @@ void RotateFace::Apply(BMesh & rkMesh)
 	}
 	center /= (F32) kFace.m_apkVerticesMap.size();*/
 
-	mat4 kScaleMatrix = rotate(m_fRotationX, m_fRotationX, m_fRotationZ);
+	mat4 kScaleMatrix = vmath::rotate(m_fRotationX, m_fRotationX, m_fRotationZ);
 	//mat4 kFaceMatrix = kFace.GetTransform(rkMesh);
 	//mat4 kFaceMatrixInv = invert(kFaceMatrix);
 	mat4 kFinalMatrix = kScaleMatrix;// kFaceMatrix * kScaleMatrix * kFaceMatrixInv;

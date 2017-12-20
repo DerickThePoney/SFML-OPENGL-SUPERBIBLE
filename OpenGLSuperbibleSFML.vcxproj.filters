@@ -52,6 +52,9 @@
     <Filter Include="UtilityStuff">
       <UniqueIdentifier>{29a23f8d-e76e-466b-bd4c-194dc66508d6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Maths">
+      <UniqueIdentifier>{f31568d2-208a-45ef-a62a-cde066f66762}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -61,9 +64,6 @@
       <Filter>PCHSTUFF\Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="targetver.h">
-      <Filter>PCHSTUFF\Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="vmath.h">
       <Filter>PCHSTUFF\Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="Utility.h">
@@ -185,6 +185,12 @@
     </ClInclude>
     <ClInclude Include="Singleton.h">
       <Filter>UtilityStuff</Filter>
+    </ClInclude>
+    <ClInclude Include="vmath.h">
+      <Filter>Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="Math.h">
+      <Filter>Maths</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

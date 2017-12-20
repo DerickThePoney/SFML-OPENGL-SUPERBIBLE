@@ -1,13 +1,13 @@
 #pragma once
 #include "Utility.h"
-#include "vmath.h"
+//#include "vmath.h"
 #include <map>
 #include <vector>
 #include <list>
 #include <set>
 #include "Mesh.h"
 #include <random>
-using namespace vmath;
+//using namespace vmath;
 
 typedef vec3 Vertice;
 typedef std::vector<Vertice*> VerticesPVector;

@@ -100,8 +100,8 @@ void Application::MainLoop()
 		
 		float tmpF = 1.0f / TIME_SEC_FLOAT(elapsedFrame);
 		
-		int multiplier = min(frameNb, NbFramesSaved);
-		int divider = min(++frameNb, NbFramesSaved);
+		int multiplier = vmath::min(frameNb, NbFramesSaved);
+		int divider = vmath::min(++frameNb, NbFramesSaved);
 		if (TIME_SEC_FLOAT(elapsedFrame) != 0 && !isinf(frameTimeValues[values_offset]))
 		{
 			average = average * (multiplier) - frameTimeValues[values_offset] + tmpF;

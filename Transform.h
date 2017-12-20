@@ -1,6 +1,6 @@
 #pragma once
 
-using namespace vmath;
+//using namespace vmath;
 
 class Transform
 {

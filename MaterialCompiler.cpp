@@ -64,7 +64,7 @@ void MaterialCompiler::AdvanceToNext(char c)
 
 bool MaterialCompiler::IsAtEnd()
 {
-	return m_iCurrent >= m_kFileSource.size();
+	return m_iCurrent >= (I32)m_kFileSource.size();
 }
 
 std::string MaterialCompiler::NextWord()
