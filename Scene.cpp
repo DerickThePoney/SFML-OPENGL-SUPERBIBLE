@@ -158,8 +158,8 @@ void Scene::IMGuiStuffs()
 
 	ImGui::Begin("Test with images");
 
-	ImGui::Image((void *)(intptr_t)m_kTexture, ImVec2(512, 512), ImVec2(0, 0), ImVec2(1, 1), ImVec4(1, 1, 1, 1), ImColor(255, 255, 255, 255));
-
+	m_kTexture.Inspect();
+	
 	ImGui::End();
 
 	/*static bool pOpen = true;

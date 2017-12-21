@@ -13,11 +13,15 @@ public:
 		void * data,
 		bool bGenerateMipMaps);
 
-	void Bind();
+	void Bind(GLint iUnit = 0);
 
 	void Delete();
 
 	operator GLuint() const { return m_hiTexture; }
+
+	ivec2 GetTextureSize() const { return ivec2(m_iWidth, m_iHeight); }
+
+	void Inspect();
 
 private:
 	GLuint m_hiTexture;
