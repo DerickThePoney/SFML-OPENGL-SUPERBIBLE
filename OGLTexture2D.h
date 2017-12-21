@@ -23,6 +23,8 @@ public:
 
 	void Inspect();
 
+	void SetSamplingParameters();
+
 private:
 	GLuint m_hiTexture;
 	
@@ -34,5 +36,9 @@ private:
 	bool m_bIsStorageInitialised;
 	
 	GLenum m_eSamplerFormat;
+
+	GLenum m_eTextureFilter;
+	GLenum m_eWrapMode;
+	//GLenum m_eMinFilter;
 };
 

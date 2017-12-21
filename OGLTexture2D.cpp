@@ -3,7 +3,7 @@
 
 
 OGLTexture2D::OGLTexture2D()
-	:m_bIsStorageInitialised(false)
+	:m_bIsStorageInitialised(false), m_eTextureFilter(GL_LINEAR), m_eWrapMode(GL_REPEAT)//, m_eMagFilter(GL_LINEAR)
 {
 }
 
@@ -34,6 +34,8 @@ void OGLTexture2D::InitialiseStorage(I32 iWidth, I32 iHeight, I32 iLevels, GLenu
 	m_eSamplerFormat = eSamplerFormat;
 
 	glTexStorage2D(GL_TEXTURE_2D, m_iNbLevels, eSamplerFormat, m_iWidth, m_iHeight);
+
+	SetSamplingParameters();
 
 	m_bIsStorageInitialised = true;
 }
@@ -71,8 +73,117 @@ void OGLTexture2D::Inspect()
 	ImGui::InputFloat2("bottom left", (float*)&bleft);
 	ImGui::InputFloat2("top right", (float*)&tright);
 
-	//ivec2 tSize = m_kTexture.GetTextureSize();
+	static char* filterModes[6] = { "GL_NEAREST" , "GL_LINEAR", "GL_NEAREST_MIPMAP_NEAREST" , "GL_LINEAR_MIPMAP_NEAREST" , "GL_NEAREST_MIPMAP_LINEAR" , "GL_LINEAR_MIPMAP_LINEAR" };
+	int index = 0;
+	switch (m_eTextureFilter)
+	{
+	case GL_NEAREST:
+		index = 0;
+		break;
+	case GL_LINEAR:
+		index = 1;
+		break;
+	case GL_NEAREST_MIPMAP_NEAREST:
+		index = 2;
+		break;
+	case GL_LINEAR_MIPMAP_NEAREST:
+		index = 3;
+		break;
+	case GL_NEAREST_MIPMAP_LINEAR:
+		index = 4;
+		break;
+	case GL_LINEAR_MIPMAP_LINEAR:
+		index = 5;
+		break;
+	default:
+		break;
+	}
+
+	if (ImGui::Combo("Filter", &index, filterModes, 6))
+	{
+		switch (index)
+		{
+		case 0:
+			m_eTextureFilter = GL_NEAREST;
+			break;
+		case 1:
+			m_eTextureFilter = GL_LINEAR;
+			break;
+		case 2:
+			m_eTextureFilter = GL_NEAREST_MIPMAP_NEAREST;
+			break;
+		case 3:
+			m_eTextureFilter = GL_LINEAR_MIPMAP_NEAREST;
+			break;
+		case 4:
+			m_eTextureFilter = GL_NEAREST_MIPMAP_LINEAR;
+			break;
+		case 5:
+			m_eTextureFilter = GL_LINEAR_MIPMAP_LINEAR;
+			break;
+		}
+
+		SetSamplingParameters();
+	}
+
+
+	static char* wrapModes[5] = { "GL_CLAMP_TO_EDGE" , "GL_CLAMP_TO_BORDER", "GL_MIRRORED_REPEAT" , "GL_REPEAT" , "GL_MIRROR_CLAMP_TO_EDGE"  };
+	index = 0;
+	switch (m_eWrapMode)
+	{
+	case GL_CLAMP_TO_EDGE:
+		index = 0;
+		break;
+	case GL_CLAMP_TO_BORDER:
+		index = 1;
+		break;
+	case GL_MIRRORED_REPEAT:
+		index = 2;
+		break;
+	case GL_REPEAT:
+		index = 3;
+		break;
+	case GL_MIRROR_CLAMP_TO_EDGE:
+		index = 4;
+		break;
+	default:
+		break;
+	}
+
+	if (ImGui::Combo("Wrap Mode", &index, wrapModes, 5))
+	{
+		switch (index)
+		{
+		case 0:
+			m_eWrapMode = GL_CLAMP_TO_EDGE;
+			break;
+		case 1:
+			m_eWrapMode = GL_CLAMP_TO_BORDER;
+			break;
+		case 2:
+			m_eWrapMode = GL_MIRRORED_REPEAT;
+			break;
+		case 3:
+			m_eWrapMode = GL_REPEAT;
+			break;
+		case 4:
+			m_eWrapMode = GL_MIRROR_CLAMP_TO_EDGE;
+			break;
+		}
+
+		SetSamplingParameters();
+	}
 
 	ImGui::Image((void *)(intptr_t)m_hiTexture, ImVec2(512, 512), bleft, tright, ImVec4(1, 1, 1, 1), ImColor(255, 255, 255, 255));
 
+}
+
+void OGLTexture2D::SetSamplingParameters()
+{
+	Bind();
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_eTextureFilter);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_eTextureFilter);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, m_eWrapMode);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, m_eWrapMode);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, m_eWrapMode);
 }
