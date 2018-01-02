@@ -11,7 +11,9 @@ protected:
 	
 public:
 	Material* Instantiate();
+	Material* Instantiate(Material* pkMaterial);
 	Material* InstantiateFromFile(const std::string& kFilename);
+
 	bool Destroy(Material* pkObj);
 
 	Material* FindFromID(UI32 uiID);
@@ -21,6 +23,6 @@ private:
 
 private:
 	std::unordered_map<UI32, Material*> m_akMaterials;
-	std::map<std::string, UI32> m_akRessourceToID;
+	std::map<std::string, std::list<UI32>> m_akRessourceToID;
 };
 

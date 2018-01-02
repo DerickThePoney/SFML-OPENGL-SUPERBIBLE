@@ -9,6 +9,8 @@
 struct MaterialData
 {
 	std::string m_kShaderFilename;
+
+
 	template<class Archive>
 	void save(Archive & archive) const
 	{
@@ -28,9 +30,12 @@ class Material
 	friend class MaterialManager;
 protected:
 	Material();
+	Material(const Material& other);
 	~Material();
 
 public:
+	Material* Clone();
+
 	bool InitMaterialFromRessource(const std::string& kFilename);
 	void Delete();
 

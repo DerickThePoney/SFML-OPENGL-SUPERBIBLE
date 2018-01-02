@@ -8,6 +8,12 @@ Material::Material()
 	m_uiMaterialID = Material::s_uiMaxMaterialID++;
 }
 
+Material::Material(const Material & other)
+	:m_kFilename(other.m_kFilename), m_kMaterialData(other.m_kMaterialData), m_pkProgram(other.m_pkProgram)
+{
+	m_uiMaterialID = Material::s_uiMaxMaterialID++;
+}
+
 
 Material::~Material()
 {

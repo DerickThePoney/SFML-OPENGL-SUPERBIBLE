@@ -28,6 +28,13 @@ Material * MaterialManager::Instantiate()
 	return newObj;
 }
 
+Material * MaterialManager::Instantiate(Material * pkMaterial)
+{
+	Material* newObj = new Material(*pkMaterial);
+	m_akMaterials[newObj->m_uiMaterialID] = newObj;
+	return newObj;
+}
+
 Material * MaterialManager::InstantiateFromFile(const std::string & kFilename)
 {
 	//check if is it not already loaded
@@ -44,11 +51,11 @@ Material * MaterialManager::InstantiateFromFile(const std::string & kFilename)
 			return nullptr;
 		}
 
-		m_akRessourceToID[kFilename] = newObj->m_uiMaterialID;
+		m_akRessourceToID[kFilename].push_back(newObj->m_uiMaterialID);
 	}
 	else
 	{
-		newObj = m_akMaterials[itFind->second];
+		newObj = Instantiate(m_akMaterials[*itFind->second.begin()]);
 	}
 
 	return newObj;
@@ -84,10 +91,14 @@ void MaterialManager::ReleaseRessourceFromID(const UI32 & id)
 	auto it = m_akRessourceToID.begin();
 	for (; it != m_akRessourceToID.end(); ++it)
 	{
-		if (it->second == id)
+		for (auto itL = it->second.begin(); itL != it->second.end(); ++itL)
 		{
-			m_akRessourceToID.erase(it);
-			return;
+			if (*itL == id)
+			{
+				it->second.erase(itL);
+				if (it->second.empty()) m_akRessourceToID.erase(it);
+				return;
+			}
 		}
 	}
 	return;

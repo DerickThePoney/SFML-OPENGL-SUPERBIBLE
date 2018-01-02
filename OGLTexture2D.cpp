@@ -181,9 +181,9 @@ void OGLTexture2D::Inspect()
 void OGLTexture2D::SetSamplingParameters()
 {
 	Bind();
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_eTextureFilter);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_eTextureFilter);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, m_eWrapMode);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, m_eWrapMode);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, m_eWrapMode);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_eTextureFilter);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_eTextureFilter);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, m_eWrapMode);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, m_eWrapMode);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, m_eWrapMode);
 }
