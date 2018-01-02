@@ -1,6 +1,4 @@
 #pragma once
-
-
 #ifdef VMATH
 #include "vmath.h"
 

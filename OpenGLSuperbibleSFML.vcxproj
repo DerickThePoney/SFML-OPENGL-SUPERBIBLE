@@ -186,8 +186,10 @@
     <ClInclude Include="imgui\stb_textedit.h" />
     <ClInclude Include="imgui\stb_truetype.h" />
     <ClInclude Include="Intersection.h" />
+    <ClInclude Include="Line.h" />
     <ClInclude Include="Material.h" />
-    <ClInclude Include="MaterialCompiler.h" />
+    <ClInclude Include="ProgramManager.h" />
+    <ClInclude Include="ShaderCompiler.h" />
     <ClInclude Include="MaterialManager.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="Mesh.h" />
@@ -196,6 +198,7 @@
     <ClInclude Include="Object.h" />
     <ClInclude Include="OGLApplication.h" />
     <ClInclude Include="OGLBuffer.h" />
+    <ClInclude Include="OGLFrameBuffer.h" />
     <ClInclude Include="OGLProgram.h" />
     <ClInclude Include="OGLTexture2D.h" />
     <ClInclude Include="Renderer.h" />
@@ -225,8 +228,10 @@
     <ClCompile Include="imgui\imgui_demo.cpp" />
     <ClCompile Include="imgui\imgui_draw.cpp" />
     <ClCompile Include="Intersection.cpp" />
+    <ClCompile Include="Line.cpp" />
     <ClCompile Include="Material.cpp" />
-    <ClCompile Include="MaterialCompiler.cpp" />
+    <ClCompile Include="ProgramManager.cpp" />
+    <ClCompile Include="ShaderCompiler.cpp" />
     <ClCompile Include="MaterialManager.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshManager.cpp" />
@@ -234,6 +239,7 @@
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="OGLApplication.cpp" />
     <ClCompile Include="OGLBuffer.cpp" />
+    <ClCompile Include="OGLFrameBuffer.cpp" />
     <ClCompile Include="OGLProgram.cpp" />
     <ClCompile Include="OGLTexture2D.cpp" />
     <ClCompile Include="Renderer.cpp" />

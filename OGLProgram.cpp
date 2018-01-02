@@ -168,6 +168,9 @@ void OGLProgram::ExtractInformation()
 
 void OGLProgram::InspectUniformProgramInformation(const ActiveProgramInformations & info)
 {
+	GLint currentProgram;
+	glGetIntegerv(GL_CURRENT_PROGRAM, &currentProgram);
+	UseProgram();
 	switch (info.m_eType)
 	{
 	case GL_FLOAT:
@@ -188,7 +191,8 @@ void OGLProgram::InspectUniformProgramInformation(const ActiveProgramInformation
 	{
 		vmath::vec3 valuef2;
 		glGetUniformfv(m_hProgram, info.m_iLocation, valuef2.GetData());
-		if (ImGui::InputFloat3(info.m_pcName, valuef2.GetData())) glUniform3fv(info.m_iLocation, 1, valuef2.GetData());
+		if (ImGui::InputFloat3(info.m_pcName, valuef2.GetData())) 
+			glUniform3fv(info.m_iLocation, 1, valuef2.GetData());
 		break;
 	}
 	case GL_FLOAT_VEC4:
@@ -303,4 +307,6 @@ void OGLProgram::InspectUniformProgramInformation(const ActiveProgramInformation
 	default:
 		{break; }
 	}
+
+	glUseProgram(currentProgram);
 }

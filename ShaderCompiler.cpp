@@ -1,9 +1,9 @@
 #include "stdafx.h"
-#include "MaterialCompiler.h"
+#include "ShaderCompiler.h"
 
-MaterialCompiler MaterialCompiler::instance = MaterialCompiler();
+ShaderCompiler ShaderCompiler::instance = ShaderCompiler();
 
-bool MaterialCompiler::RetrieveShaders(std::vector<MaterialInformation>& akShaderInformation, const std::string & kFilename)
+bool ShaderCompiler::RetrieveShaders(std::vector<ShaderInformation>& akShaderInformation, const std::string & kFilename)
 {
 	{
 		std::ifstream ifstr(kFilename);
@@ -24,7 +24,7 @@ bool MaterialCompiler::RetrieveShaders(std::vector<MaterialInformation>& akShade
 		{
 			if (NextWord() == "sh")
 			{
-				MaterialInformation info;
+				ShaderInformation info;
 				ParseNextShader(info);
 				akShaderInformation.push_back(info);
 			}
@@ -38,36 +38,36 @@ bool MaterialCompiler::RetrieveShaders(std::vector<MaterialInformation>& akShade
 	return false;
 }
 
-MaterialCompiler::MaterialCompiler()
+ShaderCompiler::ShaderCompiler()
 {
 }
 
 
-MaterialCompiler::~MaterialCompiler()
+ShaderCompiler::~ShaderCompiler()
 {
 }
 
-char MaterialCompiler::Advance()
+char ShaderCompiler::Advance()
 {
 	return m_kFileSource[m_iCurrent++];
 }
 
-char MaterialCompiler::Peek()
+char ShaderCompiler::Peek()
 {
 	return m_kFileSource[m_iCurrent];
 }
 
-void MaterialCompiler::AdvanceToNext(char c)
+void ShaderCompiler::AdvanceToNext(char c)
 {
 	while (!IsAtEnd() && Peek() != c) { Advance(); }
 }
 
-bool MaterialCompiler::IsAtEnd()
+bool ShaderCompiler::IsAtEnd()
 {
 	return m_iCurrent >= (I32)m_kFileSource.size();
 }
 
-std::string MaterialCompiler::NextWord()
+std::string ShaderCompiler::NextWord()
 {
 	int thisChar = m_iCurrent;
 	AdvanceToNext(' ');
@@ -76,12 +76,12 @@ std::string MaterialCompiler::NextWord()
 	return m_kFileSource.substr(thisChar, size);
 }
 
-void MaterialCompiler::Rewind(int size)
+void ShaderCompiler::Rewind(int size)
 {
 	m_iCurrent -= size;
 }
 
-bool MaterialCompiler::ParseNextShader(MaterialInformation& kInfo)
+bool ShaderCompiler::ParseNextShader(ShaderInformation& kInfo)
 {
 	//look for next space
 	Advance();

@@ -22,8 +22,5 @@ private:
 private:
 	std::unordered_map<UI32, Material*> m_akMaterials;
 	std::map<std::string, UI32> m_akRessourceToID;
-
-
-
 };
 

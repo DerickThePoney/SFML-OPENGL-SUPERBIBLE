@@ -27,10 +27,12 @@ struct ActiveUniformBlockInformation
 
 class OGLProgram
 {
-public:
+	friend class ProgramManager;
+private:
 	OGLProgram();
 	~OGLProgram();
 
+public:
 	OGLProgram(const OGLProgram& other) = delete;
 	OGLProgram(OGLProgram&& other) = delete;
 	

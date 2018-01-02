@@ -7,10 +7,10 @@ bool Intersect::Find(const Line & rkLine, const vmath::vec3 pkTriangle[3], I32 &
 	vmath::vec3 kE0 = pkTriangle[1] - pkTriangle[0];
 	vmath::vec3 kE1 = pkTriangle[2] - pkTriangle[0];
 	vmath::vec3 kNormal = vmath::cross(vmath::normalize(kE0), vmath::normalize(kE1));
-	vmath::vec3 kDiff = rkLine.m_kOrigin - pkTriangle[0];
+	vmath::vec3 kDiff = rkLine.GetOrigin()- pkTriangle[0];
 
 	//compute the dot product of line and normal
-	F32 fDND = vmath::dot(kNormal, vmath::normalize(rkLine.m_kDirection));
+	F32 fDND = vmath::dot(kNormal, vmath::normalize(rkLine.GetDirection()));
 	F32 fSign;
 	if (fDND < -fEpsilon)
 	{
@@ -29,10 +29,10 @@ bool Intersect::Find(const Line & rkLine, const vmath::vec3 pkTriangle[3], I32 &
 	
 	//we are in buisiness -> line and triangle are not coplanar
 	//find the point of intersection and determine wether it is in the triangle
-	F32 fDdQxE2 = fSign * vmath::dot(rkLine.m_kDirection, vmath::cross(kDiff, kE1));
+	F32 fDdQxE2 = fSign * vmath::dot(rkLine.GetDirection(), vmath::cross(kDiff, kE1));
 	if (fDdQxE2 >= 0.0f)
 	{
-		F32 fDdE1xQ = fSign*vmath::dot(rkLine.m_kDirection, vmath::cross(kDiff, kE0));
+		F32 fDdE1xQ = fSign*vmath::dot(rkLine.GetDirection(), vmath::cross(kDiff, kE0));
 		if (fDdE1xQ >= 0.0f)
 		{
 			if (fDdQxE2 + fDdE1xQ <= fDND)
@@ -76,7 +76,7 @@ bool Intersect::Find(const Line & rkLine, const vmath::vec3 * apkVertices, const
 		if (Find(rkLine, pkTriangle, iQuantity, fLocalTValue))
 		{
 			std::cout << "Intersect" << std::endl;
-			vmath::vec3 pkIntersectPoint = rkLine.m_kOrigin + fLocalTValue[0] * rkLine.m_kDirection;
+			vmath::vec3 pkIntersectPoint = rkLine.GetOrigin() + fLocalTValue[0] * rkLine.GetDirection();
 			std::cout << pkIntersectPoint[0] << "\t" << pkIntersectPoint[1] << "\t" << pkIntersectPoint[2] << "\t" << std::endl;
 			apkHit[apkTriangles[i * 3]] = 1.0f;
 			apkHit[apkTriangles[i * 3 + 1]] = 1.0f;

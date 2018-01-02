@@ -14,80 +14,45 @@ Material::~Material()
 	Delete();
 }
 
-bool Material::InitFromFiles(const std::vector<std::string>& filenames, const std::vector<GLenum> eShaderTypes)
-{
-	//create shaders objects
-	OGLShader* shaders = new OGLShader[filenames.size()];
-	bool res = true;
-	
-	//compile shaders
-	for (std::size_t i = 0; i < filenames.size(); ++i)
-	{
-		bool resShader = shaders[i].InitFromFile(filenames[i].c_str(), eShaderTypes[i]);
-		if (!resShader)
-		{
-			return resShader;
-		}
-	}
-	
-	//link the program. This deletes the shader objects, cause we don't need it no more :-)
-	res = m_kProgram.LinkProgram(shaders, filenames.size(), true);
-
-	if (!res) // bail if link did not work
-	{
-		Delete();
-		return res;
-	}
-
-	//get the id
-
-	return res;
-}
-
 bool Material::InitMaterialFromRessource(const std::string & kFilename)
 {
-	//"Compile" Material
-	std::vector<MaterialInformation> infos;
-	MaterialCompiler::instance.RetrieveShaders(infos, kFilename);
-
-	//create shaders objects
-	OGLShader* shaders = new OGLShader[infos.size()];
-	bool res = true;
-
-	//compile shaders
-	for (std::size_t i = 0; i < infos.size(); ++i)
+	//first read asset
+	try
 	{
-		bool resShader = shaders[i].InitFromMemory(infos[i].m_kShaderCode.c_str(), infos[i].m_eShaderType, kFilename.c_str());
-		if (!resShader)
-		{
-			return resShader;
-		}
+		std::ifstream ifstr(kFilename);
+		//Scene testLoading;
+		cereal::XMLInputArchive output(ifstr);
+		output(m_kMaterialData);
+	}
+	catch (std::exception& e)
+	{
+		std::cout << e.what() << std::endl;
 	}
 
-	//link the program. This deletes the shader objects, cause we don't need it no more :-)
-	res = m_kProgram.LinkProgram(shaders, infos.size(), true);
+	//"Compile" Material
+	m_pkProgram = ProgramManager::Instance()->InstantiateFromRessource(m_kMaterialData.m_kShaderFilename);
 
-	if (!res) // bail if link did not work
+	if (m_pkProgram == nullptr) // bail if link did not work
 	{
 		Delete();
-		return res;
+		return false;
 	}
 
 	//get the id
 	//m_uiMaterialID = Material::s_uiMaxMaterialID++;
 	m_kFilename = kFilename;
 
-	return res;
+	return true;
 }
 
 void Material::Delete()
 {
-	m_kProgram.DeleteProgram();
+	ProgramManager::Instance()->Destroy(m_pkProgram);
 }
 
 void Material::Use()
 {
-	m_kProgram.UseProgram();
+	m_pkProgram->UseProgram();
 }
 
 void Material::Inspect()
@@ -101,11 +66,11 @@ void Material::Inspect()
 
 	if (node_open)
 	{
-		const std::vector<ActiveProgramInformations>& uniforms = m_kProgram.GetUniformsInformation();
+		const std::vector<ActiveProgramInformations>& uniforms = m_pkProgram->GetUniformsInformation();
 		for (size_t i = 0; i < uniforms.size(); ++i)
 		{
 			if (uniforms[i].m_bIsFromBlock) continue;
-			m_kProgram.InspectUniformProgramInformation(uniforms[i]);
+			m_pkProgram->InspectUniformProgramInformation(uniforms[i]);
 		}
 		ImGui::TreePop();
 	}

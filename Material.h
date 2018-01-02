@@ -1,8 +1,27 @@
 #pragma once
 #include <vector>
 #include "Utility.h"
-#include "MaterialCompiler.h"
+#include "ShaderCompiler.h"
 #include "OGLRendering.h"
+#include "ProgramManager.h"
+
+
+struct MaterialData
+{
+	std::string m_kShaderFilename;
+	template<class Archive>
+	void save(Archive & archive) const
+	{
+		archive(CEREAL_NVP(m_kShaderFilename));
+	}
+
+	template<class Archive>
+	void load(Archive& archive)
+	{
+		archive(CEREAL_NVP(m_kShaderFilename));
+	}
+};
+
 
 class Material
 {
@@ -12,7 +31,6 @@ protected:
 	~Material();
 
 public:
-	bool InitFromFiles(const std::vector<std::string>& filenames, const std::vector<GLenum> eShaderTypes);
 	bool InitMaterialFromRessource(const std::string& kFilename);
 	void Delete();
 
@@ -43,8 +61,10 @@ public:
 	UI32 m_uiMaterialID;
 	std::string m_kFilename;
 
+	MaterialData m_kMaterialData;
+
 	//underlying handle
-	OGLProgram m_kProgram;
+	OGLProgram* m_pkProgram;
 		
 };
 

@@ -72,15 +72,6 @@
     <ClInclude Include="Object.h">
       <Filter>PCHSTUFF\Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="BezierCurve.h">
-      <Filter>PCHSTUFF\Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="BezierSpline.h">
-      <Filter>PCHSTUFF\Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="Intersection.h">
-      <Filter>PCHSTUFF\Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="imgui\stb_rect_pack.h">
       <Filter>IMGUI</Filter>
     </ClInclude>
@@ -180,9 +171,6 @@
     <ClInclude Include="MaterialManager.h">
       <Filter>Rendering\Materials</Filter>
     </ClInclude>
-    <ClInclude Include="MaterialCompiler.h">
-      <Filter>Rendering\Materials</Filter>
-    </ClInclude>
     <ClInclude Include="Singleton.h">
       <Filter>UtilityStuff</Filter>
     </ClInclude>
@@ -191,6 +179,27 @@
     </ClInclude>
     <ClInclude Include="Math.h">
       <Filter>Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="OGLFrameBuffer.h">
+      <Filter>Rendering\OGLImplementations\OGLObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="BezierSpline.h">
+      <Filter>Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="BezierCurve.h">
+      <Filter>Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="Intersection.h">
+      <Filter>Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="Line.h">
+      <Filter>Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderCompiler.h">
+      <Filter>Rendering\Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="ProgramManager.h">
+      <Filter>Rendering\Materials</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -204,12 +213,6 @@
       <Filter>PCHSTUFF\Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="Object.cpp">
-      <Filter>PCHSTUFF\Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="BezierCurve.cpp">
-      <Filter>PCHSTUFF\Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Intersection.cpp">
       <Filter>PCHSTUFF\Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui.cpp">
@@ -290,7 +293,22 @@
     <ClCompile Include="MaterialManager.cpp">
       <Filter>Rendering\Materials</Filter>
     </ClCompile>
-    <ClCompile Include="MaterialCompiler.cpp">
+    <ClCompile Include="OGLFrameBuffer.cpp">
+      <Filter>Rendering\OGLImplementations\OGLObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Intersection.cpp">
+      <Filter>Maths</Filter>
+    </ClCompile>
+    <ClCompile Include="BezierCurve.cpp">
+      <Filter>Maths</Filter>
+    </ClCompile>
+    <ClCompile Include="Line.cpp">
+      <Filter>Maths</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderCompiler.cpp">
+      <Filter>Rendering\Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="ProgramManager.cpp">
       <Filter>Rendering\Materials</Filter>
     </ClCompile>
   </ItemGroup>

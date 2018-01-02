@@ -35,6 +35,7 @@
 #include <map>
 #include "Utility.h"
 #include "Math.h"
+#include "Line.h"
 
 #include "imgui.h"
 #include "imgui-events-SFML.h"

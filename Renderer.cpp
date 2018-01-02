@@ -34,7 +34,7 @@ void Renderer::InitDefaultState()
 	//init the default shaders
 	m_pkDefaultMaterial = MaterialManager::Instance()->InstantiateFromFile("media/Materials/DefaultMaterial.material");
 
-	m_hiProjectionDataIndex = glGetUniformBlockIndex(m_pkDefaultMaterial->m_kProgram, "ProjectionData");
+	m_hiProjectionDataIndex = glGetUniformBlockIndex(*m_pkDefaultMaterial->m_pkProgram, "ProjectionData");
 
 	//init the default mesh (a cube)
 	m_pkDefaultMesh = MeshManager::Instance()->InstantiateFromFile("media/meshes/default_cube_mesh.bin");
@@ -86,6 +86,17 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 
 		//draw call
 		glDrawElements(GL_TRIANGLES, kVisibleObjectsList[i].m_pkMeshRenderer->m_pkMesh->m_aiIndices.size(), GL_UNSIGNED_INT, 0);
+
+		vec4 objectWorldPos = kVisibleObjectsList[i].m_pkTransform->GetWorldspacePosition();
+		vec4 cameraWorldPos = kCamera.m_kTransform.GetWorldspacePosition();
+
+		vec4 direction = objectWorldPos - cameraWorldPos;
+		Line l(vec3(cameraWorldPos[0], cameraWorldPos[1], cameraWorldPos[2]), vec3(direction[0], direction[1], direction[2]));
+
+		ApplyDefaultState();
+		//set modelview and proj matrix
+		glUniformMatrix4fv(0, 1, GL_FALSE, mat4::identity());
+		l.Draw(1);
 	}
 
 	//Render ImGUI
