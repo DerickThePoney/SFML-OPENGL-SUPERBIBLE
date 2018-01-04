@@ -34,7 +34,21 @@ void MeshRendererComponent::Inspect()
 	{
 		if(m_pkMesh)	ImGui::LabelText("Mesh ID", "%d", m_pkMesh->m_uiMeshID);
 		//ImGui::LabelText("Material ID", "%d", m_kMaterial->m_uiMaterialID);		
-		if (m_pkMaterial) m_pkMaterial->Inspect();
+		
+		if (m_pkMaterial)
+		{
+			ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+			// Node
+			std::stringstream sstr;
+			sstr << "Material (" << m_pkMaterial->m_kFilename.substr(m_pkMaterial->m_kFilename.find_last_of('/') + 1) << ")";
+			bool node_open = ImGui::TreeNodeEx(sstr.str().c_str(), node_flags);
+			
+			if (node_open)
+			{
+				m_pkMaterial->Inspect();
+				ImGui::TreePop();
+			}
+		}
 	}
 }
 

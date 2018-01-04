@@ -63,22 +63,16 @@ void Material::Use()
 
 void Material::Inspect()
 {
-	ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
-	// Node
 	std::stringstream sstr;
-	sstr << "Material ID " << m_uiMaterialID;
-	bool node_open = ImGui::TreeNodeEx(sstr.str().c_str(), node_flags);
+	sstr << m_uiMaterialID;
 
-
-	if (node_open)
+	ImGui::LabelText("ID" , sstr.str().c_str());
+	
+	const std::vector<ActiveProgramInformations>& uniforms = m_pkProgram->GetUniformsInformation();
+	for (size_t i = 0; i < uniforms.size(); ++i)
 	{
-		const std::vector<ActiveProgramInformations>& uniforms = m_pkProgram->GetUniformsInformation();
-		for (size_t i = 0; i < uniforms.size(); ++i)
-		{
-			if (uniforms[i].m_bIsFromBlock) continue;
-			m_pkProgram->InspectUniformProgramInformation(uniforms[i]);
-		}
-		ImGui::TreePop();
-	}
+		if (uniforms[i].m_bIsFromBlock) continue;
+		m_pkProgram->InspectUniformProgramInformation(uniforms[i]);
+	}	
 	
 }
