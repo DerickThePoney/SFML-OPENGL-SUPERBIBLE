@@ -188,6 +188,7 @@
     <ClInclude Include="Intersection.h" />
     <ClInclude Include="Line.h" />
     <ClInclude Include="Material.h" />
+    <ClInclude Include="ObjLoader.h" />
     <ClInclude Include="ProgramManager.h" />
     <ClInclude Include="ShaderCompiler.h" />
     <ClInclude Include="MaterialManager.h" />
@@ -249,6 +250,7 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SFML_Project.cpp" />
     <ClCompile Include="SinningCubeApplication.cpp" />
+    <ClCompile Include="ObjLoader.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

@@ -75,6 +75,10 @@ Mesh * MeshManager::InstantiateFromFile(const std::string & kFilename)
 				bmesh.BuildMesh(*newObj);
 			}
 		}
+		else if (kFilename.find(".obj") != kFilename.npos)
+		{
+			bool res = ObjLoader::LoadFromObjFile(newObj, kFilename);
+		}
 
 		newObj->LoadBuffersOnGraphicsCard();
 

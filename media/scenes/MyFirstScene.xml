@@ -47,7 +47,7 @@
 				</m_kLocalOrientation>
 			</value0>
 			<value1>
-				<m_kMeshFilename>media/meshes/default_cube_mesh.xml</m_kMeshFilename>
+				<m_kMeshFilename>media/meshes/MyOwnSpaceShip.obj</m_kMeshFilename>
 				<MeshID>0</MeshID>
 				<m_kMaterialFilename>media/Materials/StandardUnlitMeshMaterial.material</m_kMaterialFilename>
 			</value1>

@@ -2,6 +2,7 @@
 #include "Utility.h"
 #include "BMesh.h"
 #include "Mesh.h"
+#include "ObjLoader.h"
 
 class MeshManager
 {

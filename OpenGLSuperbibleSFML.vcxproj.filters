@@ -201,6 +201,9 @@
     <ClInclude Include="ProgramManager.h">
       <Filter>Rendering\Materials</Filter>
     </ClInclude>
+    <ClInclude Include="ObjLoader.h">
+      <Filter>Rendering\Mesh</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -310,6 +313,9 @@
     </ClCompile>
     <ClCompile Include="ProgramManager.cpp">
       <Filter>Rendering\Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjLoader.cpp">
+      <Filter>Rendering\Mesh</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
