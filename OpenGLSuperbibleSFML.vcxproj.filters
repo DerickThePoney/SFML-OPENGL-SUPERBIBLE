@@ -55,6 +55,9 @@
     <Filter Include="Maths">
       <UniqueIdentifier>{f31568d2-208a-45ef-a62a-cde066f66762}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Rendering\Mesh\Loaders">
+      <UniqueIdentifier>{ffb8fcdc-6e14-48e4-b619-d201778311c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -202,7 +205,10 @@
       <Filter>Rendering\Materials</Filter>
     </ClInclude>
     <ClInclude Include="ObjLoader.h">
-      <Filter>Rendering\Mesh</Filter>
+      <Filter>Rendering\Mesh\Loaders</Filter>
+    </ClInclude>
+    <ClInclude Include="PLYLoader.h">
+      <Filter>Rendering\Mesh\Loaders</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -315,7 +321,10 @@
       <Filter>Rendering\Materials</Filter>
     </ClCompile>
     <ClCompile Include="ObjLoader.cpp">
-      <Filter>Rendering\Mesh</Filter>
+      <Filter>Rendering\Mesh\Loaders</Filter>
+    </ClCompile>
+    <ClCompile Include="PLYLoader.cpp">
+      <Filter>Rendering\Mesh\Loaders</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

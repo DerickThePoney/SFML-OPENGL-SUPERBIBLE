@@ -3,6 +3,7 @@
 #include "BMesh.h"
 #include "Mesh.h"
 #include "ObjLoader.h"
+#include "PLYLoader.h"
 
 class MeshManager
 {

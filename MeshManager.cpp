@@ -79,6 +79,10 @@ Mesh * MeshManager::InstantiateFromFile(const std::string & kFilename)
 		{
 			bool res = ObjLoader::LoadFromObjFile(newObj, kFilename);
 		}
+		else if (kFilename.find(".ply") != kFilename.npos)
+		{
+			bool res = PLYLoader::LoadFromPLYFile(newObj, kFilename);
+		}
 
 		newObj->LoadBuffersOnGraphicsCard();
 

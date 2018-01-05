@@ -189,6 +189,7 @@
     <ClInclude Include="Line.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="ObjLoader.h" />
+    <ClInclude Include="PLYLoader.h" />
     <ClInclude Include="ProgramManager.h" />
     <ClInclude Include="ShaderCompiler.h" />
     <ClInclude Include="MaterialManager.h" />
@@ -231,6 +232,7 @@
     <ClCompile Include="Intersection.cpp" />
     <ClCompile Include="Line.cpp" />
     <ClCompile Include="Material.cpp" />
+    <ClCompile Include="PLYLoader.cpp" />
     <ClCompile Include="ProgramManager.cpp" />
     <ClCompile Include="ShaderCompiler.cpp" />
     <ClCompile Include="MaterialManager.cpp" />
