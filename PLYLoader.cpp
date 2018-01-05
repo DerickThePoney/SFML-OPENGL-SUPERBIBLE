@@ -121,15 +121,15 @@ bool PLYLoader::LoadFromPLYFile(Mesh * pkMeshObject, const std::string & kFilena
 	}
 
 	// set the memory
-	if(bHasPos) pkMeshObject->m_akVertices.resize(nbVerts);
-	if (bHasNormal) pkMeshObject->m_akNormals.resize(nbVerts);
-	if (bHasColor) pkMeshObject->m_akColor.resize(nbVerts);
-	if (bHasUV) pkMeshObject->m_akUVs.resize(nbVerts);
+	pkMeshObject->m_akVertices.resize(nbVerts, vec3(0));
+	pkMeshObject->m_akNormals.resize(nbVerts, vec3(0,0,-1));
+	pkMeshObject->m_akColor.resize(nbVerts, vec4(1));
+	pkMeshObject->m_akUVs.resize(nbVerts, vec2(0));
 
 	pkMeshObject->m_aiIndices.resize(nbTris * 3);
 
 	//read the vertex datas
-	for (I32 i = 0; i < nbVerts; ++i)
+	for (UI32 i = 0; i < nbVerts; ++i)
 	{
 		if (bHasPos)
 		{
@@ -166,12 +166,25 @@ bool PLYLoader::LoadFromPLYFile(Mesh * pkMeshObject, const std::string & kFilena
 	}
 	
 	//read the tris datas
-	for (I32 i = 0; i < nbTris; ++i)
+	for (UI32 i = 0; i < nbTris; ++i)
 	{
 		UI32 tempI;
-		iglobalsstr >> tempI >> pkMeshObject->m_aiIndices[i * 3]
-			>> pkMeshObject->m_aiIndices[i * 3 + 1]
-			>> pkMeshObject->m_aiIndices[i * 3 + 2];
+
+		iglobalsstr >> tempI;
+		
+		if (tempI == 3)
+		{
+			iglobalsstr >> pkMeshObject->m_aiIndices[i * 3]
+				>> pkMeshObject->m_aiIndices[i * 3 + 1]
+				>> pkMeshObject->m_aiIndices[i * 3 + 2];
+		}
+		else
+		{
+			std::cout << "wrong sized tris :-) : " << tempI << std::endl;
+			return false;
+		}
+
+		
 	}
 	return true;
 }
