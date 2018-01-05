@@ -72,9 +72,6 @@
     <ClInclude Include="Utility.h">
       <Filter>PCHSTUFF\Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Object.h">
-      <Filter>PCHSTUFF\Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="imgui\stb_rect_pack.h">
       <Filter>IMGUI</Filter>
     </ClInclude>
@@ -119,15 +116,6 @@
     </ClInclude>
     <ClInclude Include="BMesh.h">
       <Filter>Rendering\Mesh\Procedural</Filter>
-    </ClInclude>
-    <ClInclude Include="TestVesselApplication.h">
-      <Filter>Applications</Filter>
-    </ClInclude>
-    <ClInclude Include="SinningCubeApplication.h">
-      <Filter>Applications</Filter>
-    </ClInclude>
-    <ClInclude Include="OGLApplication.h">
-      <Filter>Applications</Filter>
     </ClInclude>
     <ClInclude Include="GameObjectApplication.h">
       <Filter>Applications</Filter>
@@ -186,12 +174,6 @@
     <ClInclude Include="OGLFrameBuffer.h">
       <Filter>Rendering\OGLImplementations\OGLObjects</Filter>
     </ClInclude>
-    <ClInclude Include="BezierSpline.h">
-      <Filter>Maths</Filter>
-    </ClInclude>
-    <ClInclude Include="BezierCurve.h">
-      <Filter>Maths</Filter>
-    </ClInclude>
     <ClInclude Include="Intersection.h">
       <Filter>Maths</Filter>
     </ClInclude>
@@ -221,9 +203,6 @@
     <ClCompile Include="Utility.cpp">
       <Filter>PCHSTUFF\Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="Object.cpp">
-      <Filter>PCHSTUFF\Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="imgui\imgui.cpp">
       <Filter>IMGUI</Filter>
     </ClCompile>
@@ -248,16 +227,7 @@
     <ClCompile Include="GameObjectApplication.cpp">
       <Filter>Applications</Filter>
     </ClCompile>
-    <ClCompile Include="OGLApplication.cpp">
-      <Filter>Applications</Filter>
-    </ClCompile>
     <ClCompile Include="Application.cpp">
-      <Filter>Applications</Filter>
-    </ClCompile>
-    <ClCompile Include="SinningCubeApplication.cpp">
-      <Filter>Applications</Filter>
-    </ClCompile>
-    <ClCompile Include="TestVesselApplication.cpp">
       <Filter>Applications</Filter>
     </ClCompile>
     <ClCompile Include="MeshManager.cpp">
@@ -306,9 +276,6 @@
       <Filter>Rendering\OGLImplementations\OGLObjects</Filter>
     </ClCompile>
     <ClCompile Include="Intersection.cpp">
-      <Filter>Maths</Filter>
-    </ClCompile>
-    <ClCompile Include="BezierCurve.cpp">
       <Filter>Maths</Filter>
     </ClCompile>
     <ClCompile Include="Line.cpp">

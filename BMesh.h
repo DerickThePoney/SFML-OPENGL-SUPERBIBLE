@@ -9,7 +9,7 @@
 #include <random>
 //using namespace vmath;
 
-typedef vec3 Vertice;
+typedef vec4 Vertice;
 typedef std::vector<Vertice*> VerticesPVector;
 typedef std::vector<Vertice> VerticesVector;
 typedef std::map<I32, Vertice> VerticesMap;
@@ -30,9 +30,9 @@ typedef std::map<I32, Edge*> EdgesPMap;
 class Face
 {
 public:
-	vec3 GetNormal(const BMesh& rkMesh);
+	vec4 GetNormal(const BMesh& rkMesh);
 	mat4 GetTransform(const BMesh& rkMesh);
-	vec3 GetCenter(const BMesh& rkMesh);
+	vec4 GetCenter(const BMesh& rkMesh);
 	F32 GetAspectRatio(const BMesh& rkMesh);
 	std::vector<I32> m_apkVerticesMap;
 	EdgesPMap m_apkEdgesMap;
@@ -174,14 +174,14 @@ private:
 class TranslateFace : public BMeshOperation
 {
 public:
-	TranslateFace(I32 iFaceID, vec3 kScaleFactor) : m_iFaceID(iFaceID), m_kScaleFactor(kScaleFactor) {}
+	TranslateFace(I32 iFaceID, vec4 kScaleFactor) : m_iFaceID(iFaceID), m_kScaleFactor(kScaleFactor) {}
 
 	// Hérité via BMeshOperation
 	virtual void Apply(BMesh & rkMesh) override;
 
 private:
 	I32 m_iFaceID;
-	vec3 m_kScaleFactor;
+	vec4 m_kScaleFactor;
 };
 
 class MakeCube : public BMeshOperation

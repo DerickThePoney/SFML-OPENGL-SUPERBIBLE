@@ -30,7 +30,7 @@ void Mesh::LoadBuffersOnGraphicsCard()
 {
 	
 	//generate vertex buffer
-	m_kOGLBindings.m_kVertices.Init(GL_ARRAY_BUFFER, m_akVertices.size() * sizeof(vec3), m_akVertices.data(), 0);
+	m_kOGLBindings.m_kVertices.Init(GL_ARRAY_BUFFER, m_akVertices.size() * sizeof(vec4), m_akVertices.data(), 0);
 	
 	//generate normal buffer
 	m_kOGLBindings.m_kNormals.Init(GL_ARRAY_BUFFER, m_akNormals.size() * sizeof(vec3), m_akNormals.data(), 0);
@@ -44,8 +44,6 @@ void Mesh::LoadBuffersOnGraphicsCard()
 	//generate indices buffer
 	m_kOGLBindings.m_kIndices.Init(GL_ELEMENT_ARRAY_BUFFER, m_aiIndices.size() * sizeof(UI32), m_aiIndices.data(), 0);
 
-	OGLBuffer justForTest((GLuint)m_kOGLBindings.m_kIndices);
-
 	SetAttributes();
 }
 
@@ -57,7 +55,7 @@ void Mesh::SetAttributes()
 
 	//set vertex array as attributes
 	m_kOGLBindings.m_kVertices.Bind(GL_ARRAY_BUFFER);
-	m_kOGLBindings.m_hkVao.SetAttribute(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+	m_kOGLBindings.m_hkVao.SetAttribute(0, 4, GL_FLOAT, GL_FALSE, 0, NULL);
 
 	//set normals array as attributes
 	m_kOGLBindings.m_kNormals.Bind(GL_ARRAY_BUFFER);

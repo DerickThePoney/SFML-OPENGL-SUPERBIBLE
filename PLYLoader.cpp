@@ -121,7 +121,7 @@ bool PLYLoader::LoadFromPLYFile(Mesh * pkMeshObject, const std::string & kFilena
 	}
 
 	// set the memory
-	pkMeshObject->m_akVertices.resize(nbVerts, vec3(0));
+	pkMeshObject->m_akVertices.resize(nbVerts, vec4(1));
 	pkMeshObject->m_akNormals.resize(nbVerts, vec3(0,0,-1));
 	pkMeshObject->m_akColor.resize(nbVerts, vec4(1));
 	pkMeshObject->m_akUVs.resize(nbVerts, vec2(0));

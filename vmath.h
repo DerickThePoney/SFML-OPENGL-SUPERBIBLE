@@ -492,6 +492,15 @@ static inline vecN<T,3> cross(const vecN<T,3>& a, const vecN<T,3>& b)
                     a[0] * b[1] - b[0] * a[1]);
 }
 
+template <typename T>
+static inline vecN<T, 4> cross(const vecN<T, 4>& a, const vecN<T, 4>& b)
+{
+	return Tvec4<T>(a[1] * b[2] - b[1] * a[2],
+		a[2] * b[0] - b[2] * a[0],
+		a[0] * b[1] - b[0] * a[1],
+		0);
+}
+
 template <typename T, int len>
 static inline T length(const vecN<T,len>& v)
 {

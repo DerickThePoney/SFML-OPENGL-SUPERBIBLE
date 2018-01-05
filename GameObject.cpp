@@ -123,7 +123,7 @@ bool GameObject::CheckPresenceInChildren(GameObject * pkGameObject)
 {
 	for (std::size_t i = 0; i < m_apkChildren.size(); ++i)
 	{
-		if (m_apkChildren[i] = pkGameObject)
+		if (m_apkChildren[i] == pkGameObject)
 		{
 			return true;
 		}
@@ -169,8 +169,8 @@ void GameObject::ImGUIHierarchy(GameObject*& node_clicked)
 			for (std::size_t i = 0; i < m_apkChildren.size(); ++i)
 			{
 				m_apkChildren[i]->ImGUIHierarchy(node_clicked);
-				ImGui::TreePop();
 			}
+			ImGui::TreePop();
 		}
 	}
 	else

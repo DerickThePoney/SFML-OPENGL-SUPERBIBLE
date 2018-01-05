@@ -1,13 +1,13 @@
 #include "stdafx.h"
 #include "Intersection.h"
 
-bool Intersect::Find(const Line & rkLine, const vmath::vec3 pkTriangle[3], I32 & iQuantity, F32 fTValue[2])
+bool Intersect::Find(const Line & rkLine, const vmath::vec4 pkTriangle[3], I32 & iQuantity, F32 fTValue[2])
 {
 	const F32 fEpsilon = 1e-6f;
-	vmath::vec3 kE0 = pkTriangle[1] - pkTriangle[0];
-	vmath::vec3 kE1 = pkTriangle[2] - pkTriangle[0];
-	vmath::vec3 kNormal = vmath::cross(vmath::normalize(kE0), vmath::normalize(kE1));
-	vmath::vec3 kDiff = rkLine.GetOrigin()- pkTriangle[0];
+	vmath::vec4 kE0 = pkTriangle[1] - pkTriangle[0];
+	vmath::vec4 kE1 = pkTriangle[2] - pkTriangle[0];
+	vmath::vec4 kNormal = vmath::cross(vmath::normalize(kE0), vmath::normalize(kE1));
+	vmath::vec4 kDiff = rkLine.GetOrigin()- pkTriangle[0];
 
 	//compute the dot product of line and normal
 	F32 fDND = vmath::dot(kNormal, vmath::normalize(rkLine.GetDirection()));
@@ -61,10 +61,10 @@ bool Intersect::Find(const Line & rkLine, const vmath::vec3 pkTriangle[3], I32 &
 	return false;
 }
 
-bool Intersect::Find(const Line & rkLine, const vmath::vec3 * apkVertices, const UI32 & uiVertices, 
+bool Intersect::Find(const Line & rkLine, const vmath::vec4 * apkVertices, const UI32 & uiVertices,
 					 const UI32 * apkTriangles, const UI32 & uiTriangles, I32 & iQuantity, F32 fTValue[2], std::vector<F32>& apkHit)
 {
-	vmath::vec3 pkTriangle[3];
+	vmath::vec4 pkTriangle[3];
 	F32 fLocalTValue[2];
 
 	for(UI32 i = 0; i < uiTriangles; ++i)
@@ -76,7 +76,7 @@ bool Intersect::Find(const Line & rkLine, const vmath::vec3 * apkVertices, const
 		if (Find(rkLine, pkTriangle, iQuantity, fLocalTValue))
 		{
 			std::cout << "Intersect" << std::endl;
-			vmath::vec3 pkIntersectPoint = rkLine.GetOrigin() + fLocalTValue[0] * rkLine.GetDirection();
+			vmath::vec4 pkIntersectPoint = rkLine.GetOrigin() + fLocalTValue[0] * rkLine.GetDirection();
 			std::cout << pkIntersectPoint[0] << "\t" << pkIntersectPoint[1] << "\t" << pkIntersectPoint[2] << "\t" << std::endl;
 			apkHit[apkTriangles[i * 3]] = 1.0f;
 			apkHit[apkTriangles[i * 3 + 1]] = 1.0f;

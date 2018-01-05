@@ -36,8 +36,10 @@ void Renderer::InitDefaultState()
 
 	m_hiProjectionDataIndex = glGetUniformBlockIndex(*m_pkDefaultMaterial->m_pkProgram, "ProjectionData");
 
+	m_pkLineShaderMaterial = MaterialManager::Instance()->InstantiateFromFile("media/Materials/LineShader.material");
+
 	//init the default mesh (a cube)
-	m_pkDefaultMesh = MeshManager::Instance()->InstantiateFromFile("media/meshes/default_cube_mesh.bin");
+	m_pkDefaultMesh = MeshManager::Instance()->InstantiateFromFile("media/meshes/ColoredCubeSmooth.ply");
 }
 
 void Renderer::Terminate()
@@ -87,7 +89,7 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 		//draw call
 		glDrawElements(GL_TRIANGLES, kVisibleObjectsList[i].m_pkMeshRenderer->m_pkMesh->m_aiIndices.size(), GL_UNSIGNED_INT, 0);
 
-		vec4 objectWorldPos = kVisibleObjectsList[i].m_pkTransform->GetWorldspacePosition();
+		/*vec4 objectWorldPos = kVisibleObjectsList[i].m_pkTransform->GetWorldspacePosition();
 		vec4 cameraWorldPos = kCamera.m_kTransform.GetWorldspacePosition();
 
 		vec4 direction = objectWorldPos - cameraWorldPos;
@@ -96,9 +98,21 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 		ApplyDefaultState();
 		//set modelview and proj matrix
 		glUniformMatrix4fv(0, 1, GL_FALSE, mat4::identity());
-		l.Draw(1);
+		l.Draw(20);*/
 	}
 
+
+	//draw a line onto the screen
+	m_pkLineShaderMaterial->Use();
+	m_auiRenderingState[MATERIAL] = m_pkLineShaderMaterial->m_uiMaterialID;
+
+	vec4 objectWorldPos = kVisibleObjectsList[1].m_pkTransform->GetWorldspacePosition();
+	vec4 cameraWorldPos = kVisibleObjectsList[0].m_pkTransform->GetWorldspacePosition();
+
+	vec4 direction = objectWorldPos - cameraWorldPos;
+	Line l(cameraWorldPos, direction);
+	l.Draw(20, kCamera);
+	
 	//Render ImGUI
 	ImGui::Render();
 

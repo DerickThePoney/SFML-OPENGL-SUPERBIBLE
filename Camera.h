@@ -19,6 +19,7 @@ public:
 	void LoadProjectionOnGraphics(GLuint bufferIndex);
 
 	const vmath::mat4& GetLookAt() const { return m_kLookAtMatrix; }
+	const vmath::mat4& GetProjection() const { return m_kProjectionMatrice; }
 
 	virtual void UpdateAllTransformsInHierarchy() override;
 	virtual void Inspector() override;

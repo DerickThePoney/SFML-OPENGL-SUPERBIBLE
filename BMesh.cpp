@@ -1,50 +1,50 @@
 ﻿#include "stdafx.h"
 #include "BMesh.h"
 
-vec3 Face::GetNormal(const BMesh& rkMesh)
+vec4 Face::GetNormal(const BMesh& rkMesh)
 {
 	//auto it = m_apkVerticesMap.begin();
 
-	vec3 kEdge1 = rkMesh.m_akVertices[m_apkVerticesMap[1]] - rkMesh.m_akVertices[m_apkVerticesMap[0]];
-	vec3 kEdge2 = rkMesh.m_akVertices[m_apkVerticesMap[2]] - rkMesh.m_akVertices[m_apkVerticesMap[0]];
+	vec4 kEdge1 = rkMesh.m_akVertices[m_apkVerticesMap[1]] - rkMesh.m_akVertices[m_apkVerticesMap[0]];
+	vec4 kEdge2 = rkMesh.m_akVertices[m_apkVerticesMap[2]] - rkMesh.m_akVertices[m_apkVerticesMap[0]];
 
 	return normalize(cross(normalize(kEdge1), normalize(kEdge2)));
 }
 
 mat4 Face::GetTransform(const BMesh & rkMesh)
 {
-	vec3 kNormal = GetNormal(rkMesh);
+	vec4 kNormal = GetNormal(rkMesh);
 
 	//get center
-	vec3 kCenter = GetCenter(rkMesh);
+	vec4 kCenter = GetCenter(rkMesh);
 
 	//get edge1
-	vec3 kEdge1 = normalize(rkMesh.m_akVertices[m_apkVerticesMap[1]] - rkMesh.m_akVertices[m_apkVerticesMap[0]]);
+	vec4 kEdge1 = normalize(rkMesh.m_akVertices[m_apkVerticesMap[1]] - rkMesh.m_akVertices[m_apkVerticesMap[0]]);
 
 	//get last vector
-	vec3 kLastVector = normalize(cross(kEdge1, kNormal));
+	vec4 kLastVector = normalize(cross(kEdge1, kNormal));
 
-	mat4 kTransform(vec4(kLastVector,0), vec4(kEdge1,0), vec4(kNormal,0), vec4(kCenter,1));
+	mat4 kTransform(kLastVector, kEdge1, kNormal, kCenter);
 
 	return kTransform;
 }
 
-vec3 Face::GetCenter(const BMesh & rkMesh)
+vec4 Face::GetCenter(const BMesh & rkMesh)
 {
 	//find center
-	vec3 center = vec3(0);
+	vec4 center = vec4(0,0,0,1);
 	for (auto it = m_apkVerticesMap.begin(); it != m_apkVerticesMap.end(); ++it)
 	{
 		center += rkMesh.m_akVertices[*it];
 	}
-	center /= (F32)m_apkVerticesMap.size();
+	center /= center[3];
 	return center;
 }
 
 F32 Face::GetAspectRatio(const BMesh & rkMesh)
 {
-	vec3 kEdge1 = rkMesh.m_akVertices[m_apkVerticesMap[1]] - rkMesh.m_akVertices[m_apkVerticesMap[0]];
-	vec3 kEdge2 = rkMesh.m_akVertices[m_apkVerticesMap[3]] - rkMesh.m_akVertices[m_apkVerticesMap[0]];
+	vec4 kEdge1 = rkMesh.m_akVertices[m_apkVerticesMap[1]] - rkMesh.m_akVertices[m_apkVerticesMap[0]];
+	vec4 kEdge2 = rkMesh.m_akVertices[m_apkVerticesMap[3]] - rkMesh.m_akVertices[m_apkVerticesMap[0]];
 
 	F32 fRet = length(kEdge1) / length(kEdge2);
 	if (fRet < 1)
@@ -65,7 +65,7 @@ void ExtrudeFace::Apply(BMesh & rkMesh)
 	//rkMesh.m_akFaces.erase(m_iFaceID);
 
 	//get face normal
-	vec3 kNormal = kFace.GetNormal(rkMesh);
+	vec4 kNormal = kFace.GetNormal(rkMesh);
 
 	//create new vertices
 	I32 iFirstNewIndex = rkMesh.m_akVertices.size();
@@ -75,7 +75,7 @@ void ExtrudeFace::Apply(BMesh & rkMesh)
 
 	for (UI32 i = 0; i < uiNbVertices; ++i)
 	{
-		rkMesh.m_akVertices.push_back(rkMesh.m_akVertices[*(it+i)] + m_fScaleFactor * kNormal);
+		rkMesh.m_akVertices.push_back(rkMesh.m_akVertices[*(it + i)] + m_fScaleFactor * kNormal);//vec4(kNormal,0));
 	}
 	
 	//create additional faces
@@ -182,8 +182,8 @@ void ScaleFace::Apply(BMesh & rkMesh)
 	for (auto it = kFace.m_apkVerticesMap.begin(); it != kFace.m_apkVerticesMap.end(); ++it)
 	{
 		//vec3 dir = normalize(center - rkMesh.m_akVertices[*it]);
-		vec4 kHomoGeneousVertice = kFinalMatrix * vec4(rkMesh.m_akVertices[*it],1);
-		rkMesh.m_akVertices[*it] = vec3(kHomoGeneousVertice[0], kHomoGeneousVertice[1], kHomoGeneousVertice[2]);
+		vec4 kHomoGeneousVertice = kFinalMatrix * vec4(rkMesh.m_akVertices[*it][0], rkMesh.m_akVertices[*it][1], rkMesh.m_akVertices[*it][2],1);
+		rkMesh.m_akVertices[*it] = kHomoGeneousVertice;// vec3(kHomoGeneousVertice[0], kHomoGeneousVertice[1], kHomoGeneousVertice[2], 1);
 	}
 
 	rkMesh.m_akFaces[m_iFaceID] = kFace;
@@ -317,20 +317,20 @@ void MakeCube::Apply(BMesh & rkMesh)
 	mat4 kScaleMatrix = m_kPositionMatrix * scale(m_kScale);
 
 	I32 iStart = rkMesh.m_akVertices.size();
-	rkMesh.m_akVertices.push_back(Vertice(-1, -1, -1));//0
-	rkMesh.m_akVertices.push_back(Vertice(-1, 1, -1));//1
-	rkMesh.m_akVertices.push_back(Vertice(1, 1, -1));//2
-	rkMesh.m_akVertices.push_back(Vertice(1, -1, -1));//3
+	rkMesh.m_akVertices.push_back(Vertice(-1, -1, -1, 1));//0
+	rkMesh.m_akVertices.push_back(Vertice(-1, 1, -1, 1));//1
+	rkMesh.m_akVertices.push_back(Vertice(1, 1, -1, 1));//2
+	rkMesh.m_akVertices.push_back(Vertice(1, -1, -1, 1));//3
 
-	rkMesh.m_akVertices.push_back(Vertice(-1, -1, 1));//4
-	rkMesh.m_akVertices.push_back(Vertice(-1, 1, 1));//5
-	rkMesh.m_akVertices.push_back(Vertice(1, 1, 1));//6
-	rkMesh.m_akVertices.push_back(Vertice(1, -1, 1));//7
+	rkMesh.m_akVertices.push_back(Vertice(-1, -1, 1, 1));//4
+	rkMesh.m_akVertices.push_back(Vertice(-1, 1, 1, 1));//5
+	rkMesh.m_akVertices.push_back(Vertice(1, 1, 1, 1));//6
+	rkMesh.m_akVertices.push_back(Vertice(1, -1, 1, 1));//7
 
 	for (UI32 i = iStart; i < rkMesh.m_akVertices.size(); ++i)
 	{
-		vec4 scaledVertice = kScaleMatrix * vec4(rkMesh.m_akVertices[i], 1);
-		rkMesh.m_akVertices[i] = Vertice(scaledVertice[0], scaledVertice[1], scaledVertice[2]);
+		vec4 scaledVertice = kScaleMatrix * rkMesh.m_akVertices[i];
+		rkMesh.m_akVertices[i] = scaledVertice;// Vertice(scaledVertice[0], scaledVertice[1], scaledVertice[2]);
 	}
 
 	//make edges
@@ -396,7 +396,7 @@ void MakeSpaceShip::Apply(BMesh & rkMesh)
 		//I32 iFaceID = it->first;
 		auto it = rkMesh.m_akFaces.find(iFaceID);
 		//Get the normal and extrude only if z axis
-		vec3 kNormal = it->second.GetNormal(rkMesh);
+		vec4 kNormal = it->second.GetNormal(rkMesh);
 		if (std::abs(kNormal[2]) > 0.5f)
 		{
 			//ok so compute the number of extrusions needed and the length of extrusions
@@ -450,7 +450,7 @@ void MakeSpaceShip::Apply(BMesh & rkMesh)
 					{
 						//get translate factor and apply scale
 						std::uniform_real_distribution<F32> kDistScale(0.1f, 0.4f);
-						vec3 kTranslate = vec3(0, kDistScale(m_kRng) * kScaleVector[1] * hullSegmentLength, 0);
+						vec4 kTranslate = vec4(0, kDistScale(m_kRng) * kScaleVector[1] * hullSegmentLength, 0, 1);
 
 						std::cout << "Translating " << it->first << " " << kTranslate << std::endl;
 						TranslateFace kScale(it->first, kTranslate);
@@ -545,7 +545,7 @@ void MakeSpaceShip::Apply(BMesh & rkMesh)
 		//I32 iFaceID = it->first;
 		auto it = rkMesh.m_akFaces.find(iFaceID);
 		//Get the normal and extrude only if z axis
-		vec3 kNormal = it->second.GetNormal(rkMesh);
+		vec4 kNormal = it->second.GetNormal(rkMesh);
 		
 		//skip thin long faces
 		if (rkMesh.m_akFaces[iFaceID].GetAspectRatio(rkMesh) > 4)
@@ -748,8 +748,8 @@ void RotateFace::Apply(BMesh & rkMesh)
 	for (auto it = kFace.m_apkVerticesMap.begin(); it != kFace.m_apkVerticesMap.end(); ++it)
 	{
 		//vec3 dir = normalize(center - rkMesh.m_akVertices[*it]);
-		vec4 kHomoGeneousVertice = kFinalMatrix * vec4(rkMesh.m_akVertices[*it], 1);
-		rkMesh.m_akVertices[*it] = vec3(kHomoGeneousVertice[0], kHomoGeneousVertice[1], kHomoGeneousVertice[2]);
+		vec4 kHomoGeneousVertice = kFinalMatrix * rkMesh.m_akVertices[*it];
+		rkMesh.m_akVertices[*it] = kHomoGeneousVertice;// vec3(kHomoGeneousVertice[0], kHomoGeneousVertice[1], kHomoGeneousVertice[2]);
 	}
 
 	rkMesh.m_akFaces[m_iFaceID] = kFace;
@@ -759,14 +759,14 @@ void SpherifyFace::Apply(BMesh & rkMesh)
 {
 	//first get the face, the normal, and the center position
 	Face kFace = rkMesh.m_akFaces[m_iFaceID];
-	vec3 kNormal = kFace.GetNormal(rkMesh);
-	vec3 kCenter = kFace.GetCenter(rkMesh);
+	vec4 kNormal = kFace.GetNormal(rkMesh);
+	vec4 kCenter = kFace.GetCenter(rkMesh);
 	mat4 kFaceMatrix = kFace.GetTransform(rkMesh);
 	mat4 kFaceMatrixInverted = invert(kFaceMatrix);
 	F32 fAspectRatio = kFace.GetAspectRatio(rkMesh);
 	if (m_fSphereCenter == 0) m_fSphereCenter -= 0.001f; // small deviation to avoid 0 distance in distance computation
-	vec3 kSphereCenter = (m_fSphereCenter)*kNormal + kCenter;
-	vec4 kLocalSphereCenter = kFaceMatrixInverted * vec4(kSphereCenter,1);
+	vec4 kSphereCenter = (m_fSphereCenter) * kNormal + kCenter;
+	vec4 kLocalSphereCenter = kFaceMatrixInverted * kSphereCenter;
 
 
 	//then subdivide but keep non fixed vertices at hand
@@ -781,13 +781,13 @@ void SpherifyFace::Apply(BMesh & rkMesh)
 	for (auto it = akNonFixedVertices.begin(); it != akNonFixedVertices.end(); ++it)
 	{
 		//sphere distance
-		vec3 kDistToCenter = rkMesh.m_akVertices[*it] - kSphereCenter;
+		vec4 kDistToCenter = rkMesh.m_akVertices[*it] - kSphereCenter;
 
 		if (length(kDistToCenter) > m_fSphereRadius*fAspectRatio)
 			continue;
 
 		//compute the vertice in face direction
-		vec4 kLocalVertice = kFaceMatrixInverted * vec4(rkMesh.m_akVertices[*it], 1);
+		vec4 kLocalVertice = kFaceMatrixInverted * vec4(rkMesh.m_akVertices[*it]);
 
 		//get the intended distance along the normal while keeping the x and y values
 		kLocalVertice[2] = sqrt(m_fSphereRadius * fAspectRatio * fAspectRatio * m_fSphereRadius -
@@ -799,7 +799,7 @@ void SpherifyFace::Apply(BMesh & rkMesh)
 		kLocalVertice = kFaceMatrix * kLocalVertice;
 
 		//push the element in this direction
-		rkMesh.m_akVertices[*it] = vec3(kLocalVertice[0], kLocalVertice[1], kLocalVertice[2]);
+		rkMesh.m_akVertices[*it] = kLocalVertice;// vec3(kLocalVertice[0], kLocalVertice[1], kLocalVertice[2]);
 	}
 
 
@@ -852,14 +852,14 @@ void BMesh::BuildMesh(Mesh & rkMesh)
 		//vec4 kColor(kDist(kRng), kDist(kRng), kDist(kRng), 1);
 
 		//get the normals
-		vec3 kNormal = it->second.GetNormal(*this);
+		vec4 kNormal = it->second.GetNormal(*this);
 		for (UI32 i = 0; i < it->second.m_apkVerticesMap.size(); ++i)
 		{
 			/*if (rkMesh.m_akNormals[it->second.m_apkVerticesMap[i]][0] == 0 &&
 				rkMesh.m_akNormals[it->second.m_apkVerticesMap[i]][1] == 0 && 
 				rkMesh.m_akNormals[it->second.m_apkVerticesMap[i]][2] == 0)
 			{*/
-				rkMesh.m_akNormals[it->second.m_apkVerticesMap[i]] += kNormal;
+				rkMesh.m_akNormals[it->second.m_apkVerticesMap[i]] += vec3(kNormal[0], kNormal[1], kNormal[2]);
 				rkMesh.m_akColor[it->second.m_apkVerticesMap[i]] += it->second.m_kColor;
 				++kNbAdded[it->second.m_apkVerticesMap[i]];
 			//}
@@ -883,7 +883,7 @@ void MakeSpaceShip2::Apply(BMesh & rkMesh)
 
 	for (UI32 i = 0; i < rkMesh.m_akFaces.size(); ++i)
 	{
-		vec3 kNormal = rkMesh.m_akFaces[i].GetNormal(rkMesh);
+		vec4 kNormal = rkMesh.m_akFaces[i].GetNormal(rkMesh);
 
 		if (kNormal[2] > 0)
 		{
@@ -915,8 +915,8 @@ void MakeSpaceShip2::Apply(BMesh & rkMesh)
 	ExtrudeFace kFront1(iFront, 1);
 	ExtrudeFace kFront2(iFront, 0.5f);
 	ScaleFace kFrontScale1(iFront, 0.7f, 0.7f);
-	TranslateFace kTranslate1(iFront, vec3(0, -0.3f, 0));
-	TranslateFace kTranslate2(iFront, vec3(0, -0.25f, 0));
+	TranslateFace kTranslate1(iFront, vec4(0, -0.3f, 0, 1));
+	TranslateFace kTranslate2(iFront, vec4(0, -0.25f, 0, 1));
 
 
 	kFront1.Apply(rkMesh);
@@ -941,11 +941,11 @@ void MakeSpaceShip2::Apply(BMesh & rkMesh)
 	//make Left Wing
 	ExtrudeFace kLeftWing1(iLeft, 0.1f);
 	ScaleFace kLeftWingScale1(iLeft, 0.2f, 0.9f);
-	TranslateFace kLeftWingTranslate1(iLeft, vec3(0, 0.7f, 0));
+	TranslateFace kLeftWingTranslate1(iLeft, vec4(0, 0.7f, 0, 1));
 
 	ExtrudeFace kLeftWing2(iLeft, 0.1f);
 	ScaleFace kLeftWingScale2(iLeft, 1, 0.8f);
-	TranslateFace kLeftWingTranslate2(iLeft, vec3(0, 0.2f, 0));
+	TranslateFace kLeftWingTranslate2(iLeft, vec4(0, 0.2f, 0, 1));
 
 	ExtrudeFace kLeftWing3(iLeft, 2);
 
@@ -961,11 +961,11 @@ void MakeSpaceShip2::Apply(BMesh & rkMesh)
 	//make Right Wing
 	ExtrudeFace kRightWing1(iRight, 0.1f);
 	ScaleFace kRightWingScale1(iRight, 0.2f, 0.9f);
-	TranslateFace kRightWingTranslate1(iRight, vec3(0, 0.7f, 0));
+	TranslateFace kRightWingTranslate1(iRight, vec4(0, 0.7f, 0, 1));
 
 	ExtrudeFace kRightWing2(iRight, 0.1f);
 	ScaleFace kRightWingScale2(iRight, 1, 0.8f);
-	TranslateFace kRightWingTranslate2(iRight, vec3(0, 0.2f, 0));
+	TranslateFace kRightWingTranslate2(iRight, vec4(0, 0.2f, 0, 1));
 
 	ExtrudeFace kRightWing3(iRight, 2);
 

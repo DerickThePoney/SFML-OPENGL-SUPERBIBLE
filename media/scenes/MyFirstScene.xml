@@ -32,12 +32,12 @@
 				<m_kLocalPosition>
 					<value0>0</value0>
 					<value1>0</value1>
-					<value2>-5</value2>
+					<value2>-20</value2>
 				</m_kLocalPosition>
 				<m_kScale>
-					<value0>0.2</value0>
-					<value1>0.2</value1>
-					<value2>0.2</value2>
+					<value0>1</value0>
+					<value1>1</value1>
+					<value2>1</value2>
 				</m_kScale>
 				<m_kLocalOrientation>
 					<value0>1</value0>
@@ -51,12 +51,12 @@
 				<MeshID>0</MeshID>
 				<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
 			</value1>
-			<uiNbChildren>1</uiNbChildren>
+			<uiNbChildren>2</uiNbChildren>
 			<GameObject>
 				<m_kName>Middle</m_kName>
 				<value0>
 					<m_kLocalPosition>
-						<value0>5</value0>
+						<value0>-5</value0>
 						<value1>0</value1>
 						<value2>0</value2>
 					</m_kLocalPosition>
@@ -77,9 +77,10 @@
 					<MeshID>0</MeshID>
 					<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
 				</value1>
-				<uiNbChildren>1</uiNbChildren>
-				<GameObject>
-					<m_kName>LeafObject</m_kName>
+				<uiNbChildren>0</uiNbChildren>
+			</GameObject>
+			<GameObject>
+					<m_kName>Middle2</m_kName>
 					<value0>
 						<m_kLocalPosition>
 							<value0>5</value0>
@@ -105,7 +106,6 @@
 					</value1>
 					<uiNbChildren>0</uiNbChildren>
 				</GameObject>
-			</GameObject>
 		</GameObject>
 	</MyFirstScene>
 </cereal>

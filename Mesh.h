@@ -62,7 +62,7 @@ public:
 		}
 	}
 
-	std::vector<vec3> m_akVertices;
+	std::vector<vec4> m_akVertices;
 	std::vector<vec3> m_akNormals;
 	std::vector<vec4> m_akColor;
 	std::vector<UI32> m_aiIndices;

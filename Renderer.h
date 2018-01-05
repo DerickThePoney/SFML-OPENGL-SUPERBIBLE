@@ -106,6 +106,8 @@ private:
 	Mesh* m_pkDefaultMesh;
 	Material* m_pkDefaultMaterial;
 
+	Material* m_pkLineShaderMaterial;
+
 	//Projection block index
 	GLuint m_hiProjectionDataIndex;
 };

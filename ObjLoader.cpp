@@ -49,7 +49,7 @@ bool ObjLoader::LoadFromObjFile(Mesh* pkMeshObject, const std::string & kFilenam
 	//iglobalsstr.seekg(0, iglobalsstr.beg);
 	//go through each lines...
 	//char line[512];// = new char[512];
-	pkMeshObject->m_akVertices.resize(vnb);
+	pkMeshObject->m_akVertices.resize(vnb, vec4(1));
 	std::vector<vec3> akNormals(vnnb);
 	std::vector<vec2> akUVs(vtnb);
 
