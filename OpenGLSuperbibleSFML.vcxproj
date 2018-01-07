@@ -171,6 +171,7 @@
     <ClInclude Include="Application.h" />
     <ClInclude Include="BMesh.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="DebugRenderingCommands.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameObjectApplication.h" />
     <ClInclude Include="GameObjectManager.h" />
@@ -216,6 +217,7 @@
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="BMesh.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="DebugRenderingCommands.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameObjectApplication.cpp" />
     <ClCompile Include="GameObjectManager.cpp" />

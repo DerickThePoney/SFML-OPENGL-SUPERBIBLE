@@ -6,6 +6,12 @@
 		<bCullBack>true</bCullBack>
 		<bCullFront>false</bCullFront>
 		<ePolygonMode>6914</ePolygonMode>
+		<kClearColor>
+			<value0>0</value0>
+			<value1>0.27450981736183167</value1>
+			<value2>0</value2>
+			<value3>1</value3>
+		</kClearColor>
 	</value0>
 </cereal>
 

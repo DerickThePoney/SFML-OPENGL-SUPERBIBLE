@@ -72,7 +72,7 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 	static const GLfloat one = 1.0f;
 
 	//clear screen
-	glClearBufferfv(GL_COLOR, 0, vmath::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+	glClearBufferfv(GL_COLOR, 0, m_kGlobalRendererSettings.kClearColor);
 	glClearBufferfv(GL_DEPTH, 0, &one);
 	
 	// Load the camera projections
@@ -112,7 +112,12 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 	vec4 direction = objectWorldPos - cameraWorldPos;
 	Line l(cameraWorldPos, direction);
 	l.Draw(20, kCamera);
-	
+
+	objectWorldPos = kVisibleObjectsList[2].m_pkTransform->GetWorldspacePosition();
+	direction = objectWorldPos - cameraWorldPos;
+	Line l2(cameraWorldPos, direction);
+	l2.Draw(20, kCamera);
+
 	//Render ImGUI
 	ImGui::Render();
 
@@ -206,6 +211,8 @@ void Renderer::GraphicsSettings()
 	}
 
 	
+	ImGui::ColorEdit4("Clear color", m_kGlobalRendererSettings.kClearColor.GetData());
+
 	//bool cullFaces = glIsEnabled(GL_CULL_FACE);
 	if (ImGui::Checkbox("Faces culling", &m_kGlobalRendererSettings.bCullFaces)) modif = true;
 

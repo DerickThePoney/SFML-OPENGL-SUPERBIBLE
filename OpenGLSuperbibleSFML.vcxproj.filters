@@ -192,6 +192,9 @@
     <ClInclude Include="PLYLoader.h">
       <Filter>Rendering\Mesh\Loaders</Filter>
     </ClInclude>
+    <ClInclude Include="DebugRenderingCommands.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -292,6 +295,9 @@
     </ClCompile>
     <ClCompile Include="PLYLoader.cpp">
       <Filter>Rendering\Mesh\Loaders</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugRenderingCommands.cpp">
+      <Filter>Rendering</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

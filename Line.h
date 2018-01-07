@@ -40,13 +40,13 @@ public:
 		vmath::vec4 kArray[] = { start, end };
 		UI32 indices[] = { 0,1 };
 		glBindBuffer(GL_ARRAY_BUFFER, m_hiBufferData[0]);
-		glBufferData(GL_ARRAY_BUFFER, 2 * sizeof(vmath::vec4), kArray, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, 2 * sizeof(vmath::vec4), kArray, GL_DYNAMIC_DRAW);
 
 		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, NULL);
 		glEnableVertexAttribArray(0);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_hiBufferData[1]);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, 2 * sizeof(UI32), indices, GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, 2 * sizeof(UI32), indices, GL_DYNAMIC_DRAW);
 
 		glDrawElements(GL_LINES, 2, GL_UNSIGNED_INT, 0);
 	}

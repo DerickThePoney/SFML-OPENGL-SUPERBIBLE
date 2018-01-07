@@ -27,6 +27,7 @@ enum RENDER_STATE
 
 struct RendererGlobalSettings
 {
+	vec4 kClearColor;
 	bool bCullFaces;
 	bool bIsCCW;
 	bool bCullBack;
@@ -34,7 +35,7 @@ struct RendererGlobalSettings
 	GLenum ePolygonMode;
 
 	RendererGlobalSettings()
-		: bCullFaces(true), bIsCCW(true), bCullBack(true), bCullFront(false)
+		: kClearColor(vec4(0,0,0,1)), bCullFaces(true), bIsCCW(true), bCullBack(true), bCullFront(false)
 	{}
 
 	template<class Archive>
@@ -45,7 +46,8 @@ struct RendererGlobalSettings
 			CEREAL_NVP(bIsCCW),
 			CEREAL_NVP(bCullBack),
 			CEREAL_NVP(bCullFront),
-			CEREAL_NVP(ePolygonMode)
+			CEREAL_NVP(ePolygonMode),
+			CEREAL_NVP(kClearColor)
 		);
 	}
 
@@ -57,6 +59,7 @@ struct RendererGlobalSettings
 		DEARCHIVE_WITH_DEFAULT(bCullBack, true);
 		DEARCHIVE_WITH_DEFAULT(bCullFront, false);
 		DEARCHIVE_WITH_DEFAULT(ePolygonMode, GL_FILL);
+		DEARCHIVE_WITH_DEFAULT(kClearColor, vec4(0, 0, 0, 1));
 	}
 };
 
