@@ -12,6 +12,7 @@
 			<value2>0</value2>
 			<value3>1</value3>
 		</kClearColor>
+		<bDepthTesting>true</bDepthTesting>
 	</value0>
 </cereal>
 

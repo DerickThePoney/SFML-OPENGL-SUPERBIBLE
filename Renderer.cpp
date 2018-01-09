@@ -37,20 +37,86 @@ void Renderer::InitDefaultState()
 	m_hiProjectionDataIndex = glGetUniformBlockIndex(*m_pkDefaultMaterial->m_pkProgram, "ProjectionData");
 
 	m_pkLineShaderMaterial = MaterialManager::Instance()->InstantiateFromFile("media/Materials/LineShader.material");
+	m_pkBlitShader = MaterialManager::Instance()->InstantiateFromFile("media/Materials/BlitMaterial.material");
 
 	//init the default mesh (a cube)
 	m_pkDefaultMesh = MeshManager::Instance()->InstantiateFromFile("media/meshes/ColoredCubeSmooth.ply");
+
+	m_pkScreenQuad = MeshManager::Instance()->Instantiate();
+
+	m_pkScreenQuad->m_akVertices.push_back(vec4(-1, -1, 0, 1));
+	m_pkScreenQuad->m_akVertices.push_back(vec4(1, -1, 0, 1));
+	m_pkScreenQuad->m_akVertices.push_back(vec4(-1, 1, 0, 1));
+	//m_pkScreenQuad->m_akVertices.push_back(vec4(-1, 1, 0, 1));
+	//m_pkScreenQuad->m_akVertices.push_back(vec4(1, -1, 0, 1));
+	m_pkScreenQuad->m_akVertices.push_back(vec4(1, 1, 0, 1));
+
+	m_pkScreenQuad->m_akNormals.push_back(vec3(0, 0, 1));
+	m_pkScreenQuad->m_akNormals.push_back(vec3(0, 0, 1));
+	m_pkScreenQuad->m_akNormals.push_back(vec3(0, 0, 1));
+	//m_pkScreenQuad->m_akVertices.push_back(vec4(-1, 1, 0, 1));
+	//m_pkScreenQuad->m_akVertices.push_back(vec4(1, -1, 0, 1));
+	m_pkScreenQuad->m_akNormals.push_back(vec3(0, 0, 1));
+
+	m_pkScreenQuad->m_akColor.push_back(vec4(1));
+	m_pkScreenQuad->m_akColor.push_back(vec4(1));
+	m_pkScreenQuad->m_akColor.push_back(vec4(1));
+	//m_pkScreenQuad->m_akVertices.push_back(vec4(-1, 1, 0, 1));
+	//m_pkScreenQuad->m_akVertices.push_back(vec4(1, -1, 0, 1));
+	m_pkScreenQuad->m_akColor.push_back(vec4(1));
+
+	m_pkScreenQuad->m_akUVs.push_back(vec2(0, 0));
+	m_pkScreenQuad->m_akUVs.push_back(vec2(1, 0));
+	m_pkScreenQuad->m_akUVs.push_back(vec2(0, 1));
+	//m_pkScreenQuad->m_akUVs.push_back(vec2(0, 1));
+	//m_pkScreenQuad->m_akUVs.push_back(vec2(1, 0));
+	m_pkScreenQuad->m_akUVs.push_back(vec2(1, 1));
+
+
+	m_pkScreenQuad->m_aiIndices.push_back(0); m_pkScreenQuad->m_aiIndices.push_back(1); m_pkScreenQuad->m_aiIndices.push_back(2);
+	m_pkScreenQuad->m_aiIndices.push_back(2); m_pkScreenQuad->m_aiIndices.push_back(1); m_pkScreenQuad->m_aiIndices.push_back(3);
+
+	m_pkScreenQuad->LoadBuffersOnGraphicsCard();
+
+	//for testing
+	glGenFramebuffers(1, &framebuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	glViewport(0, 0, m_window->getSize().x, m_window->getSize().y);
+
+	screentexture.Initialise();
+	screentexture.InitialiseStorage(m_window->getSize().x, m_window->getSize().y, 1, GL_RGBA32F);
+	/*depthtexture.Initialise();
+	depthtexture.InitialiseStorage(m_window->getSize().x, m_window->getSize().y, 1, GL_DEPTH_COMPONENT32);*/
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,	screentexture, 0);
+	//glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthtexture, 0);
+
+	glGenRenderbuffers(1, &depthbuffer);
+	glBindRenderbuffer(GL_RENDERBUFFER, depthbuffer);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, m_window->getSize().x,
+		m_window->getSize().y);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+		GL_RENDERBUFFER, depthbuffer);
 }
 
 void Renderer::Terminate()
 {
 	TerminateDefaultState();
+
+
 }
 
 void Renderer::TerminateDefaultState()
 {
+	glDeleteRenderbuffers(1, &depthbuffer);
+	//depthtexture.Delete();
+	screentexture.Delete();
+	glDeleteFramebuffers(1, &framebuffer);
+	MeshManager::Instance()->Destroy(m_pkScreenQuad);
 	MeshManager::Instance()->Destroy(m_pkDefaultMesh);
+	MaterialManager::Instance()->Destroy(m_pkBlitShader);
+	MaterialManager::Instance()->Destroy(m_pkLineShaderMaterial);	
 	MaterialManager::Instance()->Destroy(m_pkDefaultMaterial);
+	
 }
 
 void Renderer::Update()
@@ -67,7 +133,13 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 	//init the state the default state
 	ApplyDefaultState();
 
-	
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	auto sz = m_window->getSize();
+	glViewport(0, 0, sz.x, sz.y);
+	glDrawBuffer(GL_COLOR_ATTACHMENT0);
+
 	//draw
 	static const GLfloat one = 1.0f;
 
@@ -88,17 +160,6 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 
 		//draw call
 		glDrawElements(GL_TRIANGLES, kVisibleObjectsList[i].m_pkMeshRenderer->m_pkMesh->m_aiIndices.size(), GL_UNSIGNED_INT, 0);
-
-		/*vec4 objectWorldPos = kVisibleObjectsList[i].m_pkTransform->GetWorldspacePosition();
-		vec4 cameraWorldPos = kCamera.m_kTransform.GetWorldspacePosition();
-
-		vec4 direction = objectWorldPos - cameraWorldPos;
-		Line l(vec3(cameraWorldPos[0], cameraWorldPos[1], cameraWorldPos[2]), vec3(direction[0], direction[1], direction[2]));
-
-		ApplyDefaultState();
-		//set modelview and proj matrix
-		glUniformMatrix4fv(0, 1, GL_FALSE, mat4::identity());
-		l.Draw(20);*/
 	}
 
 
@@ -117,6 +178,17 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 	direction = objectWorldPos - cameraWorldPos;
 	Line l2(cameraWorldPos, direction);
 	l2.Draw(20, kCamera);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glClearBufferfv(GL_COLOR, 0, vec4(1,0,0,1));
+	glClearBufferfv(GL_DEPTH, 0, &one);
+	//glDrawBuffer(GL_COLOR_ATTACHMENT0);
+	glViewport(0, 0, sz.x, sz.y);
+	m_pkBlitShader->Use();
+	glDisable(GL_DEPTH_TEST);
+	glBindTexture(GL_TEXTURE_2D, screentexture);
+	m_pkScreenQuad->BindForDrawing();
+	glDrawElements(GL_TRIANGLES, m_pkScreenQuad->m_aiIndices.size(), GL_UNSIGNED_INT, 0);
 
 	//Render ImGUI
 	ImGui::Render();
@@ -163,6 +235,24 @@ void Renderer::ApplyGameObjectRenderData(GameObjectRenderData & data)
 			m_auiRenderingState[MESH] = data.m_pkMeshRenderer->m_pkMesh->m_uiMeshID;
 		}
 	}
+}
+
+void Renderer::OnResize(unsigned int width, unsigned int height)
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	screentexture.InitialiseStorage(width, height, 1, GL_RGBA32F);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, screentexture, 0);
+
+	//resize the render buffer
+	glDeleteRenderbuffers(1, &depthbuffer);
+	glGenRenderbuffers(1, &depthbuffer);
+	glBindRenderbuffer(GL_RENDERBUFFER, depthbuffer);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width,
+		height);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+		GL_RENDERBUFFER, depthbuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 }
 
 void Renderer::ApplyGraphicsSettings()

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cereal>
+	<MaterialData>
+		<m_kShaderFilename>media/shaders/BlitShader.shader</m_kShaderFilename>
+	</MaterialData>
+</cereal>

@@ -89,6 +89,8 @@ public:
 	void ApplyDefaultState();
 	void ApplyGameObjectRenderData(GameObjectRenderData& data);
 
+	void OnResize(unsigned int width, unsigned int height);
+
 	void ApplyGraphicsSettings();
 
 	void GraphicsSettings();
@@ -110,9 +112,17 @@ private:
 
 	//Default rendering state 
 	Mesh* m_pkDefaultMesh;
+	Mesh* m_pkScreenQuad;
 	Material* m_pkDefaultMaterial;
 
 	Material* m_pkLineShaderMaterial;
+	Material* m_pkBlitShader;
+
+	GLuint framebuffer;
+	GLuint depthbuffer;
+	OGLTexture2D screentexture;
+	OGLTexture2D depthtexture;
+
 
 	//Projection block index
 	GLuint m_hiProjectionDataIndex;

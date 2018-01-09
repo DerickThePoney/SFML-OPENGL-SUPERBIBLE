@@ -84,6 +84,7 @@ void GameObjectApplication::OnResize(unsigned int width, unsigned int height)
 {
 	Application::OnResize(width, height);
 	m_kScene.OnResize(width, height);
+	m_kRenderer.OnResize(width, height);
 }
 
 void GameObjectApplication::LoadAndCompileProgram()
