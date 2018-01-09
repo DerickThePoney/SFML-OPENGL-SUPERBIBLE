@@ -135,7 +135,7 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 
 
 	glBindTexture(GL_TEXTURE_2D, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer);
 	auto sz = m_window->getSize();
 	glViewport(0, 0, sz.x, sz.y);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0);
@@ -179,16 +179,28 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 	Line l2(cameraWorldPos, direction);
 	l2.Draw(20, kCamera);
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glClearBufferfv(GL_COLOR, 0, vec4(1,0,0,1));
-	glClearBufferfv(GL_DEPTH, 0, &one);
-	//glDrawBuffer(GL_COLOR_ATTACHMENT0);
-	glViewport(0, 0, sz.x, sz.y);
-	m_pkBlitShader->Use();
-	//glDisable(GL_DEPTH_TEST);
-	glBindTexture(GL_TEXTURE_2D, screentexture);
-	m_pkScreenQuad->BindForDrawing();
-	glDrawElements(GL_TRIANGLES, m_pkScreenQuad->m_aiIndices.size(), GL_UNSIGNED_INT, 0);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	
+	if (m_kGlobalRendererSettings.bBlit)
+	{
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer);
+		glBlitFramebuffer(0, 0, sz.x, sz.y, 0, 0, sz.x, sz.y, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+	}
+	else
+	{
+		glClearBufferfv(GL_COLOR, 0, vec4(1,0,0,1));
+		glClearBufferfv(GL_DEPTH, 0, &one);
+		//glDrawBuffer(GL_COLOR_ATTACHMENT0);
+		glViewport(0, 0, sz.x, sz.y);
+		m_pkBlitShader->Use();
+		//glDisable(GL_DEPTH_TEST);
+		glBindTexture(GL_TEXTURE_2D, screentexture);
+		m_pkScreenQuad->BindForDrawing();
+		glDrawElements(GL_TRIANGLES, m_pkScreenQuad->m_aiIndices.size(), GL_UNSIGNED_INT, 0);
+	}
+
+	
 
 	//Render ImGUI
 	ImGui::Render();
@@ -320,6 +332,8 @@ void Renderer::GraphicsSettings()
 	if(ImGui::ColorEdit4("Clear color", m_kGlobalRendererSettings.kClearColor.GetData())) modif = true;
 
 	if(ImGui::Checkbox("Depth testing", &m_kGlobalRendererSettings.bDepthTesting)) modif = true;
+
+	ImGui::Checkbox("Blit ", &m_kGlobalRendererSettings.bBlit);
 
 	//bool cullFaces = glIsEnabled(GL_CULL_FACE);
 	if (ImGui::Checkbox("Faces culling", &m_kGlobalRendererSettings.bCullFaces)) modif = true;
