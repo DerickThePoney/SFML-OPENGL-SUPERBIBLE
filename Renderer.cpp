@@ -166,6 +166,7 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 	//draw a line onto the screen
 	m_pkLineShaderMaterial->Use();
 	m_auiRenderingState[MATERIAL] = m_pkLineShaderMaterial->m_uiMaterialID;
+	kCamera.LoadProjectionOnGraphics(0);
 
 	vec4 objectWorldPos = kVisibleObjectsList[1].m_pkTransform->GetWorldspacePosition();
 	vec4 cameraWorldPos = kVisibleObjectsList[0].m_pkTransform->GetWorldspacePosition();
@@ -194,6 +195,7 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 		//glDrawBuffer(GL_COLOR_ATTACHMENT0);
 		glViewport(0, 0, sz.x, sz.y);
 		m_pkBlitShader->Use();
+		m_auiRenderingState[MATERIAL] = m_pkBlitShader->m_uiMaterialID;
 		//glDisable(GL_DEPTH_TEST);
 		glBindTexture(GL_TEXTURE_2D, screentexture);
 		m_pkScreenQuad->BindForDrawing();

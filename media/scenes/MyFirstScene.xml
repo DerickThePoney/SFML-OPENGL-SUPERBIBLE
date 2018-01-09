@@ -5,8 +5,8 @@
 			<value0>
 				<m_kLocalPosition>
 					<value0>0</value0>
-					<value1>0</value1>
-					<value2>0</value2>
+					<value1>5</value1>
+					<value2>20</value2>
 				</m_kLocalPosition>
 				<m_kScale>
 					<value0>1</value0>
@@ -32,7 +32,7 @@
 				<m_kLocalPosition>
 					<value0>0</value0>
 					<value1>0</value1>
-					<value2>-20</value2>
+					<value2>0</value2>
 				</m_kLocalPosition>
 				<m_kScale>
 					<value0>1</value0>

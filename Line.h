@@ -29,10 +29,10 @@ public:
 
 		mat4 lookAt = camera.GetLookAt();
 		mat4 prj = camera.GetProjection();
-		vec4 start = lookAt * m_kOrigin;
+		vec4 start = m_kOrigin;
 		//start = prj * start;
 		//start /= start[3];
-		vec4 end = lookAt * (m_kOrigin + m_kDirection);
+		vec4 end = m_kOrigin + m_kDirection;
 		//end = prj * end;
 		//end /= end[3];
 		//end /= end[3];
