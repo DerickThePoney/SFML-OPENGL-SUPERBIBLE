@@ -85,17 +85,17 @@ void Renderer::InitDefaultState()
 
 	screentexture.Initialise();
 	screentexture.InitialiseStorage(m_window->getSize().x, m_window->getSize().y, 1, GL_RGBA32F);
-	/*depthtexture.Initialise();
-	depthtexture.InitialiseStorage(m_window->getSize().x, m_window->getSize().y, 1, GL_DEPTH_COMPONENT32);*/
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,	screentexture, 0);
-	//glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthtexture, 0);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, screentexture, 0);
+	depthtexture.Initialise();
+	depthtexture.InitialiseStorage(m_window->getSize().x, m_window->getSize().y, 1, GL_DEPTH_COMPONENT32);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthtexture, 0);
 
-	glGenRenderbuffers(1, &depthbuffer);
+	/*glGenRenderbuffers(1, &depthbuffer);
 	glBindRenderbuffer(GL_RENDERBUFFER, depthbuffer);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, m_window->getSize().x,
 		m_window->getSize().y);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-		GL_RENDERBUFFER, depthbuffer);
+		GL_RENDERBUFFER, depthbuffer);*/
 }
 
 void Renderer::Terminate()
@@ -107,8 +107,8 @@ void Renderer::Terminate()
 
 void Renderer::TerminateDefaultState()
 {
-	glDeleteRenderbuffers(1, &depthbuffer);
-	//depthtexture.Delete();
+	//glDeleteRenderbuffers(1, &depthbuffer);
+	depthtexture.Delete();
 	screentexture.Delete();
 	glDeleteFramebuffers(1, &framebuffer);
 	MeshManager::Instance()->Destroy(m_pkScreenQuad);
@@ -185,7 +185,7 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 	//glDrawBuffer(GL_COLOR_ATTACHMENT0);
 	glViewport(0, 0, sz.x, sz.y);
 	m_pkBlitShader->Use();
-	glDisable(GL_DEPTH_TEST);
+	//glDisable(GL_DEPTH_TEST);
 	glBindTexture(GL_TEXTURE_2D, screentexture);
 	m_pkScreenQuad->BindForDrawing();
 	glDrawElements(GL_TRIANGLES, m_pkScreenQuad->m_aiIndices.size(), GL_UNSIGNED_INT, 0);
@@ -243,14 +243,17 @@ void Renderer::OnResize(unsigned int width, unsigned int height)
 	screentexture.InitialiseStorage(width, height, 1, GL_RGBA32F);
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, screentexture, 0);
 
+	depthtexture.InitialiseStorage(width, height, 1, GL_DEPTH_COMPONENT32);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthtexture, 0);
+
 	//resize the render buffer
-	glDeleteRenderbuffers(1, &depthbuffer);
+	/*glDeleteRenderbuffers(1, &depthbuffer);
 	glGenRenderbuffers(1, &depthbuffer);
 	glBindRenderbuffer(GL_RENDERBUFFER, depthbuffer);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width,
 		height);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-		GL_RENDERBUFFER, depthbuffer);
+		GL_RENDERBUFFER, depthbuffer);*/
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 }
