@@ -167,6 +167,19 @@ void Renderer::ApplyGameObjectRenderData(GameObjectRenderData & data)
 
 void Renderer::ApplyGraphicsSettings()
 {
+	//depth testing
+	if (m_kGlobalRendererSettings.bDepthTesting)
+	{
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LEQUAL);
+	}
+	else
+	{
+		glDisable(GL_DEPTH_TEST);
+	}
+
+
+	//faces culling
 	(m_kGlobalRendererSettings.bCullFaces) ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
 	
 	if (m_kGlobalRendererSettings.bCullFaces)
@@ -211,7 +224,9 @@ void Renderer::GraphicsSettings()
 	}
 
 	
-	ImGui::ColorEdit4("Clear color", m_kGlobalRendererSettings.kClearColor.GetData());
+	if(ImGui::ColorEdit4("Clear color", m_kGlobalRendererSettings.kClearColor.GetData())) modif = true;
+
+	if(ImGui::Checkbox("Depth testing", &m_kGlobalRendererSettings.bDepthTesting)) modif = true;
 
 	//bool cullFaces = glIsEnabled(GL_CULL_FACE);
 	if (ImGui::Checkbox("Faces culling", &m_kGlobalRendererSettings.bCullFaces)) modif = true;

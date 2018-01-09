@@ -41,7 +41,22 @@ void Transform::Inspect()
 	if (ImGui::CollapsingHeader("Transform"))
 	{
 		if (ImGui::InputFloat3("Local position: ", m_kLocalPosition.GetData())) m_bUpToDate = false;
-		if (ImGui::InputFloat4("Local orientation: ", m_kLocalOrientation.GetData())) m_bUpToDate = false;
+
+		float eulerAngles[3];
+		vmath::QuaternionToEulerAngles(m_kLocalOrientation, eulerAngles[0], eulerAngles[1], eulerAngles[2]);
+		eulerAngles[0] = vmath::degrees(eulerAngles[0]);
+		eulerAngles[1] = vmath::degrees(eulerAngles[1]);
+		eulerAngles[2] = vmath::degrees(eulerAngles[2]);
+
+		if (ImGui::InputFloat3("Local orientation: ", eulerAngles))
+		{
+			eulerAngles[0] = vmath::radians(eulerAngles[0]);
+			eulerAngles[1] = vmath::radians(eulerAngles[1]);
+			eulerAngles[2] = vmath::radians(eulerAngles[2]);
+			m_kLocalOrientation = vmath::QuaternionFromEulerAngles(eulerAngles[0], eulerAngles[1], eulerAngles[2]);
+			m_bUpToDate = false;
+		}
+
 		if (ImGui::InputFloat3("Local Scale: ", m_kScale.GetData())) m_bUpToDate = false;
 
 		ImGui::Checkbox("Show world space matrix", &showWorldSpace);

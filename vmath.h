@@ -1587,6 +1587,44 @@ static inline quaternion FromAngleAxis(float angle, vec3 axis)
 	return vmath::normalize(q);
 }
 
+static inline quaternion QuaternionFromEulerAngles(float pitch, float roll, float yaw)
+{
+	quaternion res;
+	// Abbreviations for the various angular functions
+	float cy = cos(yaw * 0.5f);
+	float sy = sin(yaw * 0.5f);
+	float cr = cos(pitch * 0.5f);
+	float sr = sin(pitch * 0.5f);
+	float cp = cos(roll * 0.5f);
+	float sp = sin(roll * 0.5f);
+
+	res.w = cy * cr * cp + sy * sr * sp;
+	res.x = cy * sr * cp - sy * cr * sp;
+	res.y = cy * cr * sp + sy * sr * cp;
+	res.z = sy * cr * cp - cy * sr * sp;
+	return res;
+}
+
+static inline void QuaternionToEulerAngles(const quaternion& q, float &pitch, float &roll, float &yaw)
+{
+	// roll (x-axis rotation)
+	float sinr = +2.0f * (q.w * q.x + q.y * q.z);
+	float cosr = +1.0f - 2.0f * (q.x * q.x + q.y * q.y);
+	pitch = atan2(sinr, cosr);
+
+	// pitch (y-axis rotation)
+	float sinp = +2.0f * (q.w * q.y - q.z * q.x);
+	if (fabs(sinp) >= 1)
+		roll = copysign((float)M_PI / 2, sinp); // use 90 degrees if out of range
+	else
+		roll = asin(sinp);
+
+	// yaw (z-axis rotation)
+	float siny = +2.0f * (q.w * q.z + q.x * q.y);
+	float cosy = +1.0f - 2.0f * (q.y * q.y + q.z * q.z);
+	yaw = atan2(siny, cosy);
+}
+
 };
 
 #endif /* __VMATH_H__ */
