@@ -77,7 +77,7 @@ void Application::MainLoop()
 	
 	// create the window
 	m_window.create(sf::VideoMode(800, 600), "OpenGL", sf::Style::Default, context);
-	m_window.setVerticalSyncEnabled(true);
+	m_window.setVerticalSyncEnabled(false);
 
 	// load resources, initialize the OpenGL states, ...
 	GLenum err = glewInit();
@@ -120,13 +120,16 @@ void Application::MainLoop()
 		static int values_offset = 0;
 		static int frameNb = 0;
 		static float average = 0;
+		static float maxValue = 0;
 		ImGui::Begin("Time Information: ", &tmp);
 		
-		float tmpF = 1.0f / TIME_SEC_FLOAT(elapsedFrame);
+		float tmpF = TIME_MSEC_FLOAT(elapsedFrame);
+
+		if (tmpF > maxValue) maxValue = tmpF;
 		
 		int multiplier = vmath::min(frameNb, NbFramesSaved);
 		int divider = vmath::min(++frameNb, NbFramesSaved);
-		if (TIME_SEC_FLOAT(elapsedFrame) != 0 && !isinf(frameTimeValues[values_offset]))
+		if (TIME_MSEC_FLOAT(elapsedFrame) != 0 && !isinf(frameTimeValues[values_offset]))
 		{
 			average = average * (multiplier) - frameTimeValues[values_offset] + tmpF;
 
@@ -138,8 +141,8 @@ void Application::MainLoop()
 
 		std::stringstream sstr; sstr << "avg " << average;
 
-		ImGui::InputFloat("fps", &tmpF);
-		ImGui::PlotLines("Frame time", frameTimeValues, NbFramesSaved, values_offset, sstr.str().c_str(), 0, 120, ImVec2(0, 80));// , "", 0, 1.0f, ImVec2(0, 80));
+		ImGui::InputFloat("frame time", &tmpF);
+		ImGui::PlotLines("Frame time", frameTimeValues, NbFramesSaved, values_offset, sstr.str().c_str(), 0, vmath::min(average*2, maxValue), ImVec2(0, 80));// , "", 0, 1.0f, ImVec2(0, 80));
 
 		ImGui::End();
 

@@ -86,16 +86,16 @@ void Renderer::InitDefaultState()
 	screentexture.Initialise();
 	screentexture.InitialiseStorage(m_window->getSize().x, m_window->getSize().y, 1, GL_RGBA32F);
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, screentexture, 0);
-	depthtexture.Initialise();
-	depthtexture.InitialiseStorage(m_window->getSize().x, m_window->getSize().y, 1, GL_DEPTH_COMPONENT32);
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthtexture, 0);
+	//depthtexture.Initialise();
+	//depthtexture.InitialiseStorage(m_window->getSize().x, m_window->getSize().y, 1, GL_DEPTH_COMPONENT32);
+	//glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthtexture, 0);
 
-	/*glGenRenderbuffers(1, &depthbuffer);
+	glGenRenderbuffers(1, &depthbuffer);
 	glBindRenderbuffer(GL_RENDERBUFFER, depthbuffer);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, m_window->getSize().x,
 		m_window->getSize().y);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-		GL_RENDERBUFFER, depthbuffer);*/
+		GL_RENDERBUFFER, depthbuffer);
 }
 
 void Renderer::Terminate()
@@ -144,8 +144,12 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 	static const GLfloat one = 1.0f;
 
 	//clear screen
-	glClearBufferfv(GL_COLOR, 0, m_kGlobalRendererSettings.kClearColor);
-	glClearBufferfv(GL_DEPTH, 0, &one);
+	glClearColor(m_kGlobalRendererSettings.kClearColor[0], m_kGlobalRendererSettings.kClearColor[1], 
+		m_kGlobalRendererSettings.kClearColor[2], m_kGlobalRendererSettings.kClearColor[3]);
+	glClearDepth(1);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//glClearBufferfv(GL_COLOR, 0, m_kGlobalRendererSettings.kClearColor);
+	//glClearBufferfv(GL_DEPTH, 0, &one);
 	
 	// Load the camera projections
 	kCamera.LoadProjectionOnGraphics(0);
@@ -190,8 +194,12 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 	}
 	else
 	{
-		glClearBufferfv(GL_COLOR, 0, vec4(1,0,0,1));
-		glClearBufferfv(GL_DEPTH, 0, &one);
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_CULL_FACE);
+
+		glClear(GL_COLOR_BUFFER_BIT);
+		//glClearBufferfv(GL_COLOR, 0, vec4(1,0,0,1));
+		//glClearBufferfv(GL_DEPTH, 0, &one);
 		//glDrawBuffer(GL_COLOR_ATTACHMENT0);
 		glViewport(0, 0, sz.x, sz.y);
 		m_pkBlitShader->Use();
@@ -257,17 +265,17 @@ void Renderer::OnResize(unsigned int width, unsigned int height)
 	screentexture.InitialiseStorage(width, height, 1, GL_RGBA32F);
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, screentexture, 0);
 
-	depthtexture.InitialiseStorage(width, height, 1, GL_DEPTH_COMPONENT32);
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthtexture, 0);
+	//depthtexture.InitialiseStorage(width, height, 1, GL_DEPTH_COMPONENT32);
+	//glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthtexture, 0);
 
 	//resize the render buffer
-	/*glDeleteRenderbuffers(1, &depthbuffer);
+	glDeleteRenderbuffers(1, &depthbuffer);
 	glGenRenderbuffers(1, &depthbuffer);
 	glBindRenderbuffer(GL_RENDERBUFFER, depthbuffer);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width,
 		height);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-		GL_RENDERBUFFER, depthbuffer);*/
+		GL_RENDERBUFFER, depthbuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 }
@@ -329,6 +337,8 @@ void Renderer::GraphicsSettings()
 	{
 		LoadSettings();
 	}
+
+	if (ImGui::Checkbox("VSync", &m_kGlobalRendererSettings.m_bVSync)) SetVerticalSynchronisation();
 
 	
 	if(ImGui::ColorEdit4("Clear color", m_kGlobalRendererSettings.kClearColor.GetData())) modif = true;
@@ -392,6 +402,11 @@ void Renderer::GraphicsSettings()
 	if (modif) ApplyGraphicsSettings();
 }
 
+void Renderer::SetVerticalSynchronisation()
+{
+	m_window->setVerticalSyncEnabled(m_kGlobalRendererSettings.m_bVSync);
+}
+
 void Renderer::SaveSettings()
 {
 	std::ofstream ofstr("settings/GraphicsSettings.xml");
@@ -420,4 +435,6 @@ void Renderer::LoadSettings()
 	{
 		std::cout << e.what() << std::endl;
 	}
+
+	SetVerticalSynchronisation();
 }

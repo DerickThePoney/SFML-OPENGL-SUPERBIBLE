@@ -27,6 +27,7 @@ enum RENDER_STATE
 
 struct RendererGlobalSettings
 {
+	bool m_bVSync;
 	vec4 kClearColor;
 	bool bDepthTesting;
 	bool bCullFaces;
@@ -37,13 +38,14 @@ struct RendererGlobalSettings
 	bool bBlit;
 
 	RendererGlobalSettings()
-		: kClearColor(vec4(0,0,0,1)), bDepthTesting(true), bCullFaces(true), bIsCCW(true), bCullBack(true), bCullFront(false), bBlit(false)
+		: m_bVSync(true), kClearColor(vec4(0,0,0,1)), bDepthTesting(true), bCullFaces(true), bIsCCW(true), bCullBack(true), bCullFront(false), bBlit(false)
 	{}
 
 	template<class Archive>
 	void save(Archive & archive) const
 	{
 		archive(
+			CEREAL_NVP(m_bVSync),
 			CEREAL_NVP(bCullFaces),
 			CEREAL_NVP(bIsCCW),
 			CEREAL_NVP(bCullBack),
@@ -58,6 +60,7 @@ struct RendererGlobalSettings
 	template<class Archive>
 	void load(Archive & archive)
 	{
+		DEARCHIVE_WITH_DEFAULT(m_bVSync, true);
 		DEARCHIVE_WITH_DEFAULT(bCullFaces, true);
 		DEARCHIVE_WITH_DEFAULT(bIsCCW, true);
 		DEARCHIVE_WITH_DEFAULT(bCullBack, true);
@@ -101,6 +104,7 @@ public:
 	const Mesh& GetDefaultMesh() const { return *m_pkDefaultMesh; }
 
 private:
+	void SetVerticalSynchronisation();
 	void SaveSettings();
 	void LoadSettings();
 

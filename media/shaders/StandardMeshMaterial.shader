@@ -77,7 +77,7 @@ void main(void)
 	
 	//diffuse and specular quantity
 	vec3 colorTexture = diffuse_albedo;//vec3(1.0,1.0,1.0);//texture(tex_object, fs_in.UV).rgb;  
-	vec3 diffuse = max(dot(N,L), 0.0) * colorTexture;
+	vec3 diffuse = max(dot(N,L), 0.2) * colorTexture;
 	vec3 specular = pow(max(dot(R,V),0.0), specular_power) * specular_albedo;
 	
 	vec3 light = clamp(ambiant_light + diffuse + specular,0,1);

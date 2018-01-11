@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <cereal>
 	<value0>
+		<m_bVSync>false</m_bVSync>
 		<bCullFaces>true</bCullFaces>
 		<bIsCCW>true</bIsCCW>
 		<bCullBack>true</bCullBack>
@@ -13,6 +14,7 @@
 			<value3>1</value3>
 		</kClearColor>
 		<bDepthTesting>true</bDepthTesting>
+		<bBlit>false</bBlit>
 	</value0>
 </cereal>
 

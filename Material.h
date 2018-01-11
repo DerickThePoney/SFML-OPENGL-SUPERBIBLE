@@ -9,18 +9,38 @@
 struct MaterialData
 {
 	std::string m_kShaderFilename;
-
+	bool m_bBlendColors;
+	bool m_bBlendSeparate;
+	GLenum m_eSRCBlend;
+	GLenum m_eDSTBlend;
+	GLenum m_eSRCBlendAlpha;
+	GLenum m_eDSTBlendAlpha;
+	GLenum m_eBlendFunc;
 
 	template<class Archive>
 	void save(Archive & archive) const
 	{
 		archive(CEREAL_NVP(m_kShaderFilename));
+		archive(CEREAL_NVP(m_bBlendColors),
+			CEREAL_NVP(m_bBlendSeparate),
+			CEREAL_NVP(m_eSRCBlend),
+			CEREAL_NVP(m_eDSTBlend),
+			CEREAL_NVP(m_eSRCBlendAlpha),
+			CEREAL_NVP(m_eDSTBlendAlpha),
+			CEREAL_NVP(m_eBlendFunc));
 	}
 
 	template<class Archive>
 	void load(Archive& archive)
 	{
 		archive(CEREAL_NVP(m_kShaderFilename));
+		DEARCHIVE_WITH_DEFAULT(m_bBlendColors, false);
+		DEARCHIVE_WITH_DEFAULT(m_bBlendSeparate, false);
+		DEARCHIVE_WITH_DEFAULT(m_eSRCBlend, GL_ZERO);
+		DEARCHIVE_WITH_DEFAULT(m_eDSTBlend, GL_ONE);
+		DEARCHIVE_WITH_DEFAULT(m_eSRCBlendAlpha, GL_ZERO);
+		DEARCHIVE_WITH_DEFAULT(m_eDSTBlendAlpha, GL_ONE);
+		DEARCHIVE_WITH_DEFAULT(m_eBlendFunc, GL_FUNC_ADD);
 	}
 };
 
@@ -54,10 +74,14 @@ public:
 	template<class Archive>
 	void load(Archive& archive)
 	{
-		archive(CEREAL_NVP(m_kFilename));
+		DEARCHIVE_WITH_DEFAULT(m_kFilename, "");
 
 		if(m_kFilename != "") InitMaterialFromRessource(m_kFilename);		
 	}
+
+private:
+	I32 BlendFuncToIndex(GLenum blendFunc);
+	GLenum IndexToBlendFunc(I32 blendFunc);
 
 public:
 
