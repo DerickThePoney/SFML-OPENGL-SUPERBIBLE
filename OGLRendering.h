@@ -5,3 +5,5 @@
 #include "OGLVertexArray.h"
 #include "OGLBuffer.h"
 #include "OGLTexture2D.h"
+#include "OGLRenderBuffer.h"
+#include "OGLFrameBuffer.h"

@@ -9,6 +9,7 @@ OGLFrameBuffer::OGLFrameBuffer()
 
 OGLFrameBuffer::~OGLFrameBuffer()
 {
+	Delete();
 }
 
 void OGLFrameBuffer::Init()
@@ -21,12 +22,22 @@ void OGLFrameBuffer::Delete()
 	glDeleteFramebuffers(1, &m_hiFrameBuffer);
 }
 
-void OGLFrameBuffer::Bind()
+void OGLFrameBuffer::Bind(GLenum eTarget)
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, m_hiFrameBuffer);
+	glBindFramebuffer(eTarget, m_hiFrameBuffer);
 }
 
-void OGLFrameBuffer::UnBind()
+void OGLFrameBuffer::UnBind(GLenum eTarget)
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindFramebuffer(eTarget, 0);
+}
+
+void OGLFrameBuffer::AddTextureAttachement(GLenum eTarget, const OGLTexture2D & kTexture, GLenum eBuffer, int iLevel)
+{
+	glFramebufferTexture(eTarget, eBuffer, kTexture, iLevel);
+}
+
+void OGLFrameBuffer::AddRenderBufferAttachement(GLenum eTarget, OGLRenderBuffer & kRenderBuffer, GLenum eBuffer)
+{
+	glFramebufferRenderbuffer(eTarget, eBuffer,	GL_RENDERBUFFER, kRenderBuffer);
 }

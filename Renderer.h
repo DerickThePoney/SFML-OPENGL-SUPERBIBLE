@@ -125,10 +125,11 @@ private:
 	Material* m_pkLineShaderMaterial;
 	Material* m_pkBlitShader;
 
-	GLuint framebuffer;
-	GLuint depthbuffer;
-	OGLTexture2D screentexture;
-	OGLTexture2D depthtexture;
+
+	OGLFrameBuffer m_kFrameBuffer;
+	OGLRenderBuffer m_kDepthBuffer;
+	OGLTexture2D m_kScreenTexture;
+	OGLTexture2D m_kDepthTexture;
 
 
 	//Projection block index

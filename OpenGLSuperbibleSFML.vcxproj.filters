@@ -195,6 +195,9 @@
     <ClInclude Include="DebugRenderingCommands.h">
       <Filter>Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="OGLRenderBuffer.h">
+      <Filter>Rendering\OGLImplementations\OGLObjects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -298,6 +301,9 @@
     </ClCompile>
     <ClCompile Include="DebugRenderingCommands.cpp">
       <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="OGLRenderBuffer.cpp">
+      <Filter>Rendering\OGLImplementations\OGLObjects</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

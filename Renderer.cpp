@@ -79,23 +79,21 @@ void Renderer::InitDefaultState()
 	m_pkScreenQuad->LoadBuffersOnGraphicsCard();
 
 	//for testing
-	glGenFramebuffers(1, &framebuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	m_kFrameBuffer.Init();
+	m_kFrameBuffer.Bind(GL_FRAMEBUFFER);
 	glViewport(0, 0, m_window->getSize().x, m_window->getSize().y);
 
-	screentexture.Initialise();
-	screentexture.InitialiseStorage(m_window->getSize().x, m_window->getSize().y, 1, GL_RGBA32F);
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, screentexture, 0);
-	//depthtexture.Initialise();
-	//depthtexture.InitialiseStorage(m_window->getSize().x, m_window->getSize().y, 1, GL_DEPTH_COMPONENT32);
-	//glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthtexture, 0);
+	m_kScreenTexture.Initialise();
+	m_kScreenTexture.InitialiseStorage(m_window->getSize().x, m_window->getSize().y, 1, GL_RGBA32F);
+	m_kFrameBuffer.AddTextureAttachement(GL_FRAMEBUFFER, m_kScreenTexture, GL_COLOR_ATTACHMENT0, 0);
+	
+	m_kDepthTexture.Initialise();
+	m_kDepthTexture.InitialiseStorage(m_window->getSize().x, m_window->getSize().y, 1, GL_DEPTH_COMPONENT32);
+	m_kFrameBuffer.AddTextureAttachement(GL_FRAMEBUFFER, m_kDepthTexture, GL_DEPTH_ATTACHMENT, 0);
 
-	glGenRenderbuffers(1, &depthbuffer);
-	glBindRenderbuffer(GL_RENDERBUFFER, depthbuffer);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, m_window->getSize().x,
+	m_kDepthBuffer.Init(GL_DEPTH_COMPONENT, m_window->getSize().x,
 		m_window->getSize().y);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-		GL_RENDERBUFFER, depthbuffer);
+	m_kFrameBuffer.AddRenderBufferAttachement(GL_FRAMEBUFFER, m_kDepthBuffer, GL_RENDERBUFFER);
 }
 
 void Renderer::Terminate()
@@ -105,10 +103,13 @@ void Renderer::Terminate()
 
 void Renderer::TerminateDefaultState()
 {
-	//glDeleteRenderbuffers(1, &depthbuffer);
-	depthtexture.Delete();
-	screentexture.Delete();
-	glDeleteFramebuffers(1, &framebuffer);
+	//Off screen rendering
+	m_kDepthBuffer.Delete();
+	m_kDepthTexture.Delete();
+	m_kScreenTexture.Delete();
+	m_kFrameBuffer.Delete();
+
+	//globals clean up
 	MeshManager::Instance()->Destroy(m_pkScreenQuad);
 	MeshManager::Instance()->Destroy(m_pkDefaultMesh);
 	MaterialManager::Instance()->Destroy(m_pkBlitShader);
@@ -133,7 +134,7 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 
 
 	glBindTexture(GL_TEXTURE_2D, 0);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer);
+	m_kFrameBuffer.Bind(GL_DRAW_FRAMEBUFFER);
 	auto sz = m_window->getSize();
 	glViewport(0, 0, sz.x, sz.y);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0);
@@ -182,13 +183,13 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 	Line l2(cameraWorldPos, direction);
 	l2.Draw(20, kCamera);
 
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	m_kFrameBuffer.UnBind(GL_DRAW_FRAMEBUFFER);
 	
 	if (m_kGlobalRendererSettings.bBlit)
 	{
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer);
+		m_kFrameBuffer.Bind(GL_READ_FRAMEBUFFER);
 		glBlitFramebuffer(0, 0, sz.x, sz.y, 0, 0, sz.x, sz.y, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+		m_kFrameBuffer.UnBind(GL_READ_FRAMEBUFFER);
 	}
 	else
 	{
@@ -203,7 +204,7 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 		m_pkBlitShader->Use();
 		m_auiRenderingState[MATERIAL] = m_pkBlitShader->m_uiMaterialID;
 		//glDisable(GL_DEPTH_TEST);
-		glBindTexture(GL_TEXTURE_2D, screentexture);
+		m_kScreenTexture.Bind();
 		m_pkScreenQuad->BindForDrawing();
 		glDrawElements(GL_TRIANGLES, m_pkScreenQuad->m_aiIndices.size(), GL_UNSIGNED_INT, 0);
 	}
@@ -259,22 +260,20 @@ void Renderer::ApplyGameObjectRenderData(GameObjectRenderData & data)
 
 void Renderer::OnResize(unsigned int width, unsigned int height)
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-	screentexture.InitialiseStorage(width, height, 1, GL_RGBA32F);
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, screentexture, 0);
+	m_kFrameBuffer.Bind(GL_FRAMEBUFFER);
+	
+	m_kScreenTexture.InitialiseStorage(m_window->getSize().x, m_window->getSize().y, 1, GL_RGBA32F);
+	m_kFrameBuffer.AddTextureAttachement(GL_FRAMEBUFFER, m_kScreenTexture, GL_COLOR_ATTACHMENT0, 0);
 
-	//depthtexture.InitialiseStorage(width, height, 1, GL_DEPTH_COMPONENT32);
-	//glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthtexture, 0);
+	m_kDepthTexture.InitialiseStorage(m_window->getSize().x, m_window->getSize().y, 1, GL_DEPTH_COMPONENT32);
+	m_kFrameBuffer.AddTextureAttachement(GL_FRAMEBUFFER, m_kDepthTexture, GL_DEPTH_ATTACHMENT, 0);
 
-	//resize the render buffer
-	glDeleteRenderbuffers(1, &depthbuffer);
-	glGenRenderbuffers(1, &depthbuffer);
-	glBindRenderbuffer(GL_RENDERBUFFER, depthbuffer);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width,
-		height);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-		GL_RENDERBUFFER, depthbuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	m_kDepthBuffer.Delete();
+	m_kDepthBuffer.Init(GL_DEPTH_COMPONENT, m_window->getSize().x,
+		m_window->getSize().y);
+	m_kFrameBuffer.AddRenderBufferAttachement(GL_FRAMEBUFFER, m_kDepthBuffer, GL_RENDERBUFFER);
+
+	m_kFrameBuffer.UnBind(GL_FRAMEBUFFER);
 
 }
 
