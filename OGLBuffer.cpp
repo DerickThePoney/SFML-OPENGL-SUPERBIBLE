@@ -44,10 +44,9 @@ void OGLBuffer::UpdateData(GLenum eTarget, I32 iSize, void * pData, GLbitfield e
 	glUnmapNamedBuffer(m_hiBuffer);
 #else
 	// use the standard binded version for these buffers
-	glBindBuffer(eTarget, m_hiBuffer);
-	void* ptr = glMapBuffer(eTarget, eFlags);
+	void* ptr = Map(eTarget, eFlags);
 	memcpy(ptr, pData, m_iSize);
-	glUnmapBuffer(eTarget);
+	Unmap(eTarget);
 #endif
 }
 
@@ -64,6 +63,17 @@ void OGLBuffer::Bind(GLenum eTarget)
 void OGLBuffer::BindToUniformBindingPoint(GLint iBindingIndex)
 {
 	glBindBufferBase(GL_UNIFORM_BUFFER, iBindingIndex, m_hiBuffer);
+}
+
+void * OGLBuffer::Map(GLenum eTarget, GLenum eFlags)
+{
+	Bind(eTarget);
+	return glMapBuffer(eTarget, eFlags);
+}
+
+void OGLBuffer::Unmap(GLenum eTarget)
+{
+	glUnmapBuffer(eTarget);
 }
 
 void OGLBuffer::InitFromHandle()

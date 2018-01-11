@@ -9,35 +9,29 @@ public:
 
 	~Line() 
 	{
-		glDeleteBuffers(1, &m_hiBufferData1);
-		glDeleteBuffers(1, &m_hiBufferData2);
-		glDeleteVertexArrays(1, &m_hiVao);
+		m_kVertices.Delete();
+		m_kIndices.Delete();
+		m_hkVao.Delete();
 	}
 
 	void InitDraw()
 	{
 		//create vao
-		glGenVertexArrays(1, &m_hiVao);
-		glBindVertexArray(m_hiVao);
+		m_hkVao.Init();
+		m_hkVao.Bind();
 
-		glGenBuffers(1, &m_hiBufferData1);
-		glGenBuffers(1, &m_hiBufferData2);
-
-		glBindBuffer(GL_ARRAY_BUFFER, m_hiBufferData1);
-		glBufferStorage(GL_ARRAY_BUFFER, 2 * sizeof(vec4), NULL, GL_DYNAMIC_STORAGE_BIT | GL_MAP_WRITE_BIT);
-		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, NULL);
-		glEnableVertexAttribArray(0);
-
+		m_kVertices.Init(GL_ARRAY_BUFFER, 2 * sizeof(vec4), NULL, GL_DYNAMIC_STORAGE_BIT | GL_MAP_WRITE_BIT);
+		m_hkVao.SetAttribute(0, 4, GL_FLOAT, GL_FALSE, 0, NULL);
+		
 		UI32 indices[2] = { 0,1 };
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_hiBufferData2);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, 2 * sizeof(UI32), indices, GL_STATIC_DRAW);
+		m_kIndices.Init(GL_ELEMENT_ARRAY_BUFFER, 2 * sizeof(UI32), indices, 0);
 		m_bInit = true;
 	}
 
 	void Draw(float fExtent, Camera& camera)
 	{
 		if (!m_bInit) InitDraw();
-		glBindVertexArray(m_hiVao);
+		m_hkVao.Bind();
 
 		//mat4 lookAt = camera.GetLookAt();
 		//mat4 prj = camera.GetProjection();
@@ -49,13 +43,13 @@ public:
 		//end /= end[3];
 		//end /= end[3];
 
-		//vmath::vec4 kArray[2] = { start, end };
-		
-		glBindBuffer(GL_ARRAY_BUFFER, m_hiBufferData1);
-		vec4* kArray = (vec4*) glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+		vmath::vec4 kArray[2] = { start, end };
+		m_kVertices.UpdateData(GL_ARRAY_BUFFER, 2 * sizeof(vec4), kArray, GL_WRITE_ONLY);
+		//glBindBuffer(GL_ARRAY_BUFFER, m_hiBufferData1);
+		/*vec4* kArray = (vec4*)m_kVertices.Map(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
 		kArray[0] = start;
 		kArray[1] = end;
-		glUnmapBuffer(GL_ARRAY_BUFFER);
+		m_kVertices.Unmap(GL_ARRAY_BUFFER);*/
 		//glBufferSubData(GL_ARRAY_BUFFER, 0, 2 * sizeof(vmath::vec4), kArray);
 
 		glDrawElements(GL_LINES, 2, GL_UNSIGNED_INT, 0);
@@ -68,10 +62,9 @@ public:
 	const vec4& GetDirection() const { return m_kDirection; };
 
 private:
-	GLuint m_hiVao;
-	GLuint m_hiBufferData1;
-	GLuint m_hiBufferData2;
-	GLuint m_hiProgram;
+	OGLVertexArray m_hkVao;
+	OGLBuffer m_kVertices;
+	OGLBuffer m_kIndices;
 	bool m_bInit;
 	vmath::vec4 m_kOrigin;
 	vmath::vec4 m_kDirection;

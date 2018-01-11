@@ -101,8 +101,6 @@ void Renderer::InitDefaultState()
 void Renderer::Terminate()
 {
 	TerminateDefaultState();
-
-
 }
 
 void Renderer::TerminateDefaultState()

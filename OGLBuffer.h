@@ -15,6 +15,8 @@ public:
 	//other calls
 	void Bind(GLenum eTarget);
 	void BindToUniformBindingPoint(GLint iBindingIndex);
+	void* Map(GLenum eTarget, GLenum eFlags);
+	void Unmap(GLenum eTarget);
 
 	operator GLuint() { return m_hiBuffer; }
 	const UI32& GetSize() const { return m_iSize; }
