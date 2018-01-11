@@ -81,8 +81,9 @@ void Renderer::InitDefaultState()
 	//for testing
 	m_kFrameBuffer.Init();
 	m_kFrameBuffer.Bind(GL_FRAMEBUFFER);
-	glViewport(0, 0, m_window->getSize().x, m_window->getSize().y);
+	//glViewport(0, 0, m_window->getSize().x, m_window->getSize().y);
 
+	//const I32 size = 512;
 	m_kScreenTexture.Initialise();
 	m_kScreenTexture.InitialiseStorage(m_window->getSize().x, m_window->getSize().y, 1, GL_RGBA32F);
 	m_kFrameBuffer.AddTextureAttachement(GL_FRAMEBUFFER, m_kScreenTexture, GL_COLOR_ATTACHMENT0, 0);
@@ -132,11 +133,11 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 	//init the state the default state
 	ApplyDefaultState();
 
+	auto sz = m_window->getSize();
 
 	glBindTexture(GL_TEXTURE_2D, 0);
-	m_kFrameBuffer.Bind(GL_DRAW_FRAMEBUFFER);
-	auto sz = m_window->getSize();
-	glViewport(0, 0, sz.x, sz.y);
+	m_kFrameBuffer.BindForDrawing(GL_DRAW_FRAMEBUFFER);
+	//glViewport(0, 0, sz.x, sz.y);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0);
 
 	//draw
@@ -184,6 +185,7 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 	l2.Draw(20, kCamera);
 
 	m_kFrameBuffer.UnBind(GL_DRAW_FRAMEBUFFER);
+	glViewport(0, 0, sz.x, sz.y);
 	
 	if (m_kGlobalRendererSettings.bBlit)
 	{
@@ -200,7 +202,7 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 		//glClearBufferfv(GL_COLOR, 0, vec4(1,0,0,1));
 		//glClearBufferfv(GL_DEPTH, 0, &one);
 		//glDrawBuffer(GL_COLOR_ATTACHMENT0);
-		glViewport(0, 0, sz.x, sz.y);
+		//glViewport(0, 0, sz.x, sz.y);
 		m_pkBlitShader->Use();
 		m_auiRenderingState[MATERIAL] = m_pkBlitShader->m_uiMaterialID;
 		//glDisable(GL_DEPTH_TEST);

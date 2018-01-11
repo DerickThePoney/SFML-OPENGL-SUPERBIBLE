@@ -9,6 +9,7 @@ public:
 	void Init();
 	void Delete();
 	void Bind(GLenum eTarget);
+	void BindForDrawing(GLenum eTarget);
 	void UnBind(GLenum eTarget);
 
 	void AddTextureAttachement(GLenum eTarget, const OGLTexture2D& kTexture, GLenum eBuffer, int iLevel);
@@ -17,5 +18,8 @@ public:
 	operator GLuint () { return m_hiFrameBuffer; }
 private:
 	GLuint m_hiFrameBuffer;
+
+	I32 m_iWidth;
+	I32 m_iHeight;
 };
 
