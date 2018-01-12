@@ -132,6 +132,8 @@
       <PreprocessorDefinitions>VMATH;_CRT_SECURE_NO_WARNINGS;SFML_STATIC;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>3RDPartyLibs\cereal\include;imgui;3RDPartyLibs\SFML\include;3RDPartyLibs\glew\include;%INSTALL_CEGUI%\dependencies\include;C:\Program Files (x86)\cegui\include\cegui-0</AdditionalIncludeDirectories>
       <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
