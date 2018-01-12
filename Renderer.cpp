@@ -337,6 +337,9 @@ void Renderer::GraphicsSettings()
 		LoadSettings();
 	}
 
+	ImGui::LabelText("Hardware vendor","%s", m_kRendererData.m_kHardwareVendor);
+	ImGui::LabelText("Renderer name", "%s", m_kRendererData.m_kRendererName);
+
 	if (ImGui::Checkbox("VSync", &m_kGlobalRendererSettings.m_bVSync)) SetVerticalSynchronisation();
 
 	
