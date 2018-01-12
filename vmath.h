@@ -1248,8 +1248,8 @@ static inline mat4 ortho(float left, float right, float bottom, float top, float
 {
     return mat4( vec4(2.0f / (right - left), 0.0f, 0.0f, 0.0f),
                  vec4(0.0f, 2.0f / (top - bottom), 0.0f, 0.0f),
-                 vec4(0.0f, 0.0f, 2.0f / (n - f), 0.0f),
-                 vec4((left + right) / (left - right), (bottom + top) / (bottom - top), (n + f) / (f - n), 1.0f) );
+                 vec4(0.0f, 0.0f, -2.0f / (f - n), 0.0f),
+                 vec4(-(right + left) / (right - left), -(top + bottom) / (top - bottom), -(n + f) / (f - n), 1.0f) );
 }
 
 template <typename T>

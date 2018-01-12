@@ -94,7 +94,7 @@ void Renderer::InitDefaultState()
 
 	m_kDepthBuffer.Init(GL_DEPTH_COMPONENT, m_window->getSize().x,
 		m_window->getSize().y);
-	m_kFrameBuffer.AddRenderBufferAttachement(GL_FRAMEBUFFER, m_kDepthBuffer, GL_RENDERBUFFER);
+	m_kFrameBuffer.AddRenderBufferAttachement(GL_FRAMEBUFFER, m_kDepthBuffer, GL_DEPTH_ATTACHMENT);
 }
 
 void Renderer::Terminate()
@@ -256,6 +256,7 @@ void Renderer::ApplyGameObjectRenderData(GameObjectRenderData & data)
 		{
 			data.m_pkMeshRenderer->m_pkMesh->BindForDrawing();
 			m_auiRenderingState[MESH] = data.m_pkMeshRenderer->m_pkMesh->m_uiMeshID;
+//			data.m_pkMeshRenderer->m_pkMesh->ClearLocalData();
 		}
 	}
 }
@@ -264,16 +265,15 @@ void Renderer::OnResize(unsigned int width, unsigned int height)
 {
 	m_kFrameBuffer.Bind(GL_FRAMEBUFFER);
 	
-	m_kScreenTexture.InitialiseStorage(m_window->getSize().x, m_window->getSize().y, 1, GL_RGBA32F);
+	m_kScreenTexture.InitialiseStorage(width, height, 1, GL_RGBA32F);
 	m_kFrameBuffer.AddTextureAttachement(GL_FRAMEBUFFER, m_kScreenTexture, GL_COLOR_ATTACHMENT0, 0);
 
-	m_kDepthTexture.InitialiseStorage(m_window->getSize().x, m_window->getSize().y, 1, GL_DEPTH_COMPONENT32);
+	m_kDepthTexture.InitialiseStorage(width, height, 1, GL_DEPTH_COMPONENT32);
 	m_kFrameBuffer.AddTextureAttachement(GL_FRAMEBUFFER, m_kDepthTexture, GL_DEPTH_ATTACHMENT, 0);
 
 	m_kDepthBuffer.Delete();
-	m_kDepthBuffer.Init(GL_DEPTH_COMPONENT, m_window->getSize().x,
-		m_window->getSize().y);
-	m_kFrameBuffer.AddRenderBufferAttachement(GL_FRAMEBUFFER, m_kDepthBuffer, GL_RENDERBUFFER);
+	m_kDepthBuffer.Init(GL_DEPTH_COMPONENT, width, height);
+	m_kFrameBuffer.AddRenderBufferAttachement(GL_FRAMEBUFFER, m_kDepthBuffer, GL_DEPTH_ATTACHMENT);
 
 	m_kFrameBuffer.UnBind(GL_FRAMEBUFFER);
 

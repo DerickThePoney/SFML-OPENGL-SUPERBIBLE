@@ -32,6 +32,7 @@ public:
 	void BindForDrawing();
 	void LoadBuffersOnGraphicsCard();
 	void SetAttributes();
+	void ClearLocalData();
 
 	void Delete();
 

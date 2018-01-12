@@ -12,19 +12,28 @@ void OGLBuffer::Init(GLenum eTarget, I32 iSize, void * pData, GLbitfield eFlags)
 	//generate the buffer
 	glGenBuffers(1, &m_hiBuffer);
 
+	//save these data for later;
+	m_iSize = iSize;
+	m_eFlags = eFlags;
 
 #if OGL_4_5
 	//Init the storage no binding
 	glNamedBufferStorage(m_hiBuffer, iSize, pData, eFlags);
 #else
 	//bind the buffer
-	glBindBuffer(eTarget, m_hiBuffer);
-	//Init the storage
-	glBufferStorage(eTarget, iSize, pData, eFlags);
+	Bind(eTarget);
+	if (eFlags == 0)
+	{
+		//Init the storage
+		glBufferData(eTarget, iSize, pData, GL_STATIC_DRAW);
+	}
+	else
+	{
+		//Init the storage
+		glBufferStorage(eTarget, iSize, pData, eFlags);
+	}
 #endif
-	//save these data for later;
-	m_iSize = iSize;
-	m_eFlags = eFlags;
+	
 }
 
 void OGLBuffer::UpdateData(GLenum eTarget, I32 iSize, void * pData, GLbitfield eFlags)

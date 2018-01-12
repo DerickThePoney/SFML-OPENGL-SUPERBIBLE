@@ -79,7 +79,7 @@ void Camera::Inspector()
 				m_top = size / 2;
 				m_bottom = -size / 2;
 				m_left = m_bottom * aspectRatio;
-				m_right = m_top* aspectRatio;
+				m_right = m_top * aspectRatio;
 				hasChanged = true;
 			}
 		}

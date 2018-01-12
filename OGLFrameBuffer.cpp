@@ -38,14 +38,14 @@ void OGLFrameBuffer::UnBind(GLenum eTarget)
 	glBindFramebuffer(eTarget, 0);
 }
 
-void OGLFrameBuffer::AddTextureAttachement(GLenum eTarget, const OGLTexture2D & kTexture, GLenum eBuffer, int iLevel)
+void OGLFrameBuffer::AddTextureAttachement(GLenum eTarget, const OGLTexture2D & kTexture, GLenum eAttachement, int iLevel)
 {
-	glFramebufferTexture(eTarget, eBuffer, kTexture, iLevel);
+	glFramebufferTexture(eTarget, eAttachement, kTexture, iLevel);
 	m_iWidth = kTexture.GetTextureSize()[0];
 	m_iHeight = kTexture.GetTextureSize()[1];
 }
 
-void OGLFrameBuffer::AddRenderBufferAttachement(GLenum eTarget, OGLRenderBuffer & kRenderBuffer, GLenum eBuffer)
+void OGLFrameBuffer::AddRenderBufferAttachement(GLenum eTarget, OGLRenderBuffer & kRenderBuffer, GLenum eAttachement)
 {
-	glFramebufferRenderbuffer(eTarget, eBuffer,	GL_RENDERBUFFER, kRenderBuffer);
+	glFramebufferRenderbuffer(eTarget, eAttachement, GL_RENDERBUFFER, kRenderBuffer);
 }

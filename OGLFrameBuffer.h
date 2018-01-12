@@ -12,8 +12,8 @@ public:
 	void BindForDrawing(GLenum eTarget);
 	void UnBind(GLenum eTarget);
 
-	void AddTextureAttachement(GLenum eTarget, const OGLTexture2D& kTexture, GLenum eBuffer, int iLevel);
-	void AddRenderBufferAttachement(GLenum eTarget, OGLRenderBuffer& kRenderBuffer, GLenum eBuffer);
+	void AddTextureAttachement(GLenum eTarget, const OGLTexture2D& kTexture, GLenum eAttachement, int iLevel);
+	void AddRenderBufferAttachement(GLenum eTarget, OGLRenderBuffer& kRenderBuffer, GLenum eAttachement);
 
 	operator GLuint () { return m_hiFrameBuffer; }
 private:

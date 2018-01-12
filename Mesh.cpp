@@ -45,6 +45,8 @@ void Mesh::LoadBuffersOnGraphicsCard()
 	m_kOGLBindings.m_kIndices.Init(GL_ELEMENT_ARRAY_BUFFER, m_aiIndices.size() * sizeof(UI32), m_aiIndices.data(), 0);
 
 	SetAttributes();
+
+	//ClearLocalData();
 }
 
 void Mesh::SetAttributes()
@@ -70,6 +72,15 @@ void Mesh::SetAttributes()
 	m_kOGLBindings.m_hkVao.SetAttribute(3, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 
 	m_kOGLBindings.m_hkVao.UnBind();
+}
+
+void Mesh::ClearLocalData()
+{
+	m_akVertices.clear();
+	m_akNormals.clear();
+	m_akColor.clear();
+	m_akUVs.clear();
+	m_aiIndices.clear();
 }
 
 void Mesh::Delete()
