@@ -43,10 +43,17 @@ void Transform::Inspect()
 		if (ImGui::InputFloat3("Local position: ", m_kLocalPosition.GetData())) m_bUpToDate = false;
 
 		float eulerAngles[3];
+		vec4 angleAxis;
 		vmath::QuaternionToEulerAngles(m_kLocalOrientation, eulerAngles[0], eulerAngles[1], eulerAngles[2]);
+		vmath::ToAxisAngle(m_kLocalOrientation, angleAxis);
+
 		eulerAngles[0] = vmath::degrees(eulerAngles[0]);
 		eulerAngles[1] = vmath::degrees(eulerAngles[1]);
 		eulerAngles[2] = vmath::degrees(eulerAngles[2]);
+
+		/*std::cout << "Angle:" << vmath::degrees(angleAxis[0]) << "\tAxis:" << angleAxis[1] << "\t"
+																			<< angleAxis[2] << "\t"
+																			<< angleAxis[3] << "\t" << std::endl;*/
 
 		if (ImGui::InputFloat3("Local orientation: ", eulerAngles))
 		{

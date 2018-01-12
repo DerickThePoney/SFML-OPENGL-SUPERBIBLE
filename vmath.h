@@ -1587,6 +1587,25 @@ static inline quaternion FromAngleAxis(float angle, vec3 axis)
 	return vmath::normalize(q);
 }
 
+static inline void ToAxisAngle(const quaternion& q, vec4& angleAxis)
+{
+	if (q.w > 1) normalize(q); // if w>1 acos and sqrt will produce errors, this cant happen if quaternion is normalised
+	angleAxis[0] = 2 * acos(q.w);
+	float s = sqrt(1 - q.w*q.w); // assuming quaternion normalised then w is less than 1, so term always positive.
+	if (s < 0.001) { // test to avoid divide by zero, s is always positive due to sqrt
+					 // if s close to zero then direction of axis not important
+		angleAxis[1] = q.x; // if it is important that axis is normalised then replace with x=1; y=z=0;
+		angleAxis[2] = q.y;
+		angleAxis[3] = q.z;
+	}
+	else {
+		angleAxis[1] = q.x / s; // normalise axis
+		angleAxis[2] = q.y / s;
+		angleAxis[3] = q.z / s;
+	}
+}
+
+
 static inline quaternion QuaternionFromEulerAngles(float pitch, float roll, float yaw)
 {
 	quaternion res;
