@@ -9,7 +9,7 @@ public:
 
 	//Data handling
 	void Init(GLenum eTarget, I32 iSize, void* pData, GLbitfield eFlags);
-	void UpdateData(GLenum eTarget, I32 iSize, void* pData, GLbitfield eFlags);
+	void UpdateData(GLenum eTarget, I32 iSize, void* pData, GLbitfield eFlagsNormal, GLbitfield eFlagsReset = GL_DYNAMIC_STORAGE_BIT | GL_MAP_WRITE_BIT);
 	void Delete();
 
 	//other calls

@@ -36,7 +36,8 @@ void Renderer::InitDefaultState()
 
 	m_hiProjectionDataIndex = glGetUniformBlockIndex(*m_pkDefaultMaterial->m_pkProgram, "ProjectionData");
 
-	m_pkLineShaderMaterial = MaterialManager::Instance()->InstantiateFromFile("media/Materials/LineShader.material");
+	DebugRenderingCommands::Instance()->Initialise();
+
 	m_pkBlitShader = MaterialManager::Instance()->InstantiateFromFile("media/Materials/BlitMaterial.material");
 
 	//init the default mesh (a cube)
@@ -114,13 +115,15 @@ void Renderer::TerminateDefaultState()
 	MeshManager::Instance()->Destroy(m_pkScreenQuad);
 	MeshManager::Instance()->Destroy(m_pkDefaultMesh);
 	MaterialManager::Instance()->Destroy(m_pkBlitShader);
-	MaterialManager::Instance()->Destroy(m_pkLineShaderMaterial);	
+	DebugRenderingCommands::Instance()->Delete();
+	//MaterialManager::Instance()->Destroy(m_pkLineShaderMaterial);	
 	MaterialManager::Instance()->Destroy(m_pkDefaultMaterial);
 	
 }
 
 void Renderer::Update()
 {
+	DebugRenderingCommands::Instance()->Reset();
 	GraphicsSettings();
 }
 
@@ -168,21 +171,18 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 
 
 	//draw a line onto the screen
-	m_pkLineShaderMaterial->Use();
-	m_auiRenderingState[MATERIAL] = m_pkLineShaderMaterial->m_uiMaterialID;
-	kCamera.LoadProjectionOnGraphics(0);
-
 	vec4 objectWorldPos = kVisibleObjectsList[1].m_pkTransform->GetWorldspacePosition();
 	vec4 cameraWorldPos = kVisibleObjectsList[0].m_pkTransform->GetWorldspacePosition();
 
 	vec4 direction = objectWorldPos - cameraWorldPos;
-	Line l(cameraWorldPos, direction);
-	l.Draw(20, kCamera);
+	DebugRenderingCommands::Instance()->DrawLine(cameraWorldPos, objectWorldPos, vec4(1));
 
 	objectWorldPos = kVisibleObjectsList[2].m_pkTransform->GetWorldspacePosition();
 	direction = objectWorldPos - cameraWorldPos;
-	Line l2(cameraWorldPos, direction);
-	l2.Draw(20, kCamera);
+	DebugRenderingCommands::Instance()->DrawLine(cameraWorldPos, objectWorldPos, vec4(1));
+
+	//Draw rendering commands
+	DebugRenderingCommands::Instance()->RenderDebugCommands(kCamera);
 
 	m_kFrameBuffer.UnBind(GL_DRAW_FRAMEBUFFER);
 	glViewport(0, 0, sz.x, sz.y);

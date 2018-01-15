@@ -23,9 +23,9 @@ public:
 		m_kVertices.Init(GL_ARRAY_BUFFER, 2 * sizeof(vec4), NULL, GL_DYNAMIC_STORAGE_BIT | GL_MAP_WRITE_BIT);
 		m_hkVao.SetAttribute(0, 4, GL_FLOAT, GL_FALSE, 0, NULL);
 		
-		UI32 indices[2] = { 0,1 };
-		m_kIndices.Init(GL_ELEMENT_ARRAY_BUFFER, 2 * sizeof(UI32), indices, 0);
-		m_bInit = true;
+		//UI32 indices[2] = { 0,1 };
+		//m_kIndices.Init(GL_ELEMENT_ARRAY_BUFFER, 2 * sizeof(UI32), indices, 0);
+		//m_bInit = true;
 	}
 
 	void Draw(float fExtent, Camera& camera)
@@ -52,7 +52,8 @@ public:
 		m_kVertices.Unmap(GL_ARRAY_BUFFER);*/
 		//glBufferSubData(GL_ARRAY_BUFFER, 0, 2 * sizeof(vmath::vec4), kArray);
 
-		glDrawElements(GL_LINES, 2, GL_UNSIGNED_INT, 0);
+		//glDrawElements(GL_LINES, 2, GL_UNSIGNED_INT, 0);
+		glDrawArrays(GL_LINES, 0, 2);
 	}
 
 	void SetOrigin(const vec4& kOrigin) { m_kOrigin = kOrigin; };

@@ -22,10 +22,18 @@ void OGLBuffer::Init(GLenum eTarget, I32 iSize, void * pData, GLbitfield eFlags)
 #else
 	//bind the buffer
 	Bind(eTarget);
-	if (eFlags == 0)
+	if (eFlags == 0 || eFlags == GL_STATIC_DRAW || eFlags == GL_DYNAMIC_DRAW)
 	{
-		//Init the storage
-		glBufferData(eTarget, iSize, pData, GL_STATIC_DRAW);
+		if (eFlags == GL_STATIC_DRAW || eFlags == GL_DYNAMIC_DRAW)
+		{
+			//Init the storage
+			glBufferData(eTarget, iSize, pData, eFlags);
+		}
+		else
+		{
+			//Init the storage
+			glBufferData(eTarget, iSize, pData, GL_STATIC_DRAW);
+		}
 	}
 	else
 	{
@@ -36,13 +44,13 @@ void OGLBuffer::Init(GLenum eTarget, I32 iSize, void * pData, GLbitfield eFlags)
 	
 }
 
-void OGLBuffer::UpdateData(GLenum eTarget, I32 iSize, void * pData, GLbitfield eFlags)
+void OGLBuffer::UpdateData(GLenum eTarget, I32 iSize, void * pData, GLbitfield eFlagsNormal, GLbitfield eFlagsReset)
 {
 	if (iSize != m_iSize)
 	{
 		//if size is different, just clear the buffer, and reinit it
 		Delete();
-		Init(eTarget, iSize, pData, eFlags);
+		Init(eTarget, iSize, pData, eFlagsReset);
 		return;
 	}
 	
@@ -53,7 +61,7 @@ void OGLBuffer::UpdateData(GLenum eTarget, I32 iSize, void * pData, GLbitfield e
 	glUnmapNamedBuffer(m_hiBuffer);
 #else
 	// use the standard binded version for these buffers
-	void* ptr = Map(eTarget, eFlags);
+	void* ptr = Map(eTarget, eFlagsNormal);
 	memcpy(ptr, pData, m_iSize);
 	Unmap(eTarget);
 #endif
@@ -62,6 +70,7 @@ void OGLBuffer::UpdateData(GLenum eTarget, I32 iSize, void * pData, GLbitfield e
 void OGLBuffer::Delete()
 {
 	glDeleteBuffers(1, &m_hiBuffer);
+	m_hiBuffer = 0;
 }
 
 void OGLBuffer::Bind(GLenum eTarget)

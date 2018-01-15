@@ -1,4 +1,5 @@
 #pragma once
+#include "DebugRenderingCommands.h"
 #include "BMesh.h"
 #include "MeshRendererComponent.h"
 #include "GameObject.h"

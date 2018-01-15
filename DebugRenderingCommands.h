@@ -10,20 +10,24 @@ protected:
 	~DebugRenderingCommands();
 
 public:
+	void Initialise();
 	void Reset();
 	
 	I32 DrawLine(vec4 start, vec4 end, vec4 color);
 
-
-	void RenderDebugCommands();
+	void RenderDebugCommands(Camera& kCamera);
 
 private:
 	struct LineDrawingCommands
 	{
 		std::vector<vec4> endpoints;
 		std::vector<vec4> colors;
+		Material* m_pkMaterial;
+		OGLVertexArray m_hkVao;
+		OGLBuffer m_kVertices;
 
 		void InitRender();
+		void UpdateData();
 		void Terminate();
 
 		void Clear()
@@ -32,7 +36,7 @@ private:
 			colors.clear();
 		}
 
-		void RenderLines(UI32 uiLineCommandsNb);
+		void RenderLines(UI32 uiLineCommandsNb, Camera& kCamera);
 	};
 
 	LineDrawingCommands m_kLineCommands;
