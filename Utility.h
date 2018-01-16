@@ -8,6 +8,7 @@
 #define SAFE_DELETE(x) if(x != nullptr){delete x; x = nullptr;}
 #define SAFE_DELETE_ARRAY(x) if(x != nullptr){delete[] x; x = nullptr;}
 
+typedef char C8;
 typedef unsigned char UC8;
 typedef unsigned __int32 UI32;
 typedef __int32 I32;

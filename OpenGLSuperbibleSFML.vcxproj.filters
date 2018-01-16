@@ -58,6 +58,9 @@
     <Filter Include="Rendering\Mesh\Loaders">
       <UniqueIdentifier>{ffb8fcdc-6e14-48e4-b619-d201778311c3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Input">
+      <UniqueIdentifier>{21fb6d3b-8de4-4568-8ecf-caf9ef663220}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -216,6 +219,9 @@
     <ClInclude Include="Delegate.h">
       <Filter>UtilityStuff</Filter>
     </ClInclude>
+    <ClInclude Include="InputManager.h">
+      <Filter>Input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -334,6 +340,9 @@
     </ClCompile>
     <ClCompile Include="TypeManager.cpp">
       <Filter>UtilityStuff</Filter>
+    </ClCompile>
+    <ClCompile Include="InputManager.cpp">
+      <Filter>Input</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

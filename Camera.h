@@ -13,7 +13,7 @@ class Camera : public GameObject
 {
 public:
 	Camera():GameObject(){}
-	void Init(float fovy, float aspectRation, float n, float f);
+	void Init(UI32 width, UI32 height);
 
 	void OnResize(unsigned int width, unsigned int height);
 	void LoadProjectionOnGraphics(GLuint bufferIndex);
@@ -27,15 +27,18 @@ public:
 	template<class Archive>
 	void save(Archive & archive) const 
 	{
-		archive(m_kTransform);
+		GameObject::save(archive);
 		archive(CEREAL_NVP(m_eType), CEREAL_NVP(focal), CEREAL_NVP(fNearPlane), CEREAL_NVP(fFarPlane));
+		archive(CEREAL_NVP(m_top), CEREAL_NVP(m_bottom));
 	}
 
 	template<class Archive>
 	void load(Archive & archive)
 	{
-		archive(m_kTransform);
+		GameObject::load(archive);
 		archive(CEREAL_NVP(m_eType), CEREAL_NVP(focal), CEREAL_NVP(fNearPlane), CEREAL_NVP(fFarPlane));
+		DEARCHIVE_WITH_DEFAULT(m_top, 2.5);
+		DEARCHIVE_WITH_DEFAULT(m_bottom, -2.5);
 	}
 
 private:

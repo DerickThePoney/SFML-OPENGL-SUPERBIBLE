@@ -14,6 +14,10 @@ GameObjectApplication::~GameObjectApplication()
 
 void GameObjectApplication::Initialise()
 {
+	UI32 width = m_window.getSize().x;
+	UI32 height = m_window.getSize().y;
+
+	InputManager::Instance()->Initialise();
 	//Init the Renderer System
 	m_kRenderer.Init(&m_window);
 
@@ -33,11 +37,12 @@ void GameObjectApplication::Initialise()
 	}
 	
 	//Initialise the scene
-	m_kScene.Initialise();
+	m_kScene.Initialise(width, height);
 }
 
 void GameObjectApplication::Update(double deltaTime)
 {
+	InputManager::Instance()->Update(deltaTime);
 	m_kRenderer.Update();
 	m_kScene.Update(deltaTime);
 }
@@ -78,6 +83,7 @@ void GameObjectApplication::Terminate()
 	ImGui::SFML::Shutdown();
 	//m_kMaterial.Delete();
 	m_kRenderer.Terminate();
+	InputManager::Delete();
 }
 
 void GameObjectApplication::OnResize(unsigned int width, unsigned int height)

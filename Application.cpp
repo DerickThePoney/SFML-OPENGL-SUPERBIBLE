@@ -29,45 +29,50 @@ void Application::HandleMessages()
 }
 
 void Application::InterpretMessage(sf::Event event)
-{
-	if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
+{	
+	sf::Joystick::Identification idJoystick;
+	switch (event.type)
 	{
+	case sf::Event::Closed:
+		// end the program
 		m_bRunning = false;
-	}
-	else
-	{
-		sf::Joystick::Identification idJoystick;
-		switch (event.type)
+		break;
+	case sf::Event::Resized:
+		// adjust the viewport when the window is resized
+		OnResize(event.size.width, event.size.height);
+		break;
+	case sf::Event::EventType::JoystickButtonPressed:  ///< A joystick button was pressed (data in event.joystickButton)
+		std::cout << "JoystickButtonPressed: id = " << event.joystickButton.joystickId << " button = " << event.joystickButton.button << std::endl;
+		break;
+	case sf::Event::EventType::JoystickButtonReleased: ///< A joystick button was released (data in event.joystickButton)
+		std::cout << "JoystickButtonReleased: id = " << event.joystickButton.joystickId << " button = " << event.joystickButton.button << std::endl;
+		break;
+	case sf::Event::EventType::JoystickMoved:          ///< The joystick moved along an axis (data in event.joystickMove)
+		std::cout << "JoystickMoved: id = " << event.joystickMove.joystickId << " axis = " << event.joystickMove.axis << " position = " << event.joystickMove.position << std::endl;
+		break;
+	case sf::Event::EventType::JoystickConnected:      ///< A joystick was connected (data in event.joystickConnect)
+		std::cout << "JoystickConnected: id = " << event.joystickConnect.joystickId << std::endl;
+		idJoystick = sf::Joystick::getIdentification(event.joystickConnect.joystickId);
+		std::cout << "\tname= " << (std::string)idJoystick.name << " vendor id = " << idJoystick.vendorId << " product id = " << idJoystick.productId << std::endl;
+		break;
+	case sf::Event::EventType::JoystickDisconnected:  ///< A joystick was disconnected (data in event.joystickConnect)
+		std::cout << "JoystickDisconnected: id = " << event.joystickConnect.joystickId << std::endl;
+		break;
+
+	case sf::Event::EventType::KeyPressed:
+		InputManager::Instance()->HandleKeyboardMessages(event);
+		if (event.key.code == sf::Keyboard::Escape)
 		{
-		case sf::Event::Closed:
-			// end the program
 			m_bRunning = false;
-			break;
-		case sf::Event::Resized:
-			// adjust the viewport when the window is resized
-			OnResize(event.size.width, event.size.height);
-			break;
-		case sf::Event::EventType::JoystickButtonPressed:  ///< A joystick button was pressed (data in event.joystickButton)
-			std::cout << "JoystickButtonPressed: id = " << event.joystickButton.joystickId << " button = " << event.joystickButton.button << std::endl;
-			break;
-		case sf::Event::EventType::JoystickButtonReleased: ///< A joystick button was released (data in event.joystickButton)
-			std::cout << "JoystickButtonReleased: id = " << event.joystickButton.joystickId << " button = " << event.joystickButton.button << std::endl;
-			break;
-		case sf::Event::EventType::JoystickMoved:          ///< The joystick moved along an axis (data in event.joystickMove)
-			std::cout << "JoystickMoved: id = " << event.joystickMove.joystickId << " axis = " << event.joystickMove.axis << " position = " << event.joystickMove.position << std::endl;
-			break;
-		case sf::Event::EventType::JoystickConnected:      ///< A joystick was connected (data in event.joystickConnect)
-			std::cout << "JoystickConnected: id = " << event.joystickConnect.joystickId << std::endl;
-			idJoystick = sf::Joystick::getIdentification(event.joystickConnect.joystickId);
-			std::cout << "\tname= " << (std::string)idJoystick.name << " vendor id = " << idJoystick.vendorId << " product id = " << idJoystick.productId << std::endl;
-			break;
-		case sf::Event::EventType::JoystickDisconnected:  ///< A joystick was disconnected (data in event.joystickConnect)
-			std::cout << "JoystickDisconnected: id = " << event.joystickConnect.joystickId << std::endl;
-			break;
-		default:
-			break;
 		}
+		break;
+	case sf::Event::EventType::KeyReleased:
+		InputManager::Instance()->HandleKeyboardMessages(event);
+		break;
+	default:
+		break;
 	}
+	
 }
 
 void Application::MainLoop()

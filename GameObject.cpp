@@ -113,10 +113,10 @@ GameObject * GameObject::GetChild(const std::string & rkName)
 
 void GameObject::Update(double fElapsedTime)
 {
-	/*const double speed = vmath::radians(20.0);
-	quaternion q = vmath::FromAngleAxis(speed*fElapsedTime / 1000, vec3(0,0,1));
-
-	m_kTransform.RotateInLocalSpace(q);*/
+	for (UI32 i = 0; i < m_kComponent.size(); ++i)
+	{
+		m_kComponent[i]->Update(fElapsedTime);
+	}
 }
 
 bool GameObject::CheckPresenceInChildren(GameObject * pkGameObject)
@@ -189,9 +189,19 @@ void GameObject::Inspector()
 	ImGui::InputText("Name", buff, 100);
 	m_kName = buff;
 	m_kTransform.Inspect();
-	
+
 	for (UI32 i = 0; i < m_kComponent.size(); ++i)
 	{
 		m_kComponent[i]->Inspect();
 	}
+
+	ImGui::Separator();
+	
+	static int selectedComponent = -1;
+	ImGui::Combo("Name", &selectedComponent, Components);
+
+	ImGui::SameLine();
+
+	ImGui::Button("Add component");
+
 }

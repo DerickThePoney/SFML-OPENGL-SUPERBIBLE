@@ -17,7 +17,7 @@ Scene::~Scene()
 	m_kTexture.Delete();
 }
 
-void Scene::Initialise(UI32 width, UI32 height)
+void Scene::Initialise(unsigned int width, unsigned int height)
 {
 	m_kCamera.Init(width, height);
 
@@ -173,8 +173,8 @@ void Scene::IMGuiStuffs()
 	
 	ImGui::End();
 
-	static bool pOpen = true;
-	ImGui::ShowTestWindow(&pOpen);
+	/*static bool pOpen = true;
+	ImGui::ShowTestWindow(&pOpen);*/
 }
 
 

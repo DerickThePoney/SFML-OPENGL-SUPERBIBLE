@@ -68,7 +68,7 @@ public:
 		}*/
 
 		archive(CEREAL_NVP(m_kName), m_kTransform);// , CEREAL_NVP(akComponentsNames));
-		archive(m_kComponent);
+		archive(CEREAL_NVP(m_kComponent));
 		/*//build up components
 		for (UI32 i = 0; i < akComponentsNames.size(); ++i)
 		{
@@ -89,7 +89,8 @@ public:
 	void load(Archive& archive)
 	{
 		//std::vector<std::string> akComponentsNames;
-		archive(CEREAL_NVP(m_kName), m_kTransform, CEREAL_NVP(m_kComponent));
+		archive(CEREAL_NVP(m_kName), m_kTransform);
+		archive(CEREAL_NVP(m_kComponent));
 
 		for (UI32 i = 0; i < m_kComponent.size(); ++i)
 		{

@@ -20,3 +20,10 @@ public:
 public:
 	GameObject* m_pkParent;
 };
+
+#define ADDCOMPONENT(x) #x
+
+static const C8* Components =
+{
+	ADDCOMPONENT(MeshRendererComponent)
+};

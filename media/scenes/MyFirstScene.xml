@@ -3,6 +3,7 @@
 	<value0>
 		<m_kFilename>media/scenes/MyFirstScene.xml</m_kFilename>
 		<m_kCamera>
+			<m_kName>Main camera</m_kName>
 			<value0>
 				<m_kLocalPosition>
 					<value0>0</value0>
@@ -21,10 +22,14 @@
 					<value3>0</value3>
 				</m_kLocalOrientation>
 			</value0>
+			<m_kComponent size="dynamic"/>
+			<uiNbChildren>0</uiNbChildren>
 			<m_eType>1</m_eType>
 			<focal>50</focal>
 			<fNearPlane>0.10000000149011612</fNearPlane>
 			<fFarPlane>1000</fFarPlane>
+			<m_top>14.500000953674316</m_top>
+			<m_bottom>-14.500000953674316</m_bottom>
 		</m_kCamera>
 		<uiNbChildren>1</uiNbChildren>
 		<GameObject>
@@ -47,7 +52,7 @@
 					<value3>0</value3>
 				</m_kLocalOrientation>
 			</value0>
-			<value1 size="dynamic">
+			<m_kComponent size="dynamic">
 				<value0>
 					<polymorphic_id>2147483649</polymorphic_id>
 					<polymorphic_name>MeshRendererComponent</polymorphic_name>
@@ -60,7 +65,7 @@
 						</data>
 					</ptr_wrapper>
 				</value0>
-			</value1>
+			</m_kComponent>
 			<uiNbChildren>24</uiNbChildren>
 			<GameObject>
 				<m_kName>Middle1</m_kName>
@@ -82,7 +87,7 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
+				<m_kComponent size="dynamic">
 					<value0>
 						<polymorphic_id>1</polymorphic_id>
 						<ptr_wrapper>
@@ -94,8 +99,31 @@
 							</data>
 						</ptr_wrapper>
 					</value0>
-				</value1>
-				<uiNbChildren>0</uiNbChildren>
+				</m_kComponent>
+				<uiNbChildren>1</uiNbChildren>
+				<GameObject>
+					<m_kName>TestObject</m_kName>
+					<value0>
+						<m_kLocalPosition>
+							<value0>0</value0>
+							<value1>0</value1>
+							<value2>0</value2>
+						</m_kLocalPosition>
+						<m_kScale>
+							<value0>1</value0>
+							<value1>1</value1>
+							<value2>1</value2>
+						</m_kScale>
+						<m_kLocalOrientation>
+							<value0>1</value0>
+							<value1>0</value1>
+							<value2>0</value2>
+							<value3>0</value3>
+						</m_kLocalOrientation>
+					</value0>
+					<m_kComponent size="dynamic"/>
+					<uiNbChildren>0</uiNbChildren>
+				</GameObject>
 			</GameObject>
 			<GameObject>
 				<m_kName>Middle2</m_kName>
@@ -117,7 +145,7 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
+				<m_kComponent size="dynamic">
 					<value0>
 						<polymorphic_id>1</polymorphic_id>
 						<ptr_wrapper>
@@ -129,7 +157,7 @@
 							</data>
 						</ptr_wrapper>
 					</value0>
-				</value1>
+				</m_kComponent>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
 			<GameObject>
@@ -152,7 +180,7 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
+				<m_kComponent size="dynamic">
 					<value0>
 						<polymorphic_id>1</polymorphic_id>
 						<ptr_wrapper>
@@ -164,7 +192,7 @@
 							</data>
 						</ptr_wrapper>
 					</value0>
-				</value1>
+				</m_kComponent>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
 			<GameObject>
@@ -187,7 +215,7 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
+				<m_kComponent size="dynamic">
 					<value0>
 						<polymorphic_id>1</polymorphic_id>
 						<ptr_wrapper>
@@ -199,7 +227,7 @@
 							</data>
 						</ptr_wrapper>
 					</value0>
-				</value1>
+				</m_kComponent>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
 			<GameObject>
@@ -222,7 +250,7 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
+				<m_kComponent size="dynamic">
 					<value0>
 						<polymorphic_id>1</polymorphic_id>
 						<ptr_wrapper>
@@ -234,7 +262,7 @@
 							</data>
 						</ptr_wrapper>
 					</value0>
-				</value1>
+				</m_kComponent>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
 			<GameObject>
@@ -257,7 +285,7 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
+				<m_kComponent size="dynamic">
 					<value0>
 						<polymorphic_id>1</polymorphic_id>
 						<ptr_wrapper>
@@ -269,7 +297,7 @@
 							</data>
 						</ptr_wrapper>
 					</value0>
-				</value1>
+				</m_kComponent>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
 			<GameObject>
@@ -292,7 +320,7 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
+				<m_kComponent size="dynamic">
 					<value0>
 						<polymorphic_id>1</polymorphic_id>
 						<ptr_wrapper>
@@ -304,7 +332,7 @@
 							</data>
 						</ptr_wrapper>
 					</value0>
-				</value1>
+				</m_kComponent>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
 			<GameObject>
@@ -327,7 +355,7 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
+				<m_kComponent size="dynamic">
 					<value0>
 						<polymorphic_id>1</polymorphic_id>
 						<ptr_wrapper>
@@ -339,7 +367,7 @@
 							</data>
 						</ptr_wrapper>
 					</value0>
-				</value1>
+				</m_kComponent>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
 			<GameObject>
@@ -362,7 +390,7 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
+				<m_kComponent size="dynamic">
 					<value0>
 						<polymorphic_id>1</polymorphic_id>
 						<ptr_wrapper>
@@ -374,7 +402,7 @@
 							</data>
 						</ptr_wrapper>
 					</value0>
-				</value1>
+				</m_kComponent>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
 			<GameObject>
@@ -397,7 +425,7 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
+				<m_kComponent size="dynamic">
 					<value0>
 						<polymorphic_id>1</polymorphic_id>
 						<ptr_wrapper>
@@ -409,7 +437,7 @@
 							</data>
 						</ptr_wrapper>
 					</value0>
-				</value1>
+				</m_kComponent>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
 			<GameObject>
@@ -432,7 +460,7 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
+				<m_kComponent size="dynamic">
 					<value0>
 						<polymorphic_id>1</polymorphic_id>
 						<ptr_wrapper>
@@ -444,7 +472,7 @@
 							</data>
 						</ptr_wrapper>
 					</value0>
-				</value1>
+				</m_kComponent>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
 			<GameObject>
@@ -467,7 +495,7 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
+				<m_kComponent size="dynamic">
 					<value0>
 						<polymorphic_id>1</polymorphic_id>
 						<ptr_wrapper>
@@ -479,7 +507,7 @@
 							</data>
 						</ptr_wrapper>
 					</value0>
-				</value1>
+				</m_kComponent>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
 			<GameObject>
@@ -502,7 +530,7 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
+				<m_kComponent size="dynamic">
 					<value0>
 						<polymorphic_id>1</polymorphic_id>
 						<ptr_wrapper>
@@ -514,7 +542,7 @@
 							</data>
 						</ptr_wrapper>
 					</value0>
-				</value1>
+				</m_kComponent>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
 			<GameObject>
@@ -537,7 +565,7 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
+				<m_kComponent size="dynamic">
 					<value0>
 						<polymorphic_id>1</polymorphic_id>
 						<ptr_wrapper>
@@ -549,7 +577,7 @@
 							</data>
 						</ptr_wrapper>
 					</value0>
-				</value1>
+				</m_kComponent>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
 			<GameObject>
@@ -572,7 +600,7 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
+				<m_kComponent size="dynamic">
 					<value0>
 						<polymorphic_id>1</polymorphic_id>
 						<ptr_wrapper>
@@ -584,7 +612,7 @@
 							</data>
 						</ptr_wrapper>
 					</value0>
-				</value1>
+				</m_kComponent>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
 			<GameObject>
@@ -607,7 +635,7 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
+				<m_kComponent size="dynamic">
 					<value0>
 						<polymorphic_id>1</polymorphic_id>
 						<ptr_wrapper>
@@ -619,7 +647,7 @@
 							</data>
 						</ptr_wrapper>
 					</value0>
-				</value1>
+				</m_kComponent>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
 			<GameObject>
@@ -642,7 +670,7 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
+				<m_kComponent size="dynamic">
 					<value0>
 						<polymorphic_id>1</polymorphic_id>
 						<ptr_wrapper>
@@ -654,7 +682,7 @@
 							</data>
 						</ptr_wrapper>
 					</value0>
-				</value1>
+				</m_kComponent>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
 			<GameObject>
@@ -677,7 +705,7 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
+				<m_kComponent size="dynamic">
 					<value0>
 						<polymorphic_id>1</polymorphic_id>
 						<ptr_wrapper>
@@ -689,7 +717,7 @@
 							</data>
 						</ptr_wrapper>
 					</value0>
-				</value1>
+				</m_kComponent>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
 			<GameObject>
@@ -712,7 +740,7 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
+				<m_kComponent size="dynamic">
 					<value0>
 						<polymorphic_id>1</polymorphic_id>
 						<ptr_wrapper>
@@ -724,7 +752,7 @@
 							</data>
 						</ptr_wrapper>
 					</value0>
-				</value1>
+				</m_kComponent>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
 			<GameObject>
@@ -747,7 +775,7 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
+				<m_kComponent size="dynamic">
 					<value0>
 						<polymorphic_id>1</polymorphic_id>
 						<ptr_wrapper>
@@ -759,7 +787,7 @@
 							</data>
 						</ptr_wrapper>
 					</value0>
-				</value1>
+				</m_kComponent>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
 			<GameObject>
@@ -782,7 +810,7 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
+				<m_kComponent size="dynamic">
 					<value0>
 						<polymorphic_id>1</polymorphic_id>
 						<ptr_wrapper>
@@ -794,7 +822,7 @@
 							</data>
 						</ptr_wrapper>
 					</value0>
-				</value1>
+				</m_kComponent>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
 			<GameObject>
@@ -817,7 +845,7 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
+				<m_kComponent size="dynamic">
 					<value0>
 						<polymorphic_id>1</polymorphic_id>
 						<ptr_wrapper>
@@ -829,7 +857,7 @@
 							</data>
 						</ptr_wrapper>
 					</value0>
-				</value1>
+				</m_kComponent>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
 			<GameObject>
@@ -852,7 +880,7 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
+				<m_kComponent size="dynamic">
 					<value0>
 						<polymorphic_id>1</polymorphic_id>
 						<ptr_wrapper>
@@ -864,7 +892,7 @@
 							</data>
 						</ptr_wrapper>
 					</value0>
-				</value1>
+				</m_kComponent>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
 			<GameObject>
@@ -887,7 +915,7 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
+				<m_kComponent size="dynamic">
 					<value0>
 						<polymorphic_id>1</polymorphic_id>
 						<ptr_wrapper>
@@ -899,7 +927,7 @@
 							</data>
 						</ptr_wrapper>
 					</value0>
-				</value1>
+				</m_kComponent>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
 		</GameObject>

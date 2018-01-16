@@ -9,7 +9,7 @@ public:
 	Scene();
 	~Scene();
 
-	void Initialise();
+	void Initialise(UI32 width, UI32 height);
 	void Terminate();
 
 	void Update(double deltaTime);

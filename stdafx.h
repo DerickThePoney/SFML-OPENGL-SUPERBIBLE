@@ -25,6 +25,7 @@
 
 #define DEARCHIVE_WITH_DEFAULT(x, def) \
 	try{archive(CEREAL_NVP(x));}catch(std::exception e){x = def;}
+#define OGL_ARRAYSIZE(_ARR)  ((int)(sizeof(_ARR)/sizeof(*_ARR)))
 
 #include <iostream>
 #include <sstream>
@@ -40,6 +41,7 @@
 #include "Math.h"
 #include "Line.h"
 #include "StringHash.h"
+#include "InputManager.h"
 
 #include "imgui.h"
 #include "imgui-events-SFML.h"

@@ -1,17 +1,9 @@
 #include "stdafx.h"
 #include "Camera.h"
 
-void Camera::Init(float fovy, float aspectRation, float n, float f)
+void Camera::Init(UI32 width, UI32 height)
 {
-	SetName("Main camera");
-	focal = (fovy);
-	aspectRatio = (aspectRation);
-	fNearPlane = (n);
-	fFarPlane = (f);
-	m_eType = CameraType::PERSPECTIVE;
-
-	m_top = 5.0 / 2;
-	m_bottom = -5.0 / 2;
+	aspectRatio = (float)width / (float)height;
 	m_left = m_bottom * aspectRatio;
 	m_right = m_top* aspectRatio;
 	
@@ -24,7 +16,7 @@ void Camera::Init(float fovy, float aspectRation, float n, float f)
 	InitialiseProjectionBuffer();
 }
 
-void Camera::OnResize(unsigned int width, unsigned int height)
+void Camera::OnResize(UI32 width, UI32 height)
 {
 	float size = m_top - m_bottom;
 	aspectRatio = (float)width / (float)height;
@@ -56,7 +48,6 @@ void Camera::UpdateAllTransformsInHierarchy()
 
 void Camera::Inspector()
 {
-	GameObject::Inspector();
 	if (ImGui::CollapsingHeader("Camera"))
 	{
 		bool hasChanged = false;
@@ -96,6 +87,8 @@ void Camera::Inspector()
 			ComputeProjection();
 		}	
 	}
+
+	GameObject::Inspector();
 }
 
 void Camera::ComputeLookAt()
