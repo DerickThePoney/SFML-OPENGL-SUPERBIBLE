@@ -5,22 +5,22 @@ UI32 GameObject::s_uiIDCounter = 0;
 
 
 GameObject::GameObject()
-	: m_pkParent(nullptr), m_kName(""), m_uiID(s_uiIDCounter++)
+	: m_pkParent(nullptr), m_kName(""), m_uiID(s_uiIDCounter++)//, m_kMeshRenderer(this)
 {
 }
 
 GameObject::GameObject(GameObject * pkParent)
-	: m_pkParent(pkParent), m_kName(""), m_uiID(s_uiIDCounter++)
+	: m_pkParent(pkParent), m_kName(""), m_uiID(s_uiIDCounter++)//, m_kMeshRenderer(this)
 {
 }
 
 GameObject::GameObject(GameObject * pkParent, const std::string & rkName)
-	: m_pkParent(pkParent), m_kName(rkName), m_uiID(s_uiIDCounter++)
+	: m_pkParent(pkParent), m_kName(rkName), m_uiID(s_uiIDCounter++)//, m_kMeshRenderer(this)
 {
 }
 
 GameObject::GameObject(const std::string & rkName)
-	: m_pkParent(nullptr), m_kName(rkName), m_uiID(s_uiIDCounter++)
+	: m_pkParent(nullptr), m_kName(rkName), m_uiID(s_uiIDCounter++)//, m_kMeshRenderer(this)
 {
 }
 
@@ -189,5 +189,9 @@ void GameObject::Inspector()
 	ImGui::InputText("Name", buff, 100);
 	m_kName = buff;
 	m_kTransform.Inspect();
-	m_kMeshRenderer.Inspect();
+	
+	for (UI32 i = 0; i < m_kComponent.size(); ++i)
+	{
+		m_kComponent[i]->Inspect();
+	}
 }

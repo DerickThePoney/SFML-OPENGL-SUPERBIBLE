@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <cereal>
 	<value0>
-		<m_kFilename>media/scenes/MyFirstScene.xml</m_kFilename>
 		<m_kCamera>
 			<value0>
 				<m_kLocalPosition>
@@ -47,19 +46,20 @@
 					<value3>0</value3>
 				</m_kLocalOrientation>
 			</value0>
-			<value1 size="dynamic">
-				<value0>
-					<polymorphic_id>2147483649</polymorphic_id>
-					<polymorphic_name>MeshRendererComponent</polymorphic_name>
-					<ptr_wrapper>
-						<id>2147483649</id>
-						<data>
-							<m_kMeshFilename>media/meshes/MyOwnSpaceShip.ply</m_kMeshFilename>
-							<MeshID>2</MeshID>
-							<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
-						</data>
-					</ptr_wrapper>
-				</value0>
+			<akComponentsNames size="dynamic">
+				<value0>MeshRendererComponent</value0>
+			</akComponentsNames>
+			<value1>
+				<polymorphic_id>2147483649</polymorphic_id>
+				<polymorphic_name>MeshRendererComponent</polymorphic_name>
+				<ptr_wrapper>
+					<id>2147483649</id>
+					<data>
+						<m_kMeshFilename>media/meshes/MyOwnSpaceShip.ply</m_kMeshFilename>
+						<MeshID>4294967295</MeshID>
+						<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
+					</data>
+				</ptr_wrapper>
 			</value1>
 			<uiNbChildren>24</uiNbChildren>
 			<GameObject>
@@ -82,18 +82,19 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
-					<value0>
-						<polymorphic_id>1</polymorphic_id>
-						<ptr_wrapper>
-							<id>2147483650</id>
-							<data>
-								<m_kMeshFilename>media/meshes/ColoredCubeFlat.ply</m_kMeshFilename>
-								<MeshID>3</MeshID>
-								<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
-							</data>
-						</ptr_wrapper>
-					</value0>
+				<akComponentsNames size="dynamic">
+					<value0>MeshRendererComponent</value0>
+				</akComponentsNames>
+				<value1>
+					<polymorphic_id>1</polymorphic_id>
+					<ptr_wrapper>
+						<id>2147483650</id>
+						<data>
+							<m_kMeshFilename>media/meshes/ColoredCubeFlat.ply</m_kMeshFilename>
+							<MeshID>4294967295</MeshID>
+							<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
+						</data>
+					</ptr_wrapper>
 				</value1>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
@@ -117,18 +118,19 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
-					<value0>
-						<polymorphic_id>1</polymorphic_id>
-						<ptr_wrapper>
-							<id>2147483651</id>
-							<data>
-								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
-								<MeshID>0</MeshID>
-								<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
-							</data>
-						</ptr_wrapper>
-					</value0>
+				<akComponentsNames size="dynamic">
+					<value0>MeshRendererComponent</value0>
+				</akComponentsNames>
+				<value1>
+					<polymorphic_id>1</polymorphic_id>
+					<ptr_wrapper>
+						<id>2147483651</id>
+						<data>
+							<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
+							<MeshID>4294967295</MeshID>
+							<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
+						</data>
+					</ptr_wrapper>
 				</value1>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
@@ -152,18 +154,19 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
-					<value0>
-						<polymorphic_id>1</polymorphic_id>
-						<ptr_wrapper>
-							<id>2147483652</id>
-							<data>
-								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
-								<MeshID>0</MeshID>
-								<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
-							</data>
-						</ptr_wrapper>
-					</value0>
+				<akComponentsNames size="dynamic">
+					<value0>MeshRendererComponent</value0>
+				</akComponentsNames>
+				<value1>
+					<polymorphic_id>1</polymorphic_id>
+					<ptr_wrapper>
+						<id>2147483652</id>
+						<data>
+							<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
+							<MeshID>4294967295</MeshID>
+							<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
+						</data>
+					</ptr_wrapper>
 				</value1>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
@@ -187,18 +190,19 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
-					<value0>
-						<polymorphic_id>1</polymorphic_id>
-						<ptr_wrapper>
-							<id>2147483653</id>
-							<data>
-								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
-								<MeshID>0</MeshID>
-								<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
-							</data>
-						</ptr_wrapper>
-					</value0>
+				<akComponentsNames size="dynamic">
+					<value0>MeshRendererComponent</value0>
+				</akComponentsNames>
+				<value1>
+					<polymorphic_id>1</polymorphic_id>
+					<ptr_wrapper>
+						<id>2147483653</id>
+						<data>
+							<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
+							<MeshID>4294967295</MeshID>
+							<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
+						</data>
+					</ptr_wrapper>
 				</value1>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
@@ -222,18 +226,19 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
-					<value0>
-						<polymorphic_id>1</polymorphic_id>
-						<ptr_wrapper>
-							<id>2147483654</id>
-							<data>
-								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
-								<MeshID>0</MeshID>
-								<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
-							</data>
-						</ptr_wrapper>
-					</value0>
+				<akComponentsNames size="dynamic">
+					<value0>MeshRendererComponent</value0>
+				</akComponentsNames>
+				<value1>
+					<polymorphic_id>1</polymorphic_id>
+					<ptr_wrapper>
+						<id>2147483654</id>
+						<data>
+							<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
+							<MeshID>4294967295</MeshID>
+							<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
+						</data>
+					</ptr_wrapper>
 				</value1>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
@@ -257,18 +262,19 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
-					<value0>
-						<polymorphic_id>1</polymorphic_id>
-						<ptr_wrapper>
-							<id>2147483655</id>
-							<data>
-								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
-								<MeshID>0</MeshID>
-								<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
-							</data>
-						</ptr_wrapper>
-					</value0>
+				<akComponentsNames size="dynamic">
+					<value0>MeshRendererComponent</value0>
+				</akComponentsNames>
+				<value1>
+					<polymorphic_id>1</polymorphic_id>
+					<ptr_wrapper>
+						<id>2147483655</id>
+						<data>
+							<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
+							<MeshID>4294967295</MeshID>
+							<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
+						</data>
+					</ptr_wrapper>
 				</value1>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
@@ -292,18 +298,19 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
-					<value0>
-						<polymorphic_id>1</polymorphic_id>
-						<ptr_wrapper>
-							<id>2147483656</id>
-							<data>
-								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
-								<MeshID>0</MeshID>
-								<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
-							</data>
-						</ptr_wrapper>
-					</value0>
+				<akComponentsNames size="dynamic">
+					<value0>MeshRendererComponent</value0>
+				</akComponentsNames>
+				<value1>
+					<polymorphic_id>1</polymorphic_id>
+					<ptr_wrapper>
+						<id>2147483656</id>
+						<data>
+							<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
+							<MeshID>4294967295</MeshID>
+							<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
+						</data>
+					</ptr_wrapper>
 				</value1>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
@@ -327,18 +334,19 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
-					<value0>
-						<polymorphic_id>1</polymorphic_id>
-						<ptr_wrapper>
-							<id>2147483657</id>
-							<data>
-								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
-								<MeshID>0</MeshID>
-								<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
-							</data>
-						</ptr_wrapper>
-					</value0>
+				<akComponentsNames size="dynamic">
+					<value0>MeshRendererComponent</value0>
+				</akComponentsNames>
+				<value1>
+					<polymorphic_id>1</polymorphic_id>
+					<ptr_wrapper>
+						<id>2147483657</id>
+						<data>
+							<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
+							<MeshID>4294967295</MeshID>
+							<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
+						</data>
+					</ptr_wrapper>
 				</value1>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
@@ -362,18 +370,19 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
-					<value0>
-						<polymorphic_id>1</polymorphic_id>
-						<ptr_wrapper>
-							<id>2147483658</id>
-							<data>
-								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
-								<MeshID>0</MeshID>
-								<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
-							</data>
-						</ptr_wrapper>
-					</value0>
+				<akComponentsNames size="dynamic">
+					<value0>MeshRendererComponent</value0>
+				</akComponentsNames>
+				<value1>
+					<polymorphic_id>1</polymorphic_id>
+					<ptr_wrapper>
+						<id>2147483658</id>
+						<data>
+							<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
+							<MeshID>4294967295</MeshID>
+							<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
+						</data>
+					</ptr_wrapper>
 				</value1>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
@@ -397,18 +406,19 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
-					<value0>
-						<polymorphic_id>1</polymorphic_id>
-						<ptr_wrapper>
-							<id>2147483659</id>
-							<data>
-								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
-								<MeshID>0</MeshID>
-								<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
-							</data>
-						</ptr_wrapper>
-					</value0>
+				<akComponentsNames size="dynamic">
+					<value0>MeshRendererComponent</value0>
+				</akComponentsNames>
+				<value1>
+					<polymorphic_id>1</polymorphic_id>
+					<ptr_wrapper>
+						<id>2147483659</id>
+						<data>
+							<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
+							<MeshID>4294967295</MeshID>
+							<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
+						</data>
+					</ptr_wrapper>
 				</value1>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
@@ -432,18 +442,19 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
-					<value0>
-						<polymorphic_id>1</polymorphic_id>
-						<ptr_wrapper>
-							<id>2147483660</id>
-							<data>
-								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
-								<MeshID>0</MeshID>
-								<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
-							</data>
-						</ptr_wrapper>
-					</value0>
+				<akComponentsNames size="dynamic">
+					<value0>MeshRendererComponent</value0>
+				</akComponentsNames>
+				<value1>
+					<polymorphic_id>1</polymorphic_id>
+					<ptr_wrapper>
+						<id>2147483660</id>
+						<data>
+							<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
+							<MeshID>4294967295</MeshID>
+							<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
+						</data>
+					</ptr_wrapper>
 				</value1>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
@@ -467,18 +478,19 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
-					<value0>
-						<polymorphic_id>1</polymorphic_id>
-						<ptr_wrapper>
-							<id>2147483661</id>
-							<data>
-								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
-								<MeshID>0</MeshID>
-								<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
-							</data>
-						</ptr_wrapper>
-					</value0>
+				<akComponentsNames size="dynamic">
+					<value0>MeshRendererComponent</value0>
+				</akComponentsNames>
+				<value1>
+					<polymorphic_id>1</polymorphic_id>
+					<ptr_wrapper>
+						<id>2147483661</id>
+						<data>
+							<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
+							<MeshID>4294967295</MeshID>
+							<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
+						</data>
+					</ptr_wrapper>
 				</value1>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
@@ -502,18 +514,19 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
-					<value0>
-						<polymorphic_id>1</polymorphic_id>
-						<ptr_wrapper>
-							<id>2147483662</id>
-							<data>
-								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
-								<MeshID>0</MeshID>
-								<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
-							</data>
-						</ptr_wrapper>
-					</value0>
+				<akComponentsNames size="dynamic">
+					<value0>MeshRendererComponent</value0>
+				</akComponentsNames>
+				<value1>
+					<polymorphic_id>1</polymorphic_id>
+					<ptr_wrapper>
+						<id>2147483662</id>
+						<data>
+							<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
+							<MeshID>4294967295</MeshID>
+							<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
+						</data>
+					</ptr_wrapper>
 				</value1>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
@@ -537,18 +550,19 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
-					<value0>
-						<polymorphic_id>1</polymorphic_id>
-						<ptr_wrapper>
-							<id>2147483663</id>
-							<data>
-								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
-								<MeshID>0</MeshID>
-								<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
-							</data>
-						</ptr_wrapper>
-					</value0>
+				<akComponentsNames size="dynamic">
+					<value0>MeshRendererComponent</value0>
+				</akComponentsNames>
+				<value1>
+					<polymorphic_id>1</polymorphic_id>
+					<ptr_wrapper>
+						<id>2147483663</id>
+						<data>
+							<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
+							<MeshID>4294967295</MeshID>
+							<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
+						</data>
+					</ptr_wrapper>
 				</value1>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
@@ -572,18 +586,19 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
-					<value0>
-						<polymorphic_id>1</polymorphic_id>
-						<ptr_wrapper>
-							<id>2147483664</id>
-							<data>
-								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
-								<MeshID>0</MeshID>
-								<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
-							</data>
-						</ptr_wrapper>
-					</value0>
+				<akComponentsNames size="dynamic">
+					<value0>MeshRendererComponent</value0>
+				</akComponentsNames>
+				<value1>
+					<polymorphic_id>1</polymorphic_id>
+					<ptr_wrapper>
+						<id>2147483664</id>
+						<data>
+							<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
+							<MeshID>4294967295</MeshID>
+							<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
+						</data>
+					</ptr_wrapper>
 				</value1>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
@@ -607,18 +622,19 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
-					<value0>
-						<polymorphic_id>1</polymorphic_id>
-						<ptr_wrapper>
-							<id>2147483665</id>
-							<data>
-								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
-								<MeshID>0</MeshID>
-								<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
-							</data>
-						</ptr_wrapper>
-					</value0>
+				<akComponentsNames size="dynamic">
+					<value0>MeshRendererComponent</value0>
+				</akComponentsNames>
+				<value1>
+					<polymorphic_id>1</polymorphic_id>
+					<ptr_wrapper>
+						<id>2147483665</id>
+						<data>
+							<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
+							<MeshID>4294967295</MeshID>
+							<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
+						</data>
+					</ptr_wrapper>
 				</value1>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
@@ -642,18 +658,19 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
-					<value0>
-						<polymorphic_id>1</polymorphic_id>
-						<ptr_wrapper>
-							<id>2147483666</id>
-							<data>
-								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
-								<MeshID>0</MeshID>
-								<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
-							</data>
-						</ptr_wrapper>
-					</value0>
+				<akComponentsNames size="dynamic">
+					<value0>MeshRendererComponent</value0>
+				</akComponentsNames>
+				<value1>
+					<polymorphic_id>1</polymorphic_id>
+					<ptr_wrapper>
+						<id>2147483666</id>
+						<data>
+							<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
+							<MeshID>4294967295</MeshID>
+							<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
+						</data>
+					</ptr_wrapper>
 				</value1>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
@@ -677,18 +694,19 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
-					<value0>
-						<polymorphic_id>1</polymorphic_id>
-						<ptr_wrapper>
-							<id>2147483667</id>
-							<data>
-								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
-								<MeshID>0</MeshID>
-								<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
-							</data>
-						</ptr_wrapper>
-					</value0>
+				<akComponentsNames size="dynamic">
+					<value0>MeshRendererComponent</value0>
+				</akComponentsNames>
+				<value1>
+					<polymorphic_id>1</polymorphic_id>
+					<ptr_wrapper>
+						<id>2147483667</id>
+						<data>
+							<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
+							<MeshID>4294967295</MeshID>
+							<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
+						</data>
+					</ptr_wrapper>
 				</value1>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
@@ -712,18 +730,19 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
-					<value0>
-						<polymorphic_id>1</polymorphic_id>
-						<ptr_wrapper>
-							<id>2147483668</id>
-							<data>
-								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
-								<MeshID>0</MeshID>
-								<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
-							</data>
-						</ptr_wrapper>
-					</value0>
+				<akComponentsNames size="dynamic">
+					<value0>MeshRendererComponent</value0>
+				</akComponentsNames>
+				<value1>
+					<polymorphic_id>1</polymorphic_id>
+					<ptr_wrapper>
+						<id>2147483668</id>
+						<data>
+							<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
+							<MeshID>4294967295</MeshID>
+							<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
+						</data>
+					</ptr_wrapper>
 				</value1>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
@@ -747,18 +766,19 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
-					<value0>
-						<polymorphic_id>1</polymorphic_id>
-						<ptr_wrapper>
-							<id>2147483669</id>
-							<data>
-								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
-								<MeshID>0</MeshID>
-								<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
-							</data>
-						</ptr_wrapper>
-					</value0>
+				<akComponentsNames size="dynamic">
+					<value0>MeshRendererComponent</value0>
+				</akComponentsNames>
+				<value1>
+					<polymorphic_id>1</polymorphic_id>
+					<ptr_wrapper>
+						<id>2147483669</id>
+						<data>
+							<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
+							<MeshID>4294967295</MeshID>
+							<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
+						</data>
+					</ptr_wrapper>
 				</value1>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
@@ -782,18 +802,19 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
-					<value0>
-						<polymorphic_id>1</polymorphic_id>
-						<ptr_wrapper>
-							<id>2147483670</id>
-							<data>
-								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
-								<MeshID>0</MeshID>
-								<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
-							</data>
-						</ptr_wrapper>
-					</value0>
+				<akComponentsNames size="dynamic">
+					<value0>MeshRendererComponent</value0>
+				</akComponentsNames>
+				<value1>
+					<polymorphic_id>1</polymorphic_id>
+					<ptr_wrapper>
+						<id>2147483670</id>
+						<data>
+							<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
+							<MeshID>4294967295</MeshID>
+							<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
+						</data>
+					</ptr_wrapper>
 				</value1>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
@@ -817,18 +838,19 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
-					<value0>
-						<polymorphic_id>1</polymorphic_id>
-						<ptr_wrapper>
-							<id>2147483671</id>
-							<data>
-								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
-								<MeshID>0</MeshID>
-								<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
-							</data>
-						</ptr_wrapper>
-					</value0>
+				<akComponentsNames size="dynamic">
+					<value0>MeshRendererComponent</value0>
+				</akComponentsNames>
+				<value1>
+					<polymorphic_id>1</polymorphic_id>
+					<ptr_wrapper>
+						<id>2147483671</id>
+						<data>
+							<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
+							<MeshID>4294967295</MeshID>
+							<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
+						</data>
+					</ptr_wrapper>
 				</value1>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
@@ -852,18 +874,19 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
-					<value0>
-						<polymorphic_id>1</polymorphic_id>
-						<ptr_wrapper>
-							<id>2147483672</id>
-							<data>
-								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
-								<MeshID>0</MeshID>
-								<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
-							</data>
-						</ptr_wrapper>
-					</value0>
+				<akComponentsNames size="dynamic">
+					<value0>MeshRendererComponent</value0>
+				</akComponentsNames>
+				<value1>
+					<polymorphic_id>1</polymorphic_id>
+					<ptr_wrapper>
+						<id>2147483672</id>
+						<data>
+							<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
+							<MeshID>4294967295</MeshID>
+							<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
+						</data>
+					</ptr_wrapper>
 				</value1>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
@@ -887,18 +910,19 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<value1 size="dynamic">
-					<value0>
-						<polymorphic_id>1</polymorphic_id>
-						<ptr_wrapper>
-							<id>2147483673</id>
-							<data>
-								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
-								<MeshID>0</MeshID>
-								<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
-							</data>
-						</ptr_wrapper>
-					</value0>
+				<akComponentsNames size="dynamic">
+					<value0>MeshRendererComponent</value0>
+				</akComponentsNames>
+				<value1>
+					<polymorphic_id>1</polymorphic_id>
+					<ptr_wrapper>
+						<id>2147483673</id>
+						<data>
+							<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
+							<MeshID>4294967295</MeshID>
+							<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
+						</data>
+					</ptr_wrapper>
 				</value1>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <cereal>
 	<value0>
-		<m_kFilename>media/scenes/MyFirstScene.xml</m_kFilename>
 		<m_kCamera>
 			<value0>
 				<m_kLocalPosition>

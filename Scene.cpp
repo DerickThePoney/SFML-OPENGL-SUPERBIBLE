@@ -70,23 +70,25 @@ void Scene::OnResize(unsigned int width, unsigned int height)
 	m_kCamera.OnResize(width, height);
 }
 
-void Scene::ExtractVisibleObjectList(std::vector<GameObject*>& akObjects)
+void Scene::ExtractVisibleObjectList(std::vector<MeshRendererComponent*>& akObjects)
 {
 	//no frustum cull for the moment
 	for (std::size_t i = 0; i < m_akRootObjects.size(); ++i)
 	{
-		akObjects.push_back(m_akRootObjects[i]);
+		MeshRendererComponent* pkComponent = m_akRootObjects[i]->FindComponent<MeshRendererComponent>().get();
+		if(pkComponent != nullptr)	akObjects.push_back(pkComponent);
 		ExtractVisibleObjectsInHierarchy(m_akRootObjects[i], akObjects);
 	}
 }
 
-void Scene::ExtractVisibleObjectsInHierarchy(GameObject* base, std::vector<GameObject*>& akObjects)
+void Scene::ExtractVisibleObjectsInHierarchy(GameObject* base, std::vector<MeshRendererComponent*>& akObjects)
 {
 	I32 childNb = base->GetNumberOfChildren();
 	
 	for (I32 j = 0; j < childNb; ++j)
 	{
-		akObjects.push_back(base->GetChild(j));
+		MeshRendererComponent* pkComponent = base->GetChild(j)->FindComponent<MeshRendererComponent>().get();
+		if (pkComponent != nullptr)	akObjects.push_back(pkComponent);
 		ExtractVisibleObjectsInHierarchy(base->GetChild(j), akObjects);
 	}
 }
@@ -135,6 +137,17 @@ void Scene::IMGuiStuffs()
 	ImGui::SameLine();
 	if (ImGui::Button("Save"))
 	{
+		try
+		{
+			std::ofstream ofstr(m_kFilename);
+			//Scene testLoading;
+			cereal::XMLOutputArchive output(ofstr);
+			output(*this);
+		}
+		catch (std::exception& e)
+		{
+			std::cout << e.what() << std::endl;
+		}
 	}
 
 	//objects inspection

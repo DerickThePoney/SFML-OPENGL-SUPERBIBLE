@@ -198,6 +198,24 @@
     <ClInclude Include="OGLRenderBuffer.h">
       <Filter>Rendering\OGLImplementations\OGLObjects</Filter>
     </ClInclude>
+    <ClInclude Include="IComponent.h">
+      <Filter>GameObjects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="RTTI.h">
+      <Filter>UtilityStuff</Filter>
+    </ClInclude>
+    <ClInclude Include="StringHash.h">
+      <Filter>UtilityStuff</Filter>
+    </ClInclude>
+    <ClInclude Include="TypeManager.h">
+      <Filter>UtilityStuff</Filter>
+    </ClInclude>
+    <ClInclude Include="TypeSystem.h">
+      <Filter>UtilityStuff</Filter>
+    </ClInclude>
+    <ClInclude Include="Delegate.h">
+      <Filter>UtilityStuff</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -304,6 +322,18 @@
     </ClCompile>
     <ClCompile Include="OGLRenderBuffer.cpp">
       <Filter>Rendering\OGLImplementations\OGLObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="IComponent.cpp">
+      <Filter>GameObjects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="RTTI.cpp">
+      <Filter>UtilityStuff</Filter>
+    </ClCompile>
+    <ClCompile Include="StringHash.cpp">
+      <Filter>UtilityStuff</Filter>
+    </ClCompile>
+    <ClCompile Include="TypeManager.cpp">
+      <Filter>UtilityStuff</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

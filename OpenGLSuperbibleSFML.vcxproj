@@ -174,9 +174,11 @@
     <ClInclude Include="BMesh.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="DebugRenderingCommands.h" />
+    <ClInclude Include="Delegate.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameObjectApplication.h" />
     <ClInclude Include="GameObjectManager.h" />
+    <ClInclude Include="IComponent.h" />
     <ClInclude Include="imgui\imconfig-events-SFML.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui-events-SFML.h" />
@@ -193,6 +195,7 @@
     <ClInclude Include="OGLRenderBuffer.h" />
     <ClInclude Include="PLYLoader.h" />
     <ClInclude Include="ProgramManager.h" />
+    <ClInclude Include="RTTI.h" />
     <ClInclude Include="ShaderCompiler.h" />
     <ClInclude Include="MaterialManager.h" />
     <ClInclude Include="Math.h" />
@@ -211,8 +214,11 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="StringHash.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Transform.h" />
+    <ClInclude Include="TypeManager.h" />
+    <ClInclude Include="TypeSystem.h" />
     <ClInclude Include="Utility.h" />
     <ClInclude Include="vmath.h" />
   </ItemGroup>
@@ -224,6 +230,7 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameObjectApplication.cpp" />
     <ClCompile Include="GameObjectManager.cpp" />
+    <ClCompile Include="IComponent.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
     <ClCompile Include="imgui\imgui_draw.cpp" />
@@ -233,6 +240,7 @@
     <ClCompile Include="OGLRenderBuffer.cpp" />
     <ClCompile Include="PLYLoader.cpp" />
     <ClCompile Include="ProgramManager.cpp" />
+    <ClCompile Include="RTTI.cpp" />
     <ClCompile Include="ShaderCompiler.cpp" />
     <ClCompile Include="MaterialManager.cpp" />
     <ClCompile Include="Mesh.cpp" />
@@ -255,7 +263,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="StringHash.cpp" />
     <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="TypeManager.cpp" />
     <ClCompile Include="Utility.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

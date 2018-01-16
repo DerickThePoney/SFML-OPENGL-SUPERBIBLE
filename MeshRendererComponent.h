@@ -1,12 +1,14 @@
 #pragma once
 #include "MaterialManager.h"
 #include "MeshManager.h"
-
+#include "IComponent.h"
 //TODO make an IComponent and have transform and meshrenderer part of it
-class MeshRendererComponent 
+class MeshRendererComponent : public IComponent
 {
+	TYPE_SYSTEM_DECLARE_RTTI;
+
 public:
-	MeshRendererComponent() : m_pkMesh(nullptr), m_pkMaterial(nullptr), m_kMeshFilename(""), m_kMaterialFilename("") {}
+	MeshRendererComponent(GameObject* pkParent = nullptr) : m_pkMesh(nullptr), m_pkMaterial(nullptr), m_kMeshFilename(""), m_kMaterialFilename(""), IComponent(pkParent) {}
 	~MeshRendererComponent() { }
 
 	void Init(Mesh* kMesh, Material* kMaterial);
@@ -18,7 +20,7 @@ public:
 	template<class Archive>
 	void save(Archive & archive) const
 	{
-		archive(CEREAL_NVP(m_kMeshFilename), cereal::make_nvp("MeshID", m_pkMesh->m_uiMeshID), CEREAL_NVP(m_kMaterialFilename));
+		archive(CEREAL_NVP(m_kMeshFilename), cereal::make_nvp("MeshID", (m_pkMesh != nullptr)?m_pkMesh->m_uiMeshID : -1), CEREAL_NVP(m_kMaterialFilename));
 	}
 
 	template<class Archive>
@@ -48,3 +50,6 @@ public:
 	Mesh* m_pkMesh;
 	Material* m_pkMaterial;
 };
+
+CEREAL_REGISTER_TYPE(MeshRendererComponent);
+CEREAL_REGISTER_POLYMORPHIC_RELATION(IComponent, MeshRendererComponent);

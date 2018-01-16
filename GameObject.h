@@ -1,6 +1,7 @@
 #pragma once
 #include "Transform.h"
 #include "MeshRendererComponent.h"
+#include "IComponent.h"
 
 
 class GameObject
@@ -43,10 +44,36 @@ public:
 
 	UI32 GetID() const { return m_uiID; }
 
+	template<typename T>
+	std::shared_ptr<T> FindComponent()
+	{
+		for (UI32 i = 0; i < m_kComponent.size(); ++i)
+		{
+			if (m_kComponent[i]->GetType() == T::TYPE)
+				return std::dynamic_pointer_cast<T>(m_kComponent[i]);
+		}
+		return nullptr;
+	}
+
+
 	template<class Archive>
 	void save(Archive & archive) const
 	{
-		archive(CEREAL_NVP(m_kName), m_kTransform, m_kMeshRenderer);
+		/*std::vector<std::string> akComponentsNames;
+
+		//build up components names
+		for (UI32 i = 0; i < m_kComponent.size(); ++i)
+		{
+			akComponentsNames.push_back(m_kComponent[i]->GetType().GetName());
+		}*/
+
+		archive(CEREAL_NVP(m_kName), m_kTransform);// , CEREAL_NVP(akComponentsNames));
+		archive(m_kComponent);
+		/*//build up components
+		for (UI32 i = 0; i < akComponentsNames.size(); ++i)
+		{
+			archive(m_kComponent[i]);
+		}*/
 		
 		//dump children
 		std::size_t uiNbChildren = m_apkChildren.size();
@@ -61,7 +88,23 @@ public:
 	template<class Archive>
 	void load(Archive& archive)
 	{
-		archive(CEREAL_NVP(m_kName), m_kTransform, m_kMeshRenderer);
+		//std::vector<std::string> akComponentsNames;
+		archive(CEREAL_NVP(m_kName), m_kTransform, CEREAL_NVP(m_kComponent));
+
+		for (UI32 i = 0; i < m_kComponent.size(); ++i)
+		{
+			m_kComponent[i]->m_pkParent = this;
+		}
+
+		//DEARCHIVE_WITH_DEFAULT(akComponentsNames, std::vector<std::string>(1, "MeshRendererComponent"));
+		//DEARCHIVE_WITH_DEFAULT(m_kComponent, 
+		//	std::vector < std::shared_ptr<IComponent>>(1, CREATE_NEW_COMPONENT("MeshRendererComponent", this)));
+		/*//build up components
+		for (UI32 i = 0; i < akComponentsNames.size(); ++i)
+		{
+			m_kComponent.push_back(CREATE_NEW_COMPONENT(akComponentsNames[i], this));
+			DEARCHIVE_WITH_DEFAULT(m_kComponent[i], CREATE_NEW_COMPONENT(akComponentsNames[i], this));
+		}*/
 
 		std::size_t uiNbChildren = m_apkChildren.size();
 		archive(CEREAL_NVP(uiNbChildren));
@@ -93,7 +136,7 @@ public:
 	//positional stuff
 	Transform m_kTransform;
 
-	//Visuals
-	MeshRendererComponent m_kMeshRenderer;
+	//IComponents
+	std::vector<std::shared_ptr<IComponent>> m_kComponent;
 };
 

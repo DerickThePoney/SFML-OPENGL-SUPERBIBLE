@@ -20,12 +20,12 @@ public:
 	Camera& GetCamera() { return m_kCamera; }
 	void AddRootObject(GameObject* kObject) { m_akRootObjects.push_back(kObject); }
 
-	void ExtractVisibleObjectList(std::vector<GameObject *>& akObjects);
+	void ExtractVisibleObjectList(std::vector<MeshRendererComponent *>& akObjects);
 
 	template<class Archive>
 	void save(Archive & archive) const
 	{
-		archive(CEREAL_NVP(m_kCamera));
+		archive(CEREAL_NVP(m_kFilename), CEREAL_NVP(m_kCamera));
 
 		std::size_t uiNbChildren = m_akRootObjects.size();
 		archive(CEREAL_NVP(uiNbChildren));
@@ -39,7 +39,7 @@ public:
 	template<class Archive>
 	void load(Archive& archive)
 	{
-		archive(CEREAL_NVP(m_kCamera));
+		archive(CEREAL_NVP(m_kFilename), CEREAL_NVP(m_kCamera));
 
 		std::size_t uiNbChildren = m_akRootObjects.size();
 		archive(CEREAL_NVP(uiNbChildren));
@@ -54,14 +54,14 @@ public:
 
 
 private:
-	void ExtractVisibleObjectsInHierarchy(GameObject* base, std::vector<GameObject *>& akObjects);
+	void ExtractVisibleObjectsInHierarchy(GameObject* base, std::vector<MeshRendererComponent *>& akObjects);
 
 	void TransformsUpdate();
 	void IMGuiStuffs();
 
 private:
 
-	
+	std::string m_kFilename;
 	Camera m_kCamera;
 	std::vector<GameObject*> m_akRootObjects;
 

@@ -169,17 +169,20 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 		glDrawElements(GL_TRIANGLES, kVisibleObjectsList[i].m_pkMeshRenderer->m_pkMesh->m_aiIndices.size(), GL_UNSIGNED_INT, 0);
 	}
 
+	if (kVisibleObjectsList.size() > 0)
+	{
+		//draw a line onto the screen
+		vec4 objectWorldPos = kVisibleObjectsList[1].m_pkTransform->GetWorldspacePosition();
+		vec4 cameraWorldPos = kVisibleObjectsList[0].m_pkTransform->GetWorldspacePosition();
 
-	//draw a line onto the screen
-	vec4 objectWorldPos = kVisibleObjectsList[1].m_pkTransform->GetWorldspacePosition();
-	vec4 cameraWorldPos = kVisibleObjectsList[0].m_pkTransform->GetWorldspacePosition();
+		vec4 direction = objectWorldPos - cameraWorldPos;
+		DebugRenderingCommands::Instance()->DrawLine(cameraWorldPos, objectWorldPos, vec4(1));
 
-	vec4 direction = objectWorldPos - cameraWorldPos;
-	DebugRenderingCommands::Instance()->DrawLine(cameraWorldPos, objectWorldPos, vec4(1));
+		objectWorldPos = kVisibleObjectsList[2].m_pkTransform->GetWorldspacePosition();
+		direction = objectWorldPos - cameraWorldPos;
+		DebugRenderingCommands::Instance()->DrawLine(cameraWorldPos, objectWorldPos, vec4(1));
 
-	objectWorldPos = kVisibleObjectsList[2].m_pkTransform->GetWorldspacePosition();
-	direction = objectWorldPos - cameraWorldPos;
-	DebugRenderingCommands::Instance()->DrawLine(cameraWorldPos, objectWorldPos, vec4(1));
+	}
 
 	//Draw rendering commands
 	DebugRenderingCommands::Instance()->RenderDebugCommands(kCamera);

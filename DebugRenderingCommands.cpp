@@ -48,13 +48,13 @@ void DebugRenderingCommands::LineDrawingCommands::InitRender()
 	m_hkVao.Init();
 	m_hkVao.Bind();
 
-	m_kVertices.Init(GL_ARRAY_BUFFER, 4 * sizeof(vec4), NULL, GL_DYNAMIC_STORAGE_BIT | GL_MAP_WRITE_BIT);
+	m_kVertices.Init(GL_ARRAY_BUFFER, 4 * sizeof(vec4), NULL, GL_DYNAMIC_DRAW);
 	m_hkVao.SetAttribute(0, 4, GL_FLOAT, GL_FALSE, 0, NULL);
 }
 
 void DebugRenderingCommands::LineDrawingCommands::UpdateData()
 {
-	m_kVertices.UpdateData(GL_ARRAY_BUFFER, endpoints.size() * sizeof(vec4), endpoints.data(), GL_WRITE_ONLY, GL_DYNAMIC_STORAGE_BIT | GL_MAP_WRITE_BIT);
+	m_kVertices.UpdateData(GL_ARRAY_BUFFER, endpoints.size() * sizeof(vec4), endpoints.data(), GL_WRITE_ONLY, GL_DYNAMIC_DRAW);
 }
 
 void DebugRenderingCommands::LineDrawingCommands::Terminate()

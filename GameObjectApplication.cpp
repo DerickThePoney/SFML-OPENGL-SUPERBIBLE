@@ -46,7 +46,7 @@ void GameObjectApplication::Update(double deltaTime)
 
 void GameObjectApplication::Render(double currentTime)
 {
-	std::vector<GameObject*> visibleObjectList;
+	std::vector<MeshRendererComponent*> visibleObjectList;
 	std::vector<GameObjectRenderData> visibleDataList;
 
 	// scene culling
@@ -55,11 +55,11 @@ void GameObjectApplication::Render(double currentTime)
 	//extract render data
 	for (size_t i = 0; i < visibleObjectList.size(); ++i)
 	{
-		if (visibleObjectList[i]->m_kMeshRenderer.m_pkMesh != nullptr) // no data to display...
+		if (visibleObjectList[i]->m_pkMesh != nullptr) // no data to display...
 		{
 			GameObjectRenderData data;
-			data.m_pkMeshRenderer = &visibleObjectList[i]->m_kMeshRenderer;
-			data.m_pkTransform = &visibleObjectList[i]->m_kTransform;
+			data.m_pkMeshRenderer = visibleObjectList[i];
+			data.m_pkTransform = &visibleObjectList[i]->m_pkParent->m_kTransform;
 			visibleDataList.push_back(data);
 		}
 	}

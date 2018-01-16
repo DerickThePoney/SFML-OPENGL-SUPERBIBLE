@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "MeshRendererComponent.h"
 
+TYPE_SYSTEM_RTTI_OBJECT(MeshRendererComponent, IComponent);
+
 void MeshRendererComponent::Init(Mesh* kMesh, Material* kMaterial)
 {
 	m_pkMaterial = kMaterial;

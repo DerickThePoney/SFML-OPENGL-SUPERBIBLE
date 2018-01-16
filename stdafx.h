@@ -19,6 +19,9 @@
 #include <cereal/archives/binary.hpp>
 #include <cereal/types/map.hpp>
 #include <cereal/types/vector.hpp>
+#include <cereal/types/polymorphic.hpp>
+
+#include "Delegate.h"
 
 #define DEARCHIVE_WITH_DEFAULT(x, def) \
 	try{archive(CEREAL_NVP(x));}catch(std::exception e){x = def;}
@@ -36,6 +39,7 @@
 #include "Utility.h"
 #include "Math.h"
 #include "Line.h"
+#include "StringHash.h"
 
 #include "imgui.h"
 #include "imgui-events-SFML.h"
