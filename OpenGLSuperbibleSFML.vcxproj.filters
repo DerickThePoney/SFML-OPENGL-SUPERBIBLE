@@ -61,6 +61,9 @@
     <Filter Include="Input">
       <UniqueIdentifier>{21fb6d3b-8de4-4568-8ecf-caf9ef663220}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Rendering\Lighting">
+      <UniqueIdentifier>{cea4e0ec-faaa-47d7-8c5b-d2d7f3fd8264}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -222,6 +225,9 @@
     <ClInclude Include="InputManager.h">
       <Filter>Input</Filter>
     </ClInclude>
+    <ClInclude Include="LightingManager.h">
+      <Filter>Rendering\Lighting</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -343,6 +349,9 @@
     </ClCompile>
     <ClCompile Include="InputManager.cpp">
       <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="LightingManager.cpp">
+      <Filter>Rendering\Lighting</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

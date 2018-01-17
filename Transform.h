@@ -1,5 +1,4 @@
 #pragma once
-
 //using namespace vmath;
 
 class Transform

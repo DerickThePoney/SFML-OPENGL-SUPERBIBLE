@@ -190,6 +190,7 @@
     <ClInclude Include="imgui\stb_truetype.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="Intersection.h" />
+    <ClInclude Include="LightingManager.h" />
     <ClInclude Include="Line.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="ObjLoader.h" />
@@ -237,6 +238,7 @@
     <ClCompile Include="imgui\imgui_draw.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Intersection.cpp" />
+    <ClCompile Include="LightingManager.cpp" />
     <ClCompile Include="Line.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="OGLRenderBuffer.cpp" />
