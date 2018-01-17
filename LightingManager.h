@@ -46,6 +46,7 @@ enum LIGHT_TYPE
 	SPOT_LIGHT
 };
 
+#pragma pack (push, 1)
 struct Light
 {
 	vec4 m_kPosition;
@@ -54,8 +55,9 @@ struct Light
 	LIGHT_TYPE m_eLight;
 	F32 m_fRange;
 	F32 m_fConeSize;
+	UI32 pad;
 };
-
+#pragma pack (pop)
 
 class LightingManager : public Singleton<LightingManager>
 {
