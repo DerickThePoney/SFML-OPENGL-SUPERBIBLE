@@ -1,6 +1,32 @@
 #include "stdafx.h"
 #include "Application.h"
 
+const char* pcEventTypesNames[]=
+{
+ "Closed",                 ///< The window requested to be closed (no data)
+ "Resized",                ///< The window was resized (data in event.size)
+ "LostFocus",              ///< The window lost the focus (no data)
+ "GainedFocus",            ///< The window gained the focus (no data)
+ "TextEntered",            ///< A character was entered (data in event.text)
+ "KeyPressed",             ///< A key was pressed (data in event.key)
+ "KeyReleased",            ///< A key was released (data in event.key)
+ "MouseWheelMoved",        ///< The mouse wheel was scrolled (data in event.mouseWheel) (deprecated)
+ "MouseWheelScrolled",     ///< The mouse wheel was scrolled (data in event.mouseWheelScroll)
+ "MouseButtonPressed",     ///< A mouse button was pressed (data in event.mouseButton)
+ "MouseButtonReleased",    ///< A mouse button was released (data in event.mouseButton)
+ "MouseMoved",             ///< The mouse cursor moved (data in event.mouseMove)
+ "MouseEntered",           ///< The mouse cursor entered the area of the window (no data)
+ "MouseLeft",              ///< The mouse cursor left the area of the window (no data)
+ "JoystickButtonPressed",  ///< A joystick button was pressed (data in event.joystickButton)
+ "JoystickButtonReleased", ///< A joystick button was released (data in event.joystickButton)
+ "JoystickMoved",          ///< The joystick moved along an axis (data in event.joystickMove)
+ "JoystickConnected",      ///< A joystick was connected (data in event.joystickConnect)
+ "JoystickDisconnected",   ///< A joystick was disconnected (data in event.joystickConnect)
+ "TouchBegan",             ///< A touch event began (data in event.touch)
+ "TouchMoved",             ///< A touch moved (data in event.touch)
+ "TouchEnded",             ///< A touch event ended (data in event.touch)
+ "SensorChanged"          ///< A sensor value changed (data in event.sensor)
+};
 
 Application::Application()
 	: m_bOnEscapeQuit (true)
@@ -12,6 +38,21 @@ Application::~Application()
 {
 }
 
+void Application::Initialise()
+{
+	InputManager::Instance()->Initialise();
+}
+
+void Application::Terminate()
+{
+	InputManager::Delete();
+}
+
+void Application::Update(double deltaTime)
+{
+	InputManager::Instance()->Update(deltaTime);
+}
+
 void Application::OnResize(unsigned int width, unsigned int height)
 {
 	glViewport(0, 0, width, height);
@@ -19,6 +60,8 @@ void Application::OnResize(unsigned int width, unsigned int height)
 
 void Application::HandleMessages()
 {
+	InputManager::Instance()->PrepareNewFrame();
+
 	// handle events
 	sf::Event event;
 	while (m_window.pollEvent(event))
@@ -69,7 +112,18 @@ void Application::InterpretMessage(sf::Event event)
 	case sf::Event::EventType::KeyReleased:
 		InputManager::Instance()->HandleKeyboardMessages(event);
 		break;
+	case sf::Event::EventType::MouseButtonPressed:
+	case sf::Event::EventType::MouseWheelScrolled:
+	case sf::Event::EventType::MouseButtonReleased:
+	case sf::Event::EventType::MouseMoved:
+	case sf::Event::EventType::MouseEntered:
+	case sf::Event::EventType::MouseLeft:
+		InputManager::Instance()->HandleMouseMessages(event);
+		//std::cout << "Mouse Event received: " << pcEventTypesNames[event.type] << std::endl;
+		break;
+	case sf::Event::EventType::MouseWheelMoved:
 	default:
+		std::cout << "Unhandled event received: " << pcEventTypesNames[event.type] << std::endl;
 		break;
 	}
 	

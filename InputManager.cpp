@@ -112,9 +112,21 @@ const char* pcKeyboardKeysNames[] = ///// COPIED FROM SFML!
 	"Pause"         ///< The Pause key
 };
 
-InputManager::InputManager()
-	: current_queue(1), m_kConfigFilename("settings/InputManager.xml")
+const char* pcMouseButtonsNames[] =
 {
+	"Left",       ///< The left mouse button
+	"Right",      ///< The right mouse button
+	"Middle",     ///< The middle (wheel) mouse button
+	"XButton1",   ///< The first extra mouse button
+	"XButton2"   ///< The second extra mouse button
+};
+
+
+InputManager::InputManager()
+	: m_kConfigFilename("settings/InputManager.xml")
+{
+	m_kKeyboard.current_queue = 1;
+	m_kMouseData.current_queue = 1;
 }
 
 InputManager::~InputManager()
@@ -123,8 +135,11 @@ InputManager::~InputManager()
 
 void InputManager::Initialise()
 {
-	m_pbIsDown[0] = std::vector<bool>(sf::Keyboard::Key::KeyCount, false);
-	m_pbIsDown[1] = std::vector<bool>(sf::Keyboard::Key::KeyCount, false);
+	m_kKeyboard.m_pbIsDown[0] = std::vector<bool>(sf::Keyboard::Key::KeyCount, false);
+	m_kKeyboard.m_pbIsDown[1] = std::vector<bool>(sf::Keyboard::Key::KeyCount, false);
+
+	m_kMouseData.m_pbIsDown[0] = std::vector<bool>(sf::Mouse::Button::ButtonCount, false);
+	m_kMouseData.m_pbIsDown[1] = std::vector<bool>(sf::Mouse::Button::ButtonCount, false);
 
 	LoadSettings();
 }
@@ -133,24 +148,109 @@ void InputManager::HandleKeyboardMessages(sf::Event event)
 {
 	sf::Keyboard::Key key = event.key.code;
 
-	if (key == Unknown) return;
+	if (key == sf::Keyboard::Key::Unknown) return;
 
 	if (event.type == sf::Event::KeyPressed)
 	{
-		m_pbIsDown[current_queue][key] = true;
+		m_kKeyboard.m_pbIsDown[m_kKeyboard.current_queue][key] = true;
 	}
 	else if (event.type == sf::Event::KeyReleased)
 	{
-		m_pbIsDown[current_queue][key] = false;
+		m_kKeyboard.m_pbIsDown[m_kKeyboard.current_queue][key] = false;
 	}
 }
 
-void InputManager::Update(double fElaspsedTime)
+void InputManager::HandleMouseMessages(sf::Event event)
 {
-	current_queue = 1 - current_queue;
-	m_pbIsDown[current_queue] = m_pbIsDown[1 - current_queue];
+	switch (event.type)
+	{
+	case sf::Event::MouseMoved:
+		m_kMouseData.m_kPosition = ivec2(event.mouseMove.x, event.mouseMove.y);
+		break;
+	case sf::Event::MouseButtonPressed:
+		m_kMouseData.m_pbIsDown[m_kMouseData.current_queue][event.mouseButton.button] = true;
+		break;
+	case sf::Event::MouseButtonReleased:
+		m_kMouseData.m_pbIsDown[m_kMouseData.current_queue][event.mouseButton.button] = false;
+		break;
+	case sf::Event::MouseWheelScrolled:
+		m_kMouseData.m_fWheelDelta = event.mouseWheelScroll.delta;
+		m_kMouseData.m_bScrolled = true;
+		break;
+	default:
+		break;
+	}
+}
 
+void InputManager::PrepareNewFrame()
+{
+	m_kKeyboard.current_queue = 1 - m_kKeyboard.current_queue;
+	m_kKeyboard.m_pbIsDown[m_kKeyboard.current_queue] = m_kKeyboard.m_pbIsDown[1 - m_kKeyboard.current_queue];
+
+	m_kMouseData.current_queue = 1 - m_kMouseData.current_queue;
+	m_kMouseData.m_pbIsDown[m_kMouseData.current_queue] = m_kMouseData.m_pbIsDown[1 - m_kMouseData.current_queue];
+	
+	if (m_kMouseData.m_bScrolled)
+	{
+		m_kMouseData.m_bScrolled = false;
+	}
+	else
+	{
+		m_kMouseData.m_fWheelDelta = 0;
+	}
+}
+
+void InputManager::Update(double fElapsedTime)
+{
 	Inspect();
+}
+
+bool InputManager::IsKeyboardButtonPressed(sf::Keyboard::Key key)
+{
+	return m_kKeyboard.m_pbIsDown[m_kKeyboard.current_queue][key];
+}
+
+bool InputManager::IsKeyboardButtonJustDown(sf::Keyboard::Key key)
+{
+	return (m_kKeyboard.m_pbIsDown[m_kKeyboard.current_queue][key]) &&
+		(m_kKeyboard.m_pbIsDown[1 - m_kKeyboard.current_queue][key] != 
+			m_kKeyboard.m_pbIsDown[m_kKeyboard.current_queue][key]);
+}
+
+bool InputManager::IsKeyboardButtonJustRelease(sf::Keyboard::Key key)
+{
+	return (!m_kKeyboard.m_pbIsDown[m_kKeyboard.current_queue][key]) &&
+		(m_kKeyboard.m_pbIsDown[1 - m_kKeyboard.current_queue][key] !=
+			m_kKeyboard.m_pbIsDown[m_kKeyboard.current_queue][key]);
+}
+
+bool InputManager::IsMouseButtonPressed(sf::Mouse::Button key)
+{
+	return m_kMouseData.m_pbIsDown[m_kMouseData.current_queue][key];
+}
+
+bool InputManager::IsMouseButtonJustDown(sf::Mouse::Button key)
+{
+	return (m_kMouseData.m_pbIsDown[m_kMouseData.current_queue][key]) &&
+		(m_kMouseData.m_pbIsDown[1 - m_kMouseData.current_queue][key] !=
+			m_kMouseData.m_pbIsDown[m_kMouseData.current_queue][key]);
+}
+
+bool InputManager::IsMouseButtonJustRelease(sf::Mouse::Button key)
+{
+	return (!m_kMouseData.m_pbIsDown[m_kMouseData.current_queue][key]) &&
+		(m_kMouseData.m_pbIsDown[1 - m_kMouseData.current_queue][key] !=
+			m_kMouseData.m_pbIsDown[m_kMouseData.current_queue][key]);
+}
+
+float InputManager::GetMouseWheelDelta()
+{
+	return m_kMouseData.m_fWheelDelta;
+}
+
+ivec2 InputManager::GetMousePosition()
+{
+	return m_kMouseData.m_kPosition;
 }
 
 void InputManager::Inspect()
@@ -169,22 +269,74 @@ void InputManager::Inspect()
 	}
 
 	static bool bShowKeyboard = false;
+	static bool bShowMouse = false;
+	const char* buttonCheckMethod[] = { "Just pressed", "Just released", "pressed" };
 
 	ImGui::Checkbox("Show keys", &bShowKeyboard);
 
 	if (bShowKeyboard)
 	{
+		
+		static int value = 0;
+		ImGui::Combo("Check method for keyboard buttons", &value, buttonCheckMethod, 3);
+
 		for (UI32 i = 0; i < sf::Keyboard::Key::KeyCount; ++i)
 		{
 			if ((i & 15) != 0)
 			{
 				ImGui::SameLine();
 			}
-
-			bool val = m_pbIsDown[current_queue][i];
+			bool val;
+			switch (value)
+			{
+			case 0:
+				val = IsKeyboardButtonJustDown((sf::Keyboard::Key)i);
+				break;
+			case 1:
+				val = IsKeyboardButtonJustRelease((sf::Keyboard::Key)i);
+				break;
+			case 2:
+				val = IsKeyboardButtonPressed((sf::Keyboard::Key)i);
+				break;
+			}
 			ImGui::Checkbox(pcKeyboardKeysNames[i], &val);
 		}
 	}
+	
+	ImGui::Separator();
+	ImGui::Checkbox("Show mouse", &bShowMouse);
+
+	if (bShowMouse)
+	{
+		ImGui::InputInt2("Mouse position", m_kMouseData.m_kPosition.GetData(), ImGuiInputTextFlags_ReadOnly);
+		ImGui::InputFloat("Mouse wheel delta", &m_kMouseData.m_fWheelDelta, 0, 0, -1, ImGuiInputTextFlags_ReadOnly);
+
+		static int valueMouse = 0;
+		ImGui::Combo("Check method for mouse buttons", &valueMouse, buttonCheckMethod, 3);
+		for (UI32 i = 0; i < sf::Mouse::Button::ButtonCount; ++i)
+		{
+			if ((i & 15) != 0)
+			{
+				ImGui::SameLine();
+			}
+
+			bool val;
+			switch (valueMouse)
+			{
+			case 0:
+				val = IsMouseButtonJustDown((sf::Mouse::Button)i);
+				break;
+			case 1:
+				val = IsMouseButtonJustRelease((sf::Mouse::Button)i);
+				break;
+			case 2:
+				val = IsMouseButtonPressed((sf::Mouse::Button)i);
+				break;
+			}
+			ImGui::Checkbox(pcMouseButtonsNames[i], &val);
+		}
+	}
+
 
 	ImGui::Separator();
 	ImGui::Text("%s", "Stringified commands");

@@ -11,16 +11,18 @@
 #define TIME_MSEC_FLOAT(x) ((float)TIME_MSEC_DOUBLE(x))
 #define TIME_SEC_FLOAT(x) ((float)TIME_SEC_DOUBLE(x))
 
+const char* pcEventTypesNames[];
+
 class Application
 {
 public:
 	Application();
 	virtual ~Application();
 
-	virtual void Initialise() {}
-	virtual void Terminate() {}
+	virtual void Initialise();
+	virtual void Terminate();
 	virtual void Render(double currentTime) { ImGui::Render(); m_window.display(); }
-	virtual void Update(double deltaTime) {}
+	virtual void Update(double deltaTime);
 	virtual void OnResize(unsigned int width, unsigned int height);
 
 	virtual void HandleMessages();

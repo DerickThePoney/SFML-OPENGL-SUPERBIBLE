@@ -1,6 +1,7 @@
 #pragma once
 
 const char* pcKeyboardKeysNames[];
+const char* pcMouseButtonsNames[];
 
 class InputManager : public Singleton<InputManager>
 {
@@ -12,7 +13,19 @@ protected:
 public:
 	void Initialise();
 	void HandleKeyboardMessages(sf::Event event);
-	void Update(double fElaspsedTime);
+	void HandleMouseMessages(sf::Event event);
+	void PrepareNewFrame();
+	void Update(double fElapsedTime);
+
+	bool IsKeyboardButtonPressed(sf::Keyboard::Key key);
+	bool IsKeyboardButtonJustDown(sf::Keyboard::Key key);
+	bool IsKeyboardButtonJustRelease(sf::Keyboard::Key key);
+
+	bool IsMouseButtonPressed(sf::Mouse::Button key);
+	bool IsMouseButtonJustDown(sf::Mouse::Button key);
+	bool IsMouseButtonJustRelease(sf::Mouse::Button key);
+	float GetMouseWheelDelta();
+	ivec2 GetMousePosition();
 
 	void Inspect();
 
@@ -34,9 +47,32 @@ public:
 protected:
 	std::string m_kConfigFilename;
 
-	std::vector<bool> m_pbIsDown[2];
-	UI32 current_queue;
+	///Mouse
+	struct Mouse
+	{
+		ivec2 m_kPosition;
+		float m_fWheelDelta;
+		bool m_bScrolled;
 
+		std::vector<bool> m_pbIsDown[2];
+		UI32 current_queue;
+	};
+
+	Mouse m_kMouseData;
+
+
+	///Keyboard
+	struct KeyBoard
+	{
+		std::vector<bool> m_pbIsDown[2];
+		UI32 current_queue;
+	};
+
+	KeyBoard m_kKeyboard;
+
+
+
+	///Special commands
 	struct StringifiedCommand
 	{
 		std::string m_kName;
