@@ -25,6 +25,7 @@ private:
 		Material* m_pkMaterial;
 		OGLVertexArray m_hkVao;
 		OGLBuffer m_kVertices;
+		OGLBuffer m_kColors;
 
 		void InitRender();
 		void UpdateData();

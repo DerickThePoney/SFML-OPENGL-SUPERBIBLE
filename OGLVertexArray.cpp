@@ -29,15 +29,17 @@ void OGLVertexArray::UnBind()
 	m_bIsBound = false;
 }
 
-void OGLVertexArray::SetAttribute(GLuint m_uiIndex, GLint m_iSize, GLenum m_eType, GLboolean m_bNormalized, GLsizei m_iStride, const void * m_pPointer)
+void OGLVertexArray::SetAttribute(GLuint uiIndex, GLint iSize, GLenum eType, GLboolean bNormalized, 
+									GLsizei iStride, const void * pPointer, GLuint uiDivisor)
 {
 	if (!m_bIsBound)
 	{
 		Bind();
 	}
 
-	glVertexAttribPointer(m_uiIndex, m_iSize, m_eType, m_bNormalized, m_iStride, m_pPointer);
-	glEnableVertexAttribArray(m_uiIndex);
+	glVertexAttribPointer(uiIndex, iSize, eType, bNormalized, iStride, pPointer);
+	glEnableVertexAttribArray(uiIndex);
+	glVertexAttribDivisor(uiIndex, uiDivisor);
 }
 
 void OGLVertexArray::Init()

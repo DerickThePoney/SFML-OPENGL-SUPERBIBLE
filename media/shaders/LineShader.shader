@@ -2,6 +2,7 @@
 #version 430 core
 
 layout (location = 0) in vec4 position;
+layout (location = 2) in vec4 color;
 
 out VS_OUT
 {
@@ -18,7 +19,8 @@ layout(std140, binding = 0) uniform ProjectionData
 
 void main(void)
 {
-	vs_out.color = vec4(1.0 , 0.0 , 1.0 , 1.0);
+	vs_out.color = color;
+	//vs_out.color = vec4(0,0,1,1);
 	gl_Position = projData.projectionMatrix * projData.worldViewMatrix * position;///position.w;	
 }
 

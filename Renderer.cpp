@@ -176,11 +176,11 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 		vec4 cameraWorldPos = kVisibleObjectsList[0].m_pkTransform->GetWorldspacePosition();
 
 		vec4 direction = objectWorldPos - cameraWorldPos;
-		DebugRenderingCommands::Instance()->DrawLine(cameraWorldPos, objectWorldPos, vec4(1));
+		DebugRenderingCommands::Instance()->DrawLine(cameraWorldPos, objectWorldPos, vec4(0,0,1,1));
 
 		objectWorldPos = kVisibleObjectsList[2].m_pkTransform->GetWorldspacePosition();
 		direction = objectWorldPos - cameraWorldPos;
-		DebugRenderingCommands::Instance()->DrawLine(cameraWorldPos, objectWorldPos, vec4(1));
+		DebugRenderingCommands::Instance()->DrawLine(cameraWorldPos, objectWorldPos, vec4(1,0,0,1));
 
 	}
 

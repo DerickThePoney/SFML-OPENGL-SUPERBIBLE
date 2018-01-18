@@ -10,9 +10,9 @@ public:
 	void Bind();
 	void UnBind();
 
-	void SetAttribute(GLuint m_uiIndex, GLint m_iSize, GLenum m_eType, 
-						GLboolean m_bNormalized, GLsizei m_iStride, 
-						const void* m_pPointer);
+	void SetAttribute(GLuint uiIndex, GLint iSize, GLenum eType,
+		GLboolean bNormalized, GLsizei iStride,
+		const void* pPointer, GLuint uiDivisor = 0);
 
 	operator GLuint () { return m_hiVertexBuffer; }
 

@@ -28,7 +28,7 @@ void DebugRenderingCommands::Reset()
 I32 DebugRenderingCommands::DrawLine(vec4 start, vec4 end, vec4 color)
 {
 	m_kLineCommands.endpoints.push_back(start); m_kLineCommands.endpoints.push_back(end);
-	m_kLineCommands.colors.push_back(color);
+	m_kLineCommands.colors.push_back(color); m_kLineCommands.colors.push_back(color);
 	return ++m_uiLineCommandsNb;
 }
 
@@ -50,15 +50,20 @@ void DebugRenderingCommands::LineDrawingCommands::InitRender()
 
 	m_kVertices.Init(GL_ARRAY_BUFFER, 4 * sizeof(vec4), NULL, GL_DYNAMIC_DRAW);
 	m_hkVao.SetAttribute(0, 4, GL_FLOAT, GL_FALSE, 0, NULL);
+
+	m_kColors.Init(GL_ARRAY_BUFFER, 4 * sizeof(vec4), NULL, GL_DYNAMIC_DRAW);
+	m_hkVao.SetAttribute(2, 4, GL_FLOAT, GL_FALSE, 0, NULL);
 }
 
 void DebugRenderingCommands::LineDrawingCommands::UpdateData()
 {
 	m_kVertices.UpdateData(GL_ARRAY_BUFFER, endpoints.size() * sizeof(vec4), endpoints.data(), GL_WRITE_ONLY, GL_DYNAMIC_DRAW);
+	m_kColors.UpdateData(GL_ARRAY_BUFFER, colors.size() * sizeof(vec4), colors.data(), GL_WRITE_ONLY, GL_DYNAMIC_DRAW);
 }
 
 void DebugRenderingCommands::LineDrawingCommands::Terminate()
 {
+	m_kColors.Delete();
 	m_kVertices.Delete();
 	m_hkVao.Delete();
 	MaterialManager::Instance()->Destroy(m_pkMaterial);
@@ -71,4 +76,5 @@ void DebugRenderingCommands::LineDrawingCommands::RenderLines(UI32 uiLineCommand
 	m_hkVao.Bind();
 	UpdateData();
 	glDrawArrays(GL_LINES, 0, endpoints.size());
+	//glDrawArraysInstanced(GL_LINES, 2, 2, uiLineCommandsNb);
 }
