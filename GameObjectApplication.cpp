@@ -15,6 +15,7 @@ GameObjectApplication::~GameObjectApplication()
 void GameObjectApplication::Initialise()
 {
 	Application::Initialise();
+	LightingManager::Instance()->Initialise();
 
 	UI32 width = m_window.getSize().x;
 	UI32 height = m_window.getSize().y;

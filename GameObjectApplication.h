@@ -1,5 +1,6 @@
 #pragma once
 #include "Application.h"
+#include "LightingManager.h"
 #include "GameObjectManager.h"
 #include "ShaderCompiler.h"
 #include "MeshManager.h"

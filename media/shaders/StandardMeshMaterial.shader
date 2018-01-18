@@ -1,6 +1,8 @@
 #sh VERTEX 
 #version 430 core
 
+#define NUM_LIGHTS 10
+
 layout (location = 0) in vec4 position;
 layout (location = 1) in vec3 normal;
 layout (location = 2) in vec4 color;
@@ -10,8 +12,8 @@ out VS_OUT
 {
 	//light stuff
 	vec3 N;
-	vec3 L;
-	vec3 V;
+	vec4 WoldPos;
+	vec4 ViewPos;
 	
 	//color stuff
 	vec4 color;
@@ -24,6 +26,22 @@ out VS_OUT
 uniform layout(location = 0) mat4 modelToWorldMatrix;
 uniform layout(location = 1) vec3 lightPosition = vec3(0,0,10);
 
+struct Light
+{
+	vec4 m_kPosition;
+	vec4 m_kDirection;
+	vec4 m_kLightColor;
+	int m_eLight;
+	float m_fRange;
+	float m_fConeSize;
+	uint pad;
+};
+
+layout(std140, binding = 1) uniform LightArray
+{
+	Light lights[NUM_LIGHTS];
+} lightData;
+
 layout(std140, binding = 0) uniform ProjectionData
 {
 	mat4 worldViewMatrix;
@@ -31,30 +49,31 @@ layout(std140, binding = 0) uniform ProjectionData
 } projData;
 
 
-
 void main(void)
 {
-	mat4 mv_matrix = projData.worldViewMatrix * modelToWorldMatrix;
-	vec4 P = mv_matrix * position;
-	vs_out.N = mat3(mv_matrix) * normal;
-	vs_out.L = lightPosition - P.xyz;
-	vs_out.V = -P.xyz;
-
+	vs_out.WoldPos = modelToWorldMatrix * position;
+	vs_out.ViewPos = projData.worldViewMatrix * vs_out.WoldPos;
+	vs_out.N = mat3(modelToWorldMatrix) * normal;
 	vs_out.UV = UV;
 	vs_out.color = color;
-	gl_Position = projData.projectionMatrix * P;
+	gl_Position = projData.projectionMatrix * vs_out.ViewPos;
 	
 }
 
 #sh FRAGMENT 
 #version 430 core
-
+#define NUM_LIGHTS 10
 in VS_OUT
 {
+	//light stuff
 	vec3 N;
-	vec3 L;
-	vec3 V;
+	vec4 WoldPos;
+	vec4 ViewPos;
+	
+	//color stuff
 	vec4 color;
+	
+	//texture stuff
 	vec2 UV;
 } fs_in;
 
@@ -65,11 +84,53 @@ uniform layout(location = 4) vec3 diffuse_albedo = vec3(0.8,0.8,0.8);
 uniform layout(location = 5) vec3 specular_albedo = vec3(0.7);
 uniform layout(location = 6) float specular_power = 8.0;
 
+struct Light
+{
+	vec4 m_kPosition;
+	vec4 m_kDirection;
+	vec4 m_kLightColor;
+	int m_eLight;
+	float m_fRange;
+	float m_fConeSize;
+	uint pad;
+};
+
+layout(std140, binding = 1) uniform LightArray
+{
+	Light lights[NUM_LIGHTS];
+} lightData;
+
+vec4 ComputeLightColors()
+{
+	vec4 totalLight = vec4(0);
+	
+	vec3 N = normalize(fs_in.N);
+	vec4 V = normalize(fs_in.ViewPos);
+	
+	for(int i = 0; i < NUM_LIGHTS;++i)
+	{
+		if(lightData.lights[i].m_eLight == 0) continue;
+		
+		vec3 L = normalize(lightData.lights[i].m_kPosition - fs_in.ViewPos).xyz;
+		vec3 R = reflect(-L, N);
+		vec3 diffuse = max(dot(N,L), 0.2) * lightData.lights[i].m_kLightColor.rgb;
+		vec3 specular = pow(max(dot(R,V.xyz),0.0), specular_power) * lightData.lights[i].m_kLightColor.rgb;
+	
+		totalLight.rgb += clamp((diffuse + specular),0,1);
+		
+		totalLight.rgb += vec3(1);
+		
+	}
+	totalLight = totalLight/NUM_LIGHTS;
+	totalLight.a = 1;
+	return totalLight;
+}
+
 void main(void)
 {
 	//normalise input
-	vec3 N = normalize(fs_in.N);
-	vec3 L = normalize(fs_in.L);
+	/*vec3 N = normalize(fs_in.N);
+	vec3 L = normalize(fs_in.L[0]);//vec3(1);//normalize(fs_in.L);
 	vec3 V = normalize(fs_in.V);
 	
 	//reflected quantity
@@ -80,8 +141,8 @@ void main(void)
 	vec3 diffuse = max(dot(N,L), 0.2) * colorTexture;
 	vec3 specular = pow(max(dot(R,V),0.0), specular_power) * specular_albedo;
 	
-	vec3 light = clamp(ambiant_light + diffuse + specular,0,1);
+	vec3 light = clamp((ambiant_light + diffuse + specular) * lightData.lights[0].m_kLightColor.xyz,0,1);*/
 	
 	//color = vec4(fs_in.tc, 1.0, 1.0);//texture(tex_object, fs_in.tc * vec2(3.0, 1.0));
-	color = fs_in.color * vec4(light, 1.0);
+	color = fs_in.color * ComputeLightColors();
 }

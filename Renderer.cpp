@@ -157,6 +157,9 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 	// Load the camera projections
 	kCamera.LoadProjectionOnGraphics(0);
 
+	//Bind the light settings
+	LightingManager::Instance()->PrepareDataForRenderer();
+
 	//traverse the objects
 	for (std::size_t i = 0; i < kVisibleObjectsList.size(); ++i)
 	{

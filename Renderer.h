@@ -4,6 +4,7 @@
 #include "MeshRendererComponent.h"
 #include "GameObject.h"
 #include "Camera.h"
+#include "LightingManager.h"
 
 struct GameObjectRenderData
 {

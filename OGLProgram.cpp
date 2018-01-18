@@ -130,7 +130,14 @@ void OGLProgram::ExtractInformation()
 		glGetActiveUniform(m_hProgram, i, maxlength, &att.m_iLength, &att.m_iSize, &att.m_eType, att.m_pcName);
 		att.m_iLocation = glGetUniformLocation(m_hProgram, att.m_pcName);
 
-		std::cout << "Uniform: " << i << "\t" << att.m_iLocation << "\t" << att.m_iLength << "\t" << att.m_iSize << "\t" << OGLUtilities::GLTypeEnumToCString(att.m_eType) << "\t" << att.m_pcName << std::endl;
+		if (i == 10)
+		{
+			std::cout << "Too much to actually display...." << std::endl;
+		}
+		else if(i < 10)
+		{
+			std::cout << "Uniform: " << i << "\t" << att.m_iLocation << "\t" << att.m_iLength << "\t" << att.m_iSize << "\t" << OGLUtilities::GLTypeEnumToCString(att.m_eType) << "\t" << att.m_pcName << std::endl;
+		}
 
 		m_akUniformsInfo.push_back(att);
 	}
@@ -155,10 +162,17 @@ void OGLProgram::ExtractInformation()
 
 		std::cout << "Uniform Blocks: " << i << "\t" << actUB.m_iLength << "\t" << actUB.m_pcName << std::endl;
 
-		for (I32 j = 0; j < actUB.m_iNbUniform; ++j)
+		if (actUB.m_iNbUniform > 10)
 		{
-			m_akUniformsInfo[actUB.m_piUniformsIndexes[j]].m_bIsFromBlock = true;
-			std::cout << "\t" << actUB.m_piUniformsIndexes[j] << std::endl;
+			std::cout << "There are " << actUB.m_iNbUniform << " associated uniforms" << std::endl;	
+		}
+		else
+		{
+			for (I32 j = 0; j < actUB.m_iNbUniform; ++j)
+			{
+				m_akUniformsInfo[actUB.m_piUniformsIndexes[j]].m_bIsFromBlock = true;
+				std::cout << "\t" << actUB.m_piUniformsIndexes[j] << std::endl;
+			}
 		}
 
 		m_akUniformBlockInfo.push_back(actUB);

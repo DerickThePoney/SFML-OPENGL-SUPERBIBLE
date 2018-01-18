@@ -41,6 +41,7 @@ struct SpotLight
 
 enum LIGHT_TYPE
 {
+	UNUSED,
 	DIRECTIONAL_LIGHT,
 	POINT_LIGHT,
 	SPOT_LIGHT
@@ -59,6 +60,7 @@ struct Light
 };
 #pragma pack (pop)
 
+const UI32 NUM_LIGHT = 10;
 class LightingManager : public Singleton<LightingManager>
 {
 	friend class Singleton<LightingManager>;
@@ -70,5 +72,18 @@ protected:
 public:
 
 	void Initialise();
-	void Update(double fElaspedTime);
+
+	void PrepareDataForRenderer();
+
+	
+
+private:
+	void LightSettings();
+
+private:
+	LightingSettings m_kSettings;
+
+
+	Light* m_kLightsData;
+	OGLBuffer m_kLightUniformsBuffer;
 };
