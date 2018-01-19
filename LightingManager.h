@@ -56,7 +56,7 @@ struct Light
 	LIGHT_TYPE m_eLight;
 	F32 m_fRange;
 	F32 m_fConeSize;
-	UI32 pad;
+	UI32 m_uiLightStrength;
 };
 #pragma pack (pop)
 

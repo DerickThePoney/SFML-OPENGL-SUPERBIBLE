@@ -24,8 +24,16 @@ void LightingManager::Initialise()
 	}
 	
 	m_kLightsData[0].m_eLight = POINT_LIGHT;
-	m_kLightsData[0].m_kPosition = vec4(0, 0, 10, 1);
-	m_kLightsData[0].m_kLightColor= vec4(0, 0, 1, 1);
+	m_kLightsData[0].m_kPosition = vec4(0, 0, 5, 1);
+	m_kLightsData[0].m_kLightColor= vec4(1, 1, 1, 1);
+	m_kLightsData[0].m_uiLightStrength = 1;
+	m_kLightsData[0].m_fRange = 10;
+
+	m_kLightsData[2].m_eLight = POINT_LIGHT;
+	m_kLightsData[2].m_kPosition = vec4(-5, 12, 3, 1);
+	m_kLightsData[2].m_kLightColor = vec4(1, 1, 1, 1);
+	m_kLightsData[2].m_uiLightStrength = 1;
+	m_kLightsData[2].m_fRange = 10;
 }
 
 void LightingManager::PrepareDataForRenderer()

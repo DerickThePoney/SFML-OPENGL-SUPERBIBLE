@@ -11,7 +11,7 @@ layout (location = 3) in vec2 UV;
 out VS_OUT
 {
 	//light stuff
-	vec3 N;
+	vec3 NWorld;
 	vec4 WoldPos;
 	vec4 ViewPos;
 	
@@ -24,7 +24,6 @@ out VS_OUT
 
 //uniforms
 uniform layout(location = 0) mat4 modelToWorldMatrix;
-uniform layout(location = 1) vec3 lightPosition = vec3(0,0,10);
 
 struct Light
 {
@@ -53,7 +52,7 @@ void main(void)
 {
 	vs_out.WoldPos = modelToWorldMatrix * position;
 	vs_out.ViewPos = projData.worldViewMatrix * vs_out.WoldPos;
-	vs_out.N = mat3(modelToWorldMatrix) * normal;
+	vs_out.NWorld = mat3(modelToWorldMatrix) * normal;
 	vs_out.UV = UV;
 	vs_out.color = color;
 	gl_Position = projData.projectionMatrix * vs_out.ViewPos;
@@ -66,7 +65,7 @@ void main(void)
 in VS_OUT
 {
 	//light stuff
-	vec3 N;
+	vec3 NWorld;
 	vec4 WoldPos;
 	vec4 ViewPos;
 	
@@ -78,6 +77,8 @@ in VS_OUT
 } fs_in;
 
 layout (location = 0) out vec4 color;
+
+uniform layout(location = 0) mat4 modelToWorldMatrix;
 
 uniform layout(location = 3) vec3 ambiant_light = vec3(0.2,0.2,0.2);
 uniform layout(location = 4) vec3 diffuse_albedo = vec3(0.8,0.8,0.8);
@@ -92,7 +93,7 @@ struct Light
 	int m_eLight;
 	float m_fRange;
 	float m_fConeSize;
-	uint pad;
+	uint m_uiLightStrength;
 };
 
 layout(std140, binding = 1) uniform LightArray
@@ -100,28 +101,54 @@ layout(std140, binding = 1) uniform LightArray
 	Light lights[NUM_LIGHTS];
 } lightData;
 
+layout(std140, binding = 0) uniform ProjectionData
+{
+	mat4 worldViewMatrix;
+	mat4 projectionMatrix;
+} projData;
+
+vec3 ComputePointLight(int i, vec3 N, vec4 V)
+{
+	vec4 LDist  = lightData.lights[i].m_kPosition - fs_in.WoldPos;
+	vec3 L = normalize(LDist).xyz;
+	
+	float attenuation = clamp((lightData.lights[i].m_fRange - abs(length(LDist))) / lightData.lights[i].m_fRange, 0, 1);
+	
+	vec3 R = mat3(projData.worldViewMatrix) * reflect(-L, N);
+	vec3 diffuse = max(dot(N,L), 0.2) * lightData.lights[i].m_kLightColor.rgb * lightData.lights[i].m_uiLightStrength;
+	vec3 specular = pow(max(dot(R,V.xyz),0.0), specular_power) * lightData.lights[i].m_kLightColor.rgb * lightData.lights[i].m_uiLightStrength;
+		
+	return (diffuse + specular) * attenuation;
+}
+
 vec4 ComputeLightColors()
 {
-	vec4 totalLight = vec4(0);
+	vec4 totalLight = vec4(0.1);
 	
-	vec3 N = normalize(fs_in.N);
+	vec3 N = normalize(fs_in.NWorld);
 	vec4 V = normalize(fs_in.ViewPos);
 	
 	for(int i = 0; i < NUM_LIGHTS;++i)
 	{
 		if(lightData.lights[i].m_eLight == 0) continue;
 		
-		vec3 L = normalize(lightData.lights[i].m_kPosition - fs_in.ViewPos).xyz;
-		vec3 R = reflect(-L, N);
-		vec3 diffuse = max(dot(N,L), 0.2) * lightData.lights[i].m_kLightColor.rgb;
-		vec3 specular = pow(max(dot(R,V.xyz),0.0), specular_power) * lightData.lights[i].m_kLightColor.rgb;
-	
-		totalLight.rgb += clamp((diffuse + specular),0,1);
-		
-		totalLight.rgb += vec3(1);
+		if(lightData.lights[i].m_eLight == 1)
+		{
+			totalLight.rgb += vec3(1);
+		}
+		else if(lightData.lights[i].m_eLight == 2)
+		{
+			totalLight.rgb += ComputePointLight(i, N, V);
+		}
+		else if(lightData.lights[i].m_eLight == 3)
+		{
+			totalLight.rgb += vec3(1);
+		}
 		
 	}
-	totalLight = totalLight/NUM_LIGHTS;
+	
+	totalLight.rgb = clamp(totalLight.rgb,0,1);
+	//totalLight = totalLight/NUM_LIGHTS;
 	totalLight.a = 1;
 	return totalLight;
 }
