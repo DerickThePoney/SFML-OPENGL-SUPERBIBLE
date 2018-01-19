@@ -56,7 +56,7 @@ struct Light
 	LIGHT_TYPE m_eLight;
 	F32 m_fRange;
 	F32 m_fConeSize;
-	UI32 m_uiLightStrength;
+	F32 m_fLightStrength;
 };
 #pragma pack (pop)
 
@@ -75,7 +75,7 @@ public:
 
 	void PrepareDataForRenderer();
 
-	
+	Light* GetPointerToNextUnusedLight();
 
 private:
 	void LightSettings();

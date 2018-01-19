@@ -23,22 +23,34 @@ void LightingManager::Initialise()
 		m_kLightsData[i].m_eLight = UNUSED;
 	}
 	
-	m_kLightsData[0].m_eLight = POINT_LIGHT;
+	/*m_kLightsData[0].m_eLight = POINT_LIGHT;
 	m_kLightsData[0].m_kPosition = vec4(0, 0, 5, 1);
 	m_kLightsData[0].m_kLightColor= vec4(1, 1, 1, 1);
-	m_kLightsData[0].m_uiLightStrength = 1;
+	m_kLightsData[0].m_fLightStrength = 1;
 	m_kLightsData[0].m_fRange = 10;
 
 	m_kLightsData[2].m_eLight = POINT_LIGHT;
 	m_kLightsData[2].m_kPosition = vec4(-5, 12, 3, 1);
 	m_kLightsData[2].m_kLightColor = vec4(1, 1, 1, 1);
-	m_kLightsData[2].m_uiLightStrength = 1;
-	m_kLightsData[2].m_fRange = 10;
+	m_kLightsData[2].m_fLightStrength = 1;
+	m_kLightsData[2].m_fRange = 10;*/
 }
 
 void LightingManager::PrepareDataForRenderer()
 {
 	m_kLightUniformsBuffer.BindToUniformBindingPoint(1);
+}
+
+Light * LightingManager::GetPointerToNextUnusedLight()
+{
+	if (m_kLightsData != nullptr)
+	{
+		for (int i = 0; i < NUM_LIGHT; ++i)
+		{
+			if (m_kLightsData[i].m_eLight == UNUSED) return &m_kLightsData[i];
+		}
+	}
+	return nullptr;
 }
 
 void LightingManager::LightSettings()

@@ -24,6 +24,7 @@ out VS_OUT
 
 //uniforms
 uniform layout(location = 0) mat4 modelToWorldMatrix;
+uniform layout(location = 1) mat4 invModelToWorldMatrix;
 
 struct Light
 {
@@ -33,7 +34,7 @@ struct Light
 	int m_eLight;
 	float m_fRange;
 	float m_fConeSize;
-	uint pad;
+	float m_fLightStrength;
 };
 
 layout(std140, binding = 1) uniform LightArray
@@ -52,7 +53,7 @@ void main(void)
 {
 	vs_out.WoldPos = modelToWorldMatrix * position;
 	vs_out.ViewPos = projData.worldViewMatrix * vs_out.WoldPos;
-	vs_out.NWorld = mat3(modelToWorldMatrix) * normal;
+	vs_out.NWorld = mat3(transpose(invModelToWorldMatrix)) * normal;
 	vs_out.UV = UV;
 	vs_out.color = color;
 	gl_Position = projData.projectionMatrix * vs_out.ViewPos;
@@ -80,6 +81,7 @@ layout (location = 0) out vec4 color;
 
 uniform layout(location = 0) mat4 modelToWorldMatrix;
 
+
 uniform layout(location = 3) vec3 ambiant_light = vec3(0.2,0.2,0.2);
 uniform layout(location = 4) vec3 diffuse_albedo = vec3(0.8,0.8,0.8);
 uniform layout(location = 5) vec3 specular_albedo = vec3(0.7);
@@ -93,7 +95,7 @@ struct Light
 	int m_eLight;
 	float m_fRange;
 	float m_fConeSize;
-	uint m_uiLightStrength;
+	float m_fLightStrength;
 };
 
 layout(std140, binding = 1) uniform LightArray
@@ -115,8 +117,8 @@ vec3 ComputePointLight(int i, vec3 N, vec4 V)
 	float attenuation = clamp((lightData.lights[i].m_fRange - abs(length(LDist))) / lightData.lights[i].m_fRange, 0, 1);
 	
 	vec3 R = mat3(projData.worldViewMatrix) * reflect(-L, N);
-	vec3 diffuse = max(dot(N,L), 0.2) * lightData.lights[i].m_kLightColor.rgb * lightData.lights[i].m_uiLightStrength;
-	vec3 specular = pow(max(dot(R,V.xyz),0.0), specular_power) * lightData.lights[i].m_kLightColor.rgb * lightData.lights[i].m_uiLightStrength;
+	vec3 diffuse = max(dot(N,L), 0.2) * lightData.lights[i].m_kLightColor.rgb * lightData.lights[i].m_fLightStrength;
+	vec3 specular = pow(max(dot(R,V.xyz),0.0), specular_power) * lightData.lights[i].m_kLightColor.rgb * lightData.lights[i].m_fLightStrength;
 		
 	return (diffuse + specular) * attenuation;
 }

@@ -165,6 +165,10 @@ void OGLProgram::ExtractInformation()
 		if (actUB.m_iNbUniform > 10)
 		{
 			std::cout << "There are " << actUB.m_iNbUniform << " associated uniforms" << std::endl;	
+			for (I32 j = 0; j < actUB.m_iNbUniform; ++j)
+			{
+				m_akUniformsInfo[actUB.m_piUniformsIndexes[j]].m_bIsFromBlock = true;
+			}
 		}
 		else
 		{

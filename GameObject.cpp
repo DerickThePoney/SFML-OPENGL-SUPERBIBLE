@@ -154,6 +154,14 @@ void GameObject::UpdateAllTransformsInHierarchy()
 	}
 }
 
+void GameObject::OnPreRender()
+{
+	for (UI32 i = 0; i < m_kComponent.size(); ++i)
+	{
+		m_kComponent[i]->OnPreRender();
+	}
+}
+
 void GameObject::ImGUIHierarchy(GameObject*& node_clicked)
 {
 	// Disable the default open on single-click behavior and pass in Selected flag according to our selection state.
@@ -198,10 +206,24 @@ void GameObject::Inspector()
 	ImGui::Separator();
 	
 	static int selectedComponent = -1;
-	ImGui::Combo("Name", &selectedComponent, Components);
+	ImGui::Combo("Name", &selectedComponent, Components, OGL_ARRAYSIZE(Components));
 
 	ImGui::SameLine();
 
-	ImGui::Button("Add component");
+	if (ImGui::Button("Add component"))
+	{
+		AddComponent(GET_TYPE(Components[selectedComponent]));
+	}
 
+}
+
+void GameObject::AddComponent(const RTTI* pkComponentType)
+{
+	IComponentPtr pkComponent = CREATE_NEW_COMPONENT(*pkComponentType, this);
+
+	if (pkComponent != nullptr)
+	{
+		m_kComponent.push_back(pkComponent);
+		pkComponent->Init();
+	}
 }

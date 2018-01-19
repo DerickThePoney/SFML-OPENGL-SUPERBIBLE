@@ -53,6 +53,10 @@ void GameObjectApplication::Update(double deltaTime)
 
 void GameObjectApplication::Render(double currentTime)
 {
+	//Prepare for rendering
+	m_kScene.OnPreRender();
+
+	//
 	std::vector<MeshRendererComponent*> visibleObjectList;
 	std::vector<GameObjectRenderData> visibleDataList;
 

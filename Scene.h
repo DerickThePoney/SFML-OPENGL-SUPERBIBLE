@@ -14,6 +14,8 @@ public:
 
 	void Update(double deltaTime);
 
+	void OnPreRender();
+
 	void OnResize(unsigned int width, unsigned int height);
 
 	//Scene API

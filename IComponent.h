@@ -12,7 +12,9 @@ protected:
 	IComponent(GameObject* pkParent) : m_pkParent(pkParent){}
 
 public:
+	virtual void Init() {}
 	virtual void Update(double deltaTime) {}
+	virtual void OnPreRender() {}
 	virtual void Render() {}
 
 	virtual void Inspect() = 0;
@@ -21,9 +23,12 @@ public:
 	GameObject* m_pkParent;
 };
 
+typedef std::shared_ptr<IComponent> IComponentPtr;
+
 #define ADDCOMPONENT(x) #x
 
-static const C8* Components =
+static const C8* Components[] =
 {
-	ADDCOMPONENT(MeshRendererComponent)
+	ADDCOMPONENT(MeshRendererComponent),
+	ADDCOMPONENT(LightComponent)
 };

@@ -63,6 +63,15 @@ void Scene::Update(double deltaTime)
 	IMGuiStuffs();
 }
 
+void Scene::OnPreRender()
+{
+	for (std::size_t i = 0; i < m_akRootObjects.size(); ++i)
+	{
+		m_akRootObjects[i]->OnPreRender();
+	}
+
+}
+
 void Scene::OnResize(unsigned int width, unsigned int height)
 {
 	m_kCamera.OnResize(width, height);

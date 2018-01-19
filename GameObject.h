@@ -36,6 +36,7 @@ public:
 	//runtime methods
 	void Update(double fElapsedTime);
 	virtual void UpdateAllTransformsInHierarchy();
+	void OnPreRender();
 
 	void ImGUIHierarchy(GameObject*& node_clicked);
 	virtual void Inspector();
@@ -55,6 +56,8 @@ public:
 		return nullptr;
 	}
 
+
+	void AddComponent(const RTTI* pkComponentType);
 
 	template<class Archive>
 	void save(Archive & archive) const

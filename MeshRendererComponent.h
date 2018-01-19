@@ -12,7 +12,6 @@ public:
 	~MeshRendererComponent() { }
 
 	void Init(Mesh* kMesh, Material* kMaterial);
-
 	void InitMeshFromRessource(const std::string& kFilename);
 
 	void Inspect();

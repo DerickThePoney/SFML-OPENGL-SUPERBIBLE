@@ -228,6 +228,9 @@
     <ClInclude Include="LightingManager.h">
       <Filter>Rendering\Lighting</Filter>
     </ClInclude>
+    <ClInclude Include="LightComponent.h">
+      <Filter>GameObjects\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -352,6 +355,9 @@
     </ClCompile>
     <ClCompile Include="LightingManager.cpp">
       <Filter>Rendering\Lighting</Filter>
+    </ClCompile>
+    <ClCompile Include="LightComponent.cpp">
+      <Filter>GameObjects\Components</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
