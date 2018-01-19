@@ -25,6 +25,8 @@ public:
 	inline void TranslateInLocalSpace(const vec3& kTranslate) { m_kLocalPosition += kTranslate; m_bUpToDate = false; }
 	inline void RotateInLocalSpace(const quaternion& kTranslate) { m_kLocalOrientation = normalize(kTranslate * m_kLocalOrientation); m_bUpToDate = false;}
 
+	inline vec4 GetForwardVector() { return m_kWorlspaceTransform * vec4(0, 0, 1, 0); }
+
 	void WriteIntoStream(std::ostream& out)
 	{
 		out << "LP:(" << m_kLocalPosition[0] << "," << m_kLocalPosition[1] << "," << m_kLocalPosition[2] << ")\n";

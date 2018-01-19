@@ -31,7 +31,7 @@
 			<m_top>14.500000953674316</m_top>
 			<m_bottom>-14.500000953674316</m_bottom>
 		</m_kCamera>
-		<uiNbChildren>2</uiNbChildren>
+		<uiNbChildren>3</uiNbChildren>
 		<GameObject>
 			<m_kName>BaseObject</m_kName>
 			<value0>
@@ -932,7 +932,51 @@
 			</GameObject>
 		</GameObject>
 		<GameObject>
-			<m_kName>LightObject</m_kName>
+			<m_kName>Directional Light</m_kName>
+			<value0>
+				<m_kLocalPosition>
+					<value0>0</value0>
+					<value1>10</value1>
+					<value2>0</value2>
+				</m_kLocalPosition>
+				<m_kScale>
+					<value0>1</value0>
+					<value1>1</value1>
+					<value2>1</value2>
+				</m_kScale>
+				<m_kLocalOrientation>
+					<value0>0.49999997019767761</value0>
+					<value1>-0.49999997019767761</value1>
+					<value2>-0.49999997019767761</value2>
+					<value3>0.49999997019767761</value3>
+				</m_kLocalOrientation>
+			</value0>
+			<m_kComponent size="dynamic">
+				<value0>
+					<polymorphic_id>2147483650</polymorphic_id>
+					<polymorphic_name>LightComponent</polymorphic_name>
+					<ptr_wrapper>
+						<id>2147483674</id>
+						<data>
+							<IsUSED>true</IsUSED>
+							<m_eLight>1</m_eLight>
+							<m_kLightColor>
+								<value0>1</value0>
+								<value1>1</value1>
+								<value2>1</value2>
+								<value3>1</value3>
+							</m_kLightColor>
+							<m_fLightStrength>0.51399999856948853</m_fLightStrength>
+							<m_fRange>13.826000213623047</m_fRange>
+							<m_fConeSize>10</m_fConeSize>
+						</data>
+					</ptr_wrapper>
+				</value0>
+			</m_kComponent>
+			<uiNbChildren>0</uiNbChildren>
+		</GameObject>
+		<GameObject>
+			<m_kName>Point Light</m_kName>
 			<value0>
 				<m_kLocalPosition>
 					<value0>0</value0>
@@ -953,27 +997,92 @@
 			</value0>
 			<m_kComponent size="dynamic">
 				<value0>
-					<polymorphic_id>2147483650</polymorphic_id>
-					<polymorphic_name>LightComponent</polymorphic_name>
+					<polymorphic_id>2</polymorphic_id>
 					<ptr_wrapper>
-						<id>2147483674</id>
+						<id>2147483675</id>
 						<data>
 							<IsUSED>true</IsUSED>
 							<m_eLight>2</m_eLight>
 							<m_kLightColor>
-								<value0>0.58823531866073608</value0>
-								<value1>0.58823531866073608</value1>
-								<value2>0</value2>
+								<value0>0</value0>
+								<value1>1</value1>
+								<value2>1</value2>
 								<value3>1</value3>
 							</m_kLightColor>
-							<m_fLightStrength>3.2800002098083496</m_fLightStrength>
-							<m_fRange>13.826000213623047</m_fRange>
+							<m_fLightStrength>1</m_fLightStrength>
+							<m_fRange>17.042001724243164</m_fRange>
 							<m_fConeSize>10</m_fConeSize>
 						</data>
 					</ptr_wrapper>
 				</value0>
 			</m_kComponent>
-			<uiNbChildren>0</uiNbChildren>
+			<uiNbChildren>2</uiNbChildren>
+			<GameObject>
+				<m_kName>Point light 2</m_kName>
+				<value0>
+					<m_kLocalPosition>
+						<value0>0</value0>
+						<value1>0</value1>
+						<value2>0</value2>
+					</m_kLocalPosition>
+					<m_kScale>
+						<value0>1</value0>
+						<value1>1</value1>
+						<value2>1</value2>
+					</m_kScale>
+					<m_kLocalOrientation>
+						<value0>1</value0>
+						<value1>0</value1>
+						<value2>0</value2>
+						<value3>0</value3>
+					</m_kLocalOrientation>
+				</value0>
+				<m_kComponent size="dynamic">
+					<value0>
+						<polymorphic_id>2</polymorphic_id>
+						<ptr_wrapper>
+							<id>2147483676</id>
+							<data>
+								<IsUSED>true</IsUSED>
+								<m_eLight>2</m_eLight>
+								<m_kLightColor>
+									<value0>1</value0>
+									<value1>0</value1>
+									<value2>0</value2>
+									<value3>1</value3>
+								</m_kLightColor>
+								<m_fLightStrength>1</m_fLightStrength>
+								<m_fRange>4.5020003318786621</m_fRange>
+								<m_fConeSize>10</m_fConeSize>
+							</data>
+						</ptr_wrapper>
+					</value0>
+				</m_kComponent>
+				<uiNbChildren>0</uiNbChildren>
+			</GameObject>
+			<GameObject>
+				<m_kName>Point light 3</m_kName>
+				<value0>
+					<m_kLocalPosition>
+						<value0>0</value0>
+						<value1>0</value1>
+						<value2>0</value2>
+					</m_kLocalPosition>
+					<m_kScale>
+						<value0>1</value0>
+						<value1>1</value1>
+						<value2>1</value2>
+					</m_kScale>
+					<m_kLocalOrientation>
+						<value0>1</value0>
+						<value1>0</value1>
+						<value2>0</value2>
+						<value3>0</value3>
+					</m_kLocalOrientation>
+				</value0>
+				<m_kComponent size="dynamic"/>
+				<uiNbChildren>0</uiNbChildren>
+			</GameObject>
 		</GameObject>
 	</value0>
 </cereal>

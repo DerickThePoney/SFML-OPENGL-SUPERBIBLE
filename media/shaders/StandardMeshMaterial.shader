@@ -123,6 +123,20 @@ vec3 ComputePointLight(int i, vec3 N, vec4 V)
 	return (diffuse + specular) * attenuation;
 }
 
+vec3 ComputeDirectionalLight(int i, vec3 N, vec4 V)
+{
+	//vec4 LDist  = lightData.lights[i].m_kPosition - fs_in.WoldPos;
+	vec3 L = normalize(-lightData.lights[i].m_kDirection).xyz;
+	
+	vec3 R = mat3(projData.worldViewMatrix) * reflect(-L, N);
+	vec3 diffuse = max(dot(N,L), 0.2) * lightData.lights[i].m_kLightColor.rgb * lightData.lights[i].m_fLightStrength;
+	vec3 specular = pow(max(dot(R,V.xyz),0.0), specular_power) * lightData.lights[i].m_kLightColor.rgb * lightData.lights[i].m_fLightStrength;
+		
+	//return normalize(-lightData.lights[i].m_kDirection).xyz * 0.5 + 1;
+	//return vec3(dot(N,L));//
+	return (diffuse + specular);
+}
+
 vec4 ComputeLightColors()
 {
 	vec4 totalLight = vec4(0.1);
@@ -136,7 +150,7 @@ vec4 ComputeLightColors()
 		
 		if(lightData.lights[i].m_eLight == 1)
 		{
-			totalLight.rgb += vec3(1);
+			totalLight.rgb += ComputeDirectionalLight(i, N, V);
 		}
 		else if(lightData.lights[i].m_eLight == 2)
 		{
