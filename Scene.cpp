@@ -19,7 +19,7 @@ Scene::~Scene()
 
 void Scene::Initialise(UI32 width, UI32 height)
 {
-	m_kCamera.Init(width, height);
+	//m_kCamera.Init(width, height);
 
 	//Just make a simple texture
 	static I32 size = 16;
@@ -50,7 +50,7 @@ void Scene::Update(double deltaTime)
 	TransformsUpdate();
 	
 	//update loop
-	m_kCamera.Update(deltaTime);
+	//m_kCamera.Update(deltaTime);
 	for (std::size_t i = 0; i < m_akRootObjects.size(); ++i)
 	{
 		m_akRootObjects[i]->Update(deltaTime);
@@ -74,7 +74,7 @@ void Scene::OnPreRender()
 
 void Scene::OnResize(unsigned int width, unsigned int height)
 {
-	m_kCamera.OnResize(width, height);
+	//m_kCamera.OnResize(width, height);
 }
 
 void Scene::ExtractVisibleObjectList(std::vector<MeshRendererComponent*>& akObjects)
@@ -102,7 +102,7 @@ void Scene::ExtractVisibleObjectsInHierarchy(GameObject* base, std::vector<MeshR
 
 void Scene::TransformsUpdate()
 {
-	m_kCamera.UpdateAllTransformsInHierarchy();
+	//m_kCamera.UpdateAllTransformsInHierarchy();
 	for (std::size_t i = 0; i < m_akRootObjects.size(); ++i)
 	{
 		m_akRootObjects[i]->UpdateAllTransformsInHierarchy();
@@ -158,7 +158,7 @@ void Scene::IMGuiStuffs()
 	}
 
 	//objects inspection
-	m_kCamera.ImGUIHierarchy(node_clicked);
+	//m_kCamera.ImGUIHierarchy(node_clicked);
 	for (std::size_t i = 0; i < m_akRootObjects.size(); ++i)
 	{
 		m_akRootObjects[i]->ImGUIHierarchy(node_clicked);

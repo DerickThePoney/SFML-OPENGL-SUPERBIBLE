@@ -13,6 +13,7 @@ protected:
 
 public:
 	virtual void Init() {}
+	virtual void LateInit() {}
 	virtual void Update(double deltaTime) {}
 	virtual void OnPreRender() {}
 	virtual void Render() {}

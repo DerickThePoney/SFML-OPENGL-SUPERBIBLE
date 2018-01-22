@@ -3,8 +3,9 @@
 #include "BMesh.h"
 #include "MeshRendererComponent.h"
 #include "GameObject.h"
-#include "Camera.h"
+#include "CameraComponent.h"
 #include "LightingManager.h"
+#include "Camera.h"
 
 struct GameObjectRenderData
 {
@@ -93,7 +94,7 @@ public:
 
 	//rendering functions
 	void Update();
-	void Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Camera& kCamera);
+	void Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Camera* pkCamera);
 	void ApplyDefaultState();
 	void ApplyGameObjectRenderData(GameObjectRenderData& data);
 

@@ -15,6 +15,7 @@ GameObjectApplication::~GameObjectApplication()
 void GameObjectApplication::Initialise()
 {
 	Application::Initialise();
+	CameraManager::Instance()->Initialise();
 	LightingManager::Instance()->Initialise();
 
 	UI32 width = m_window.getSize().x;
@@ -40,6 +41,8 @@ void GameObjectApplication::Initialise()
 	
 	//Initialise the scene
 	m_kScene.Initialise(width, height);
+	mat4 id = vmath::mat4::identity();
+	CameraManager::Instance()->LateInit(width, height, id);
 }
 
 void GameObjectApplication::Update(double deltaTime)
@@ -89,6 +92,8 @@ void GameObjectApplication::Terminate()
 	ImGui::SFML::Shutdown();
 	//m_kMaterial.Delete();
 	m_kRenderer.Terminate();
+	LightingManager::Delete();
+	CameraManager::Delete();
 	Application::Terminate();
 }
 
@@ -97,6 +102,7 @@ void GameObjectApplication::OnResize(unsigned int width, unsigned int height)
 	Application::OnResize(width, height);
 	m_kScene.OnResize(width, height);
 	m_kRenderer.OnResize(width, height);
+	CameraManager::Instance()->OnResize(width, height);
 }
 
 void GameObjectApplication::LoadAndCompileProgram()

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "LightComponent.h"
+#include "GameObject.h"
 
 TYPE_SYSTEM_RTTI_OBJECT(LightComponent, IComponent);
 

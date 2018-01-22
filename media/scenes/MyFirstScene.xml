@@ -2,12 +2,13 @@
 <cereal>
 	<value0>
 		<m_kFilename>media/scenes/MyFirstScene.xml</m_kFilename>
-		<m_kCamera>
+		<uiNbChildren>4</uiNbChildren>
+		<GameObject>
 			<m_kName>Main camera</m_kName>
 			<value0>
 				<m_kLocalPosition>
 					<value0>0</value0>
-					<value1>5</value1>
+					<value1>10</value1>
 					<value2>20</value2>
 				</m_kLocalPosition>
 				<m_kScale>
@@ -22,16 +23,27 @@
 					<value3>0</value3>
 				</m_kLocalOrientation>
 			</value0>
-			<m_kComponent size="dynamic"/>
+			<m_kComponent size="dynamic">
+				<value0>
+					<polymorphic_id>2147483649</polymorphic_id>
+					<polymorphic_name>CameraComponent</polymorphic_name>
+					<ptr_wrapper>
+						<id>2147483649</id>
+						<data>
+							<IsUSED>true</IsUSED>
+							<IsMAIN>true</IsMAIN>
+							<m_eType>1</m_eType>
+							<focal>85.000007629394531</focal>
+							<fNearPlane>0.10000000149011612</fNearPlane>
+							<fFarPlane>1000</fFarPlane>
+							<m_top>20.500001907348633</m_top>
+							<m_bottom>-20.500001907348633</m_bottom>
+						</data>
+					</ptr_wrapper>
+				</value0>
+			</m_kComponent>
 			<uiNbChildren>0</uiNbChildren>
-			<m_eType>1</m_eType>
-			<focal>50</focal>
-			<fNearPlane>0.10000000149011612</fNearPlane>
-			<fFarPlane>1000</fFarPlane>
-			<m_top>14.500000953674316</m_top>
-			<m_bottom>-14.500000953674316</m_bottom>
-		</m_kCamera>
-		<uiNbChildren>3</uiNbChildren>
+		</GameObject>
 		<GameObject>
 			<m_kName>BaseObject</m_kName>
 			<value0>
@@ -54,10 +66,10 @@
 			</value0>
 			<m_kComponent size="dynamic">
 				<value0>
-					<polymorphic_id>2147483649</polymorphic_id>
+					<polymorphic_id>2147483650</polymorphic_id>
 					<polymorphic_name>MeshRendererComponent</polymorphic_name>
 					<ptr_wrapper>
-						<id>2147483649</id>
+						<id>2147483650</id>
 						<data>
 							<m_kMeshFilename>media/meshes/UVSphere.ply</m_kMeshFilename>
 							<MeshID>2</MeshID>
@@ -89,9 +101,9 @@
 				</value0>
 				<m_kComponent size="dynamic">
 					<value0>
-						<polymorphic_id>1</polymorphic_id>
+						<polymorphic_id>2</polymorphic_id>
 						<ptr_wrapper>
-							<id>2147483650</id>
+							<id>2147483651</id>
 							<data>
 								<m_kMeshFilename>media/meshes/ColoredCubeFlat.ply</m_kMeshFilename>
 								<MeshID>3</MeshID>
@@ -147,9 +159,9 @@
 				</value0>
 				<m_kComponent size="dynamic">
 					<value0>
-						<polymorphic_id>1</polymorphic_id>
+						<polymorphic_id>2</polymorphic_id>
 						<ptr_wrapper>
-							<id>2147483651</id>
+							<id>2147483652</id>
 							<data>
 								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
 								<MeshID>0</MeshID>
@@ -182,9 +194,9 @@
 				</value0>
 				<m_kComponent size="dynamic">
 					<value0>
-						<polymorphic_id>1</polymorphic_id>
+						<polymorphic_id>2</polymorphic_id>
 						<ptr_wrapper>
-							<id>2147483652</id>
+							<id>2147483653</id>
 							<data>
 								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
 								<MeshID>0</MeshID>
@@ -217,9 +229,9 @@
 				</value0>
 				<m_kComponent size="dynamic">
 					<value0>
-						<polymorphic_id>1</polymorphic_id>
+						<polymorphic_id>2</polymorphic_id>
 						<ptr_wrapper>
-							<id>2147483653</id>
+							<id>2147483654</id>
 							<data>
 								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
 								<MeshID>0</MeshID>
@@ -252,9 +264,9 @@
 				</value0>
 				<m_kComponent size="dynamic">
 					<value0>
-						<polymorphic_id>1</polymorphic_id>
+						<polymorphic_id>2</polymorphic_id>
 						<ptr_wrapper>
-							<id>2147483654</id>
+							<id>2147483655</id>
 							<data>
 								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
 								<MeshID>0</MeshID>
@@ -287,42 +299,7 @@
 				</value0>
 				<m_kComponent size="dynamic">
 					<value0>
-						<polymorphic_id>1</polymorphic_id>
-						<ptr_wrapper>
-							<id>2147483655</id>
-							<data>
-								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
-								<MeshID>0</MeshID>
-								<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
-							</data>
-						</ptr_wrapper>
-					</value0>
-				</m_kComponent>
-				<uiNbChildren>0</uiNbChildren>
-			</GameObject>
-			<GameObject>
-				<m_kName>Middle7</m_kName>
-				<value0>
-					<m_kLocalPosition>
-						<value0>5</value0>
-						<value1>6</value1>
-						<value2>0</value2>
-					</m_kLocalPosition>
-					<m_kScale>
-						<value0>1</value0>
-						<value1>1</value1>
-						<value2>1</value2>
-					</m_kScale>
-					<m_kLocalOrientation>
-						<value0>1</value0>
-						<value1>0</value1>
-						<value2>0</value2>
-						<value3>0</value3>
-					</m_kLocalOrientation>
-				</value0>
-				<m_kComponent size="dynamic">
-					<value0>
-						<polymorphic_id>1</polymorphic_id>
+						<polymorphic_id>2</polymorphic_id>
 						<ptr_wrapper>
 							<id>2147483656</id>
 							<data>
@@ -336,6 +313,41 @@
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
 			<GameObject>
+				<m_kName>Middle7</m_kName>
+				<value0>
+					<m_kLocalPosition>
+						<value0>5</value0>
+						<value1>6</value1>
+						<value2>0</value2>
+					</m_kLocalPosition>
+					<m_kScale>
+						<value0>1</value0>
+						<value1>1</value1>
+						<value2>1</value2>
+					</m_kScale>
+					<m_kLocalOrientation>
+						<value0>1</value0>
+						<value1>0</value1>
+						<value2>0</value2>
+						<value3>0</value3>
+					</m_kLocalOrientation>
+				</value0>
+				<m_kComponent size="dynamic">
+					<value0>
+						<polymorphic_id>2</polymorphic_id>
+						<ptr_wrapper>
+							<id>2147483657</id>
+							<data>
+								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
+								<MeshID>0</MeshID>
+								<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
+							</data>
+						</ptr_wrapper>
+					</value0>
+				</m_kComponent>
+				<uiNbChildren>0</uiNbChildren>
+			</GameObject>
+			<GameObject>
 				<m_kName>Middle8</m_kName>
 				<value0>
 					<m_kLocalPosition>
@@ -357,42 +369,7 @@
 				</value0>
 				<m_kComponent size="dynamic">
 					<value0>
-						<polymorphic_id>1</polymorphic_id>
-						<ptr_wrapper>
-							<id>2147483657</id>
-							<data>
-								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
-								<MeshID>0</MeshID>
-								<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
-							</data>
-						</ptr_wrapper>
-					</value0>
-				</m_kComponent>
-				<uiNbChildren>0</uiNbChildren>
-			</GameObject>
-			<GameObject>
-				<m_kName>Middle7</m_kName>
-				<value0>
-					<m_kLocalPosition>
-						<value0>5</value0>
-						<value1>9</value1>
-						<value2>0</value2>
-					</m_kLocalPosition>
-					<m_kScale>
-						<value0>1</value0>
-						<value1>1</value1>
-						<value2>1</value2>
-					</m_kScale>
-					<m_kLocalOrientation>
-						<value0>1</value0>
-						<value1>0</value1>
-						<value2>0</value2>
-						<value3>0</value3>
-					</m_kLocalOrientation>
-				</value0>
-				<m_kComponent size="dynamic">
-					<value0>
-						<polymorphic_id>1</polymorphic_id>
+						<polymorphic_id>2</polymorphic_id>
 						<ptr_wrapper>
 							<id>2147483658</id>
 							<data>
@@ -406,6 +383,41 @@
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
 			<GameObject>
+				<m_kName>Middle7</m_kName>
+				<value0>
+					<m_kLocalPosition>
+						<value0>5</value0>
+						<value1>9</value1>
+						<value2>0</value2>
+					</m_kLocalPosition>
+					<m_kScale>
+						<value0>1</value0>
+						<value1>1</value1>
+						<value2>1</value2>
+					</m_kScale>
+					<m_kLocalOrientation>
+						<value0>1</value0>
+						<value1>0</value1>
+						<value2>0</value2>
+						<value3>0</value3>
+					</m_kLocalOrientation>
+				</value0>
+				<m_kComponent size="dynamic">
+					<value0>
+						<polymorphic_id>2</polymorphic_id>
+						<ptr_wrapper>
+							<id>2147483659</id>
+							<data>
+								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
+								<MeshID>0</MeshID>
+								<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
+							</data>
+						</ptr_wrapper>
+					</value0>
+				</m_kComponent>
+				<uiNbChildren>0</uiNbChildren>
+			</GameObject>
+			<GameObject>
 				<m_kName>Middle8</m_kName>
 				<value0>
 					<m_kLocalPosition>
@@ -427,9 +439,9 @@
 				</value0>
 				<m_kComponent size="dynamic">
 					<value0>
-						<polymorphic_id>1</polymorphic_id>
+						<polymorphic_id>2</polymorphic_id>
 						<ptr_wrapper>
-							<id>2147483659</id>
+							<id>2147483660</id>
 							<data>
 								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
 								<MeshID>0</MeshID>
@@ -462,9 +474,9 @@
 				</value0>
 				<m_kComponent size="dynamic">
 					<value0>
-						<polymorphic_id>1</polymorphic_id>
+						<polymorphic_id>2</polymorphic_id>
 						<ptr_wrapper>
-							<id>2147483660</id>
+							<id>2147483661</id>
 							<data>
 								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
 								<MeshID>0</MeshID>
@@ -497,9 +509,9 @@
 				</value0>
 				<m_kComponent size="dynamic">
 					<value0>
-						<polymorphic_id>1</polymorphic_id>
+						<polymorphic_id>2</polymorphic_id>
 						<ptr_wrapper>
-							<id>2147483661</id>
+							<id>2147483662</id>
 							<data>
 								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
 								<MeshID>0</MeshID>
@@ -532,9 +544,9 @@
 				</value0>
 				<m_kComponent size="dynamic">
 					<value0>
-						<polymorphic_id>1</polymorphic_id>
+						<polymorphic_id>2</polymorphic_id>
 						<ptr_wrapper>
-							<id>2147483662</id>
+							<id>2147483663</id>
 							<data>
 								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
 								<MeshID>0</MeshID>
@@ -567,9 +579,9 @@
 				</value0>
 				<m_kComponent size="dynamic">
 					<value0>
-						<polymorphic_id>1</polymorphic_id>
+						<polymorphic_id>2</polymorphic_id>
 						<ptr_wrapper>
-							<id>2147483663</id>
+							<id>2147483664</id>
 							<data>
 								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
 								<MeshID>0</MeshID>
@@ -602,9 +614,9 @@
 				</value0>
 				<m_kComponent size="dynamic">
 					<value0>
-						<polymorphic_id>1</polymorphic_id>
+						<polymorphic_id>2</polymorphic_id>
 						<ptr_wrapper>
-							<id>2147483664</id>
+							<id>2147483665</id>
 							<data>
 								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
 								<MeshID>0</MeshID>
@@ -637,9 +649,9 @@
 				</value0>
 				<m_kComponent size="dynamic">
 					<value0>
-						<polymorphic_id>1</polymorphic_id>
+						<polymorphic_id>2</polymorphic_id>
 						<ptr_wrapper>
-							<id>2147483665</id>
+							<id>2147483666</id>
 							<data>
 								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
 								<MeshID>0</MeshID>
@@ -672,9 +684,9 @@
 				</value0>
 				<m_kComponent size="dynamic">
 					<value0>
-						<polymorphic_id>1</polymorphic_id>
+						<polymorphic_id>2</polymorphic_id>
 						<ptr_wrapper>
-							<id>2147483666</id>
+							<id>2147483667</id>
 							<data>
 								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
 								<MeshID>0</MeshID>
@@ -707,42 +719,7 @@
 				</value0>
 				<m_kComponent size="dynamic">
 					<value0>
-						<polymorphic_id>1</polymorphic_id>
-						<ptr_wrapper>
-							<id>2147483667</id>
-							<data>
-								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
-								<MeshID>0</MeshID>
-								<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
-							</data>
-						</ptr_wrapper>
-					</value0>
-				</m_kComponent>
-				<uiNbChildren>0</uiNbChildren>
-			</GameObject>
-			<GameObject>
-				<m_kName>Middle7</m_kName>
-				<value0>
-					<m_kLocalPosition>
-						<value0>10</value0>
-						<value1>6</value1>
-						<value2>0</value2>
-					</m_kLocalPosition>
-					<m_kScale>
-						<value0>1</value0>
-						<value1>1</value1>
-						<value2>1</value2>
-					</m_kScale>
-					<m_kLocalOrientation>
-						<value0>1</value0>
-						<value1>0</value1>
-						<value2>0</value2>
-						<value3>0</value3>
-					</m_kLocalOrientation>
-				</value0>
-				<m_kComponent size="dynamic">
-					<value0>
-						<polymorphic_id>1</polymorphic_id>
+						<polymorphic_id>2</polymorphic_id>
 						<ptr_wrapper>
 							<id>2147483668</id>
 							<data>
@@ -756,6 +733,41 @@
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
 			<GameObject>
+				<m_kName>Middle7</m_kName>
+				<value0>
+					<m_kLocalPosition>
+						<value0>10</value0>
+						<value1>6</value1>
+						<value2>0</value2>
+					</m_kLocalPosition>
+					<m_kScale>
+						<value0>1</value0>
+						<value1>1</value1>
+						<value2>1</value2>
+					</m_kScale>
+					<m_kLocalOrientation>
+						<value0>1</value0>
+						<value1>0</value1>
+						<value2>0</value2>
+						<value3>0</value3>
+					</m_kLocalOrientation>
+				</value0>
+				<m_kComponent size="dynamic">
+					<value0>
+						<polymorphic_id>2</polymorphic_id>
+						<ptr_wrapper>
+							<id>2147483669</id>
+							<data>
+								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
+								<MeshID>0</MeshID>
+								<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
+							</data>
+						</ptr_wrapper>
+					</value0>
+				</m_kComponent>
+				<uiNbChildren>0</uiNbChildren>
+			</GameObject>
+			<GameObject>
 				<m_kName>Middle8</m_kName>
 				<value0>
 					<m_kLocalPosition>
@@ -777,42 +789,7 @@
 				</value0>
 				<m_kComponent size="dynamic">
 					<value0>
-						<polymorphic_id>1</polymorphic_id>
-						<ptr_wrapper>
-							<id>2147483669</id>
-							<data>
-								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
-								<MeshID>0</MeshID>
-								<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
-							</data>
-						</ptr_wrapper>
-					</value0>
-				</m_kComponent>
-				<uiNbChildren>0</uiNbChildren>
-			</GameObject>
-			<GameObject>
-				<m_kName>Middle7</m_kName>
-				<value0>
-					<m_kLocalPosition>
-						<value0>10</value0>
-						<value1>9</value1>
-						<value2>0</value2>
-					</m_kLocalPosition>
-					<m_kScale>
-						<value0>1</value0>
-						<value1>1</value1>
-						<value2>1</value2>
-					</m_kScale>
-					<m_kLocalOrientation>
-						<value0>1</value0>
-						<value1>0</value1>
-						<value2>0</value2>
-						<value3>0</value3>
-					</m_kLocalOrientation>
-				</value0>
-				<m_kComponent size="dynamic">
-					<value0>
-						<polymorphic_id>1</polymorphic_id>
+						<polymorphic_id>2</polymorphic_id>
 						<ptr_wrapper>
 							<id>2147483670</id>
 							<data>
@@ -826,6 +803,41 @@
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
 			<GameObject>
+				<m_kName>Middle7</m_kName>
+				<value0>
+					<m_kLocalPosition>
+						<value0>10</value0>
+						<value1>9</value1>
+						<value2>0</value2>
+					</m_kLocalPosition>
+					<m_kScale>
+						<value0>1</value0>
+						<value1>1</value1>
+						<value2>1</value2>
+					</m_kScale>
+					<m_kLocalOrientation>
+						<value0>1</value0>
+						<value1>0</value1>
+						<value2>0</value2>
+						<value3>0</value3>
+					</m_kLocalOrientation>
+				</value0>
+				<m_kComponent size="dynamic">
+					<value0>
+						<polymorphic_id>2</polymorphic_id>
+						<ptr_wrapper>
+							<id>2147483671</id>
+							<data>
+								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
+								<MeshID>0</MeshID>
+								<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
+							</data>
+						</ptr_wrapper>
+					</value0>
+				</m_kComponent>
+				<uiNbChildren>0</uiNbChildren>
+			</GameObject>
+			<GameObject>
 				<m_kName>Middle8</m_kName>
 				<value0>
 					<m_kLocalPosition>
@@ -847,9 +859,9 @@
 				</value0>
 				<m_kComponent size="dynamic">
 					<value0>
-						<polymorphic_id>1</polymorphic_id>
+						<polymorphic_id>2</polymorphic_id>
 						<ptr_wrapper>
-							<id>2147483671</id>
+							<id>2147483672</id>
 							<data>
 								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
 								<MeshID>0</MeshID>
@@ -882,9 +894,9 @@
 				</value0>
 				<m_kComponent size="dynamic">
 					<value0>
-						<polymorphic_id>1</polymorphic_id>
+						<polymorphic_id>2</polymorphic_id>
 						<ptr_wrapper>
-							<id>2147483672</id>
+							<id>2147483673</id>
 							<data>
 								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
 								<MeshID>0</MeshID>
@@ -917,9 +929,9 @@
 				</value0>
 				<m_kComponent size="dynamic">
 					<value0>
-						<polymorphic_id>1</polymorphic_id>
+						<polymorphic_id>2</polymorphic_id>
 						<ptr_wrapper>
-							<id>2147483673</id>
+							<id>2147483674</id>
 							<data>
 								<m_kMeshFilename>media/meshes/ColoredCubeSmooth.ply</m_kMeshFilename>
 								<MeshID>0</MeshID>
@@ -953,10 +965,10 @@
 			</value0>
 			<m_kComponent size="dynamic">
 				<value0>
-					<polymorphic_id>2147483650</polymorphic_id>
+					<polymorphic_id>2147483651</polymorphic_id>
 					<polymorphic_name>LightComponent</polymorphic_name>
 					<ptr_wrapper>
-						<id>2147483674</id>
+						<id>2147483675</id>
 						<data>
 							<IsUSED>true</IsUSED>
 							<m_eLight>1</m_eLight>
@@ -980,7 +992,7 @@
 			<value0>
 				<m_kLocalPosition>
 					<value0>0</value0>
-					<value1>5</value1>
+					<value1>50</value1>
 					<value2>0</value2>
 				</m_kLocalPosition>
 				<m_kScale>
@@ -997,9 +1009,9 @@
 			</value0>
 			<m_kComponent size="dynamic">
 				<value0>
-					<polymorphic_id>2</polymorphic_id>
+					<polymorphic_id>3</polymorphic_id>
 					<ptr_wrapper>
-						<id>2147483675</id>
+						<id>2147483676</id>
 						<data>
 							<IsUSED>true</IsUSED>
 							<m_eLight>2</m_eLight>
@@ -1009,8 +1021,8 @@
 								<value2>1</value2>
 								<value3>1</value3>
 							</m_kLightColor>
-							<m_fLightStrength>20</m_fLightStrength>
-							<m_fRange>44.373001098632813</m_fRange>
+							<m_fLightStrength>3.0870001316070557</m_fLightStrength>
+							<m_fRange>37.299003601074219</m_fRange>
 							<m_fConeSize>10</m_fConeSize>
 						</data>
 					</ptr_wrapper>
@@ -1039,9 +1051,9 @@
 				</value0>
 				<m_kComponent size="dynamic">
 					<value0>
-						<polymorphic_id>2</polymorphic_id>
+						<polymorphic_id>3</polymorphic_id>
 						<ptr_wrapper>
-							<id>2147483676</id>
+							<id>2147483677</id>
 							<data>
 								<IsUSED>true</IsUSED>
 								<m_eLight>2</m_eLight>
@@ -1082,9 +1094,9 @@
 				</value0>
 				<m_kComponent size="dynamic">
 					<value0>
-						<polymorphic_id>2</polymorphic_id>
+						<polymorphic_id>3</polymorphic_id>
 						<ptr_wrapper>
-							<id>2147483677</id>
+							<id>2147483678</id>
 							<data>
 								<IsUSED>true</IsUSED>
 								<m_eLight>2</m_eLight>

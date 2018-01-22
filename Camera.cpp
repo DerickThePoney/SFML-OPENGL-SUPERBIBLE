@@ -1,17 +1,23 @@
 #include "stdafx.h"
 #include "Camera.h"
 
-void Camera::Init(UI32 width, UI32 height)
+Camera::Camera()
+{
+}
+
+Camera::~Camera()
+{
+}
+
+void Camera::Init(UI32 width, UI32 height, vmath::mat4& t)
 {
 	aspectRatio = (float)width / (float)height;
 	m_left = m_bottom * aspectRatio;
 	m_right = m_top* aspectRatio;
-	
-	m_kTransform.UpdateWorldSpaceTransform(nullptr);
 
 	ComputeProjection();
 
-	ComputeLookAt();
+	ComputeLookAt(t);
 
 	InitialiseProjectionBuffer();
 }
@@ -40,21 +46,15 @@ void Camera::LoadProjectionOnGraphics(GLuint bufferIndex)
 	m_kProjectionBuffer.BindToUniformBindingPoint(bufferIndex);
 }
 
-void Camera::UpdateAllTransformsInHierarchy()
+void Camera::Inspect()
 {
-	GameObject::UpdateAllTransformsInHierarchy();
-	ComputeLookAt();
-}
-
-void Camera::Inspector()
-{
-	if (ImGui::CollapsingHeader("Camera"))
+	if (ImGui::CollapsingHeader("CameraObject"))
 	{
 		bool hasChanged = false;
 
 		const char* listbox_items[] = { "Orthographic", "Perspective" };
 		int listbox_item_current = (int)m_eType;
-		if (ImGui::ListBox("Type of camera", &listbox_item_current, listbox_items, 2, 2))
+		if (ImGui::ListBox("Type of CameraObject", &listbox_item_current, listbox_items, 2, 2))
 		{
 			m_eType = (CameraType)listbox_item_current;
 			hasChanged = true;
@@ -85,16 +85,12 @@ void Camera::Inspector()
 		if (hasChanged)
 		{
 			ComputeProjection();
-		}	
+		}
 	}
-
-	GameObject::Inspector();
 }
 
-void Camera::ComputeLookAt()
+void Camera::ComputeLookAt(vmath::mat4& t)
 {
-	vmath::mat4 t = m_kTransform.GetWorldSpaceTransform();
-
 	vmath::vec3 eye(t[3][0], t[3][1], t[3][2]);
 
 	vmath::vec4 center4 = t * vmath::vec4(0, 0, -1, 0);
@@ -124,11 +120,11 @@ void Camera::ComputeProjection()
 			fNearPlane,
 			fFarPlane);
 		/*m_kProjectionMatrice = vmath::frustum(-5,
-			5,
-			-5,
-			5,
-			10,
-			100);*/
+		5,
+		-5,
+		5,
+		10,
+		100);*/
 
 
 		break;

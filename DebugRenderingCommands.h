@@ -1,5 +1,6 @@
 #pragma once
 #include "Singleton.h"
+#include "MaterialManager.h"
 
 class DebugRenderingCommands : public Singleton<DebugRenderingCommands>
 {
@@ -15,7 +16,7 @@ public:
 	
 	I32 DrawLine(vec4 start, vec4 end, vec4 color);
 
-	void RenderDebugCommands(Camera& kCamera);
+	void RenderDebugCommands(Camera* kCamera);
 
 private:
 	struct LineDrawingCommands
@@ -37,7 +38,7 @@ private:
 			colors.clear();
 		}
 
-		void RenderLines(UI32 uiLineCommandsNb, Camera& kCamera);
+		void RenderLines(UI32 uiLineCommandsNb, Camera* kCamera);
 	};
 
 	LineDrawingCommands m_kLineCommands;

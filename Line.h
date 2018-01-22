@@ -1,5 +1,5 @@
 #pragma once
-#include "Camera.h"
+#include "CameraComponent.h"
 class Line
 {
 public:

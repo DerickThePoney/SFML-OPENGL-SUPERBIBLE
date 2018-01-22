@@ -61,12 +61,6 @@ public:
 			{
 				ReleaseLight();
 			}
-			/*archive(CEREAL_NVP(m_pkLight->m_eLight),
-				CEREAL_NVP(m_pkLight->m_kLightColor),
-				CEREAL_NVP(m_pkLight->m_fLightStrength),
-				CEREAL_NVP(m_pkLight->m_fRange),
-				CEREAL_NVP(m_pkLight->m_fConeSize));
-				*/
 		}
 	}
 

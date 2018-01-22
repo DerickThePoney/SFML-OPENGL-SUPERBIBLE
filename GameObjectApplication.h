@@ -5,7 +5,7 @@
 #include "ShaderCompiler.h"
 #include "MeshManager.h"
 #include "GameObject.h"
-#include "Camera.h"
+#include "CameraComponent.h"
 #include "Renderer.h"
 #include "Scene.h"
 

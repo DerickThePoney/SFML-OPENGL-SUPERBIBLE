@@ -27,11 +27,6 @@ GameObject::GameObject(const std::string & rkName)
 
 GameObject::~GameObject()
 {
-	/*for (size_t i = 0; i < m_apkChildren.size(); ++i)
-	{
-		GameObjectManager::Instance()->Destroy();
-	}*/
-
 	m_apkChildren.clear();
 }
 

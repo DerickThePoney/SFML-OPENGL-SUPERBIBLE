@@ -1,7 +1,7 @@
 #pragma once
 #include "GameObjectManager.h"
 #include "GameObject.h"
-#include "Camera.h"
+#include "CameraComponent.h"
 
 class Scene
 {
@@ -19,7 +19,7 @@ public:
 	void OnResize(unsigned int width, unsigned int height);
 
 	//Scene API
-	Camera& GetCamera() { return m_kCamera; }
+	Camera* GetCamera() { return CameraManager::main; }
 	void AddRootObject(GameObject* kObject) { m_akRootObjects.push_back(kObject); }
 
 	void ExtractVisibleObjectList(std::vector<MeshRendererComponent *>& akObjects);
@@ -27,7 +27,7 @@ public:
 	template<class Archive>
 	void save(Archive & archive) const
 	{
-		archive(CEREAL_NVP(m_kFilename), CEREAL_NVP(m_kCamera));
+		archive(CEREAL_NVP(m_kFilename));
 
 		std::size_t uiNbChildren = m_akRootObjects.size();
 		archive(CEREAL_NVP(uiNbChildren));
@@ -41,7 +41,7 @@ public:
 	template<class Archive>
 	void load(Archive& archive)
 	{
-		archive(CEREAL_NVP(m_kFilename), CEREAL_NVP(m_kCamera));
+		archive(CEREAL_NVP(m_kFilename));
 
 		std::size_t uiNbChildren = m_akRootObjects.size();
 		archive(CEREAL_NVP(uiNbChildren));
@@ -64,7 +64,7 @@ private:
 private:
 
 	std::string m_kFilename;
-	Camera m_kCamera;
+	//CameraObject m_kCamera;
 	std::vector<GameObject*> m_akRootObjects;
 
 	OGLTexture2D m_kTexture;

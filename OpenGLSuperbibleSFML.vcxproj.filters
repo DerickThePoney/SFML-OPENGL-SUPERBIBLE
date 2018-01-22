@@ -64,6 +64,9 @@
     <Filter Include="Rendering\Lighting">
       <UniqueIdentifier>{cea4e0ec-faaa-47d7-8c5b-d2d7f3fd8264}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Rendering\Camera">
+      <UniqueIdentifier>{1f9b5fb8-6a74-4c2c-9871-24c30b788f05}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -156,9 +159,6 @@
     <ClInclude Include="Transform.h">
       <Filter>GameObjects\Components</Filter>
     </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>GameObjects</Filter>
-    </ClInclude>
     <ClInclude Include="MeshRendererComponent.h">
       <Filter>GameObjects\Components</Filter>
     </ClInclude>
@@ -231,6 +231,15 @@
     <ClInclude Include="LightComponent.h">
       <Filter>GameObjects\Components</Filter>
     </ClInclude>
+    <ClInclude Include="CameraManager.h">
+      <Filter>Rendering\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Rendering\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraComponent.h">
+      <Filter>GameObjects\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -299,9 +308,6 @@
     <ClCompile Include="Transform.cpp">
       <Filter>GameObjects\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>GameObjects</Filter>
-    </ClCompile>
     <ClCompile Include="MeshRendererComponent.cpp">
       <Filter>GameObjects\Components</Filter>
     </ClCompile>
@@ -357,6 +363,15 @@
       <Filter>Rendering\Lighting</Filter>
     </ClCompile>
     <ClCompile Include="LightComponent.cpp">
+      <Filter>GameObjects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraManager.cpp">
+      <Filter>Rendering\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Rendering\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraComponent.cpp">
       <Filter>GameObjects\Components</Filter>
     </ClCompile>
   </ItemGroup>

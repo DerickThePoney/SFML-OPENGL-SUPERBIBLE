@@ -127,7 +127,7 @@ void Renderer::Update()
 	GraphicsSettings();
 }
 
-void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Camera& kCamera)
+void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Camera* pkCamera)
 {
 	/** Here we should keep a list of OGL State... **/
 
@@ -155,7 +155,7 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 	//glClearBufferfv(GL_DEPTH, 0, &one);
 	
 	// Load the camera projections
-	kCamera.LoadProjectionOnGraphics(0);
+	pkCamera->LoadProjectionOnGraphics(0);
 
 	//Bind the light settings
 	LightingManager::Instance()->PrepareDataForRenderer();
@@ -189,7 +189,7 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 	}
 
 	//Draw rendering commands
-	DebugRenderingCommands::Instance()->RenderDebugCommands(kCamera);
+	DebugRenderingCommands::Instance()->RenderDebugCommands(pkCamera);
 
 	m_kFrameBuffer.UnBind(GL_DRAW_FRAMEBUFFER);
 	glViewport(0, 0, sz.x, sz.y);

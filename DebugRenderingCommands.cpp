@@ -32,7 +32,7 @@ I32 DebugRenderingCommands::DrawLine(vec4 start, vec4 end, vec4 color)
 	return ++m_uiLineCommandsNb;
 }
 
-void DebugRenderingCommands::RenderDebugCommands(Camera& kCamera)
+void DebugRenderingCommands::RenderDebugCommands(Camera* kCamera)
 {
 	GLint last_program; glGetIntegerv(GL_CURRENT_PROGRAM, &last_program);
 	
@@ -69,10 +69,10 @@ void DebugRenderingCommands::LineDrawingCommands::Terminate()
 	MaterialManager::Instance()->Destroy(m_pkMaterial);
 }
 
-void DebugRenderingCommands::LineDrawingCommands::RenderLines(UI32 uiLineCommandsNb, Camera& kCamera)
+void DebugRenderingCommands::LineDrawingCommands::RenderLines(UI32 uiLineCommandsNb, Camera* kCamera)
 {
 	m_pkMaterial->Use();
-	kCamera.LoadProjectionOnGraphics(0);
+	kCamera->LoadProjectionOnGraphics(0);
 	m_hkVao.Bind();
 	UpdateData();
 	glDrawArrays(GL_LINES, 0, endpoints.size());
