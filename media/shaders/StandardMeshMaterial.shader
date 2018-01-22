@@ -75,7 +75,9 @@ vec3 ComputePointLight(int i, vec3 N, vec4 V)
 	vec4 LDist  = lightData.lights[i].m_kPosition - interpolator.WoldPos;
 	vec3 L = normalize(LDist).xyz;
 	
-	float attenuation = clamp((lightData.lights[i].m_fRange - abs(length(LDist))) / lightData.lights[i].m_fRange, 0, 1);
+	float oneOnRange = 1 / lightData.lights[i].m_fRange;
+	float dist = length(LDist);
+	float attenuation = 1 / (1 + oneOnRange * dist * dist);
 	
 	vec3 R = mat3(projData.worldViewMatrix) * reflect(-L, N);
 	vec3 diffuse = max(dot(N,L), 0.2) * lightData.lights[i].m_kLightColor.rgb * lightData.lights[i].m_fLightStrength;
