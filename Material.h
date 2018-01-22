@@ -4,6 +4,7 @@
 #include "ShaderCompiler.h"
 #include "OGLRendering.h"
 #include "ProgramManager.h"
+#include "MaterialUniformData.h"
 
 
 struct MaterialData
@@ -16,6 +17,8 @@ struct MaterialData
 	GLenum m_eSRCBlendAlpha;
 	GLenum m_eDSTBlendAlpha;
 	GLenum m_eBlendFunc;
+
+	std::vector<UniformDataContainer*> m_akDataForShader;
 
 	template<class Archive>
 	void save(Archive & archive) const
@@ -41,6 +44,7 @@ struct MaterialData
 		DEARCHIVE_WITH_DEFAULT(m_eSRCBlendAlpha, GL_ZERO);
 		DEARCHIVE_WITH_DEFAULT(m_eDSTBlendAlpha, GL_ONE);
 		DEARCHIVE_WITH_DEFAULT(m_eBlendFunc, GL_FUNC_ADD);
+		//DEARCHIVE_WITH_DEFAULT(m_akDataForShader, std::vector<UniformDataContainer>());
 	}
 };
 

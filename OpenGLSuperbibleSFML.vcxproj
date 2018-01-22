@@ -196,6 +196,7 @@
     <ClInclude Include="LightingManager.h" />
     <ClInclude Include="Line.h" />
     <ClInclude Include="Material.h" />
+    <ClInclude Include="MaterialUniformData.h" />
     <ClInclude Include="ObjLoader.h" />
     <ClInclude Include="OGLRenderBuffer.h" />
     <ClInclude Include="PLYLoader.h" />
@@ -247,6 +248,7 @@
     <ClCompile Include="LightingManager.cpp" />
     <ClCompile Include="Line.cpp" />
     <ClCompile Include="Material.cpp" />
+    <ClCompile Include="MaterialUniformData.cpp" />
     <ClCompile Include="OGLRenderBuffer.cpp" />
     <ClCompile Include="PLYLoader.cpp" />
     <ClCompile Include="ProgramManager.cpp" />
