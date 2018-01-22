@@ -4,6 +4,7 @@
 UI32 Material::s_uiMaxMaterialID = 0;
 
 Material::Material()
+	: m_pkProgram(nullptr)
 {
 	m_uiMaterialID = Material::s_uiMaxMaterialID++;
 }

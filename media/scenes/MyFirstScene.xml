@@ -59,9 +59,9 @@
 					<ptr_wrapper>
 						<id>2147483649</id>
 						<data>
-							<m_kMeshFilename>media/meshes/MyOwnSpaceShip.ply</m_kMeshFilename>
+							<m_kMeshFilename>media/meshes/UVSphere.ply</m_kMeshFilename>
 							<MeshID>2</MeshID>
-							<m_kMaterialFilename>media/Materials/StandardMeshMaterial.material</m_kMaterialFilename>
+							<m_kMaterialFilename>media/Materials/StandardPBRMeshMaterial.material</m_kMaterialFilename>
 						</data>
 					</ptr_wrapper>
 				</value0>
@@ -945,10 +945,10 @@
 					<value2>1</value2>
 				</m_kScale>
 				<m_kLocalOrientation>
-					<value0>0.49999997019767761</value0>
-					<value1>-0.49999997019767761</value1>
-					<value2>-0.49999997019767761</value2>
-					<value3>0.49999997019767761</value3>
+					<value0>0.70710676908493042</value0>
+					<value1>0</value1>
+					<value2>0.70710676908493042</value2>
+					<value3>0</value3>
 				</m_kLocalOrientation>
 			</value0>
 			<m_kComponent size="dynamic">
@@ -966,7 +966,7 @@
 								<value2>1</value2>
 								<value3>1</value3>
 							</m_kLightColor>
-							<m_fLightStrength>0.51399999856948853</m_fLightStrength>
+							<m_fLightStrength>1.8650001287460327</m_fLightStrength>
 							<m_fRange>13.826000213623047</m_fRange>
 							<m_fConeSize>10</m_fConeSize>
 						</data>
@@ -980,7 +980,7 @@
 			<value0>
 				<m_kLocalPosition>
 					<value0>0</value0>
-					<value1>10</value1>
+					<value1>5</value1>
 					<value2>0</value2>
 				</m_kLocalPosition>
 				<m_kScale>
@@ -1009,8 +1009,8 @@
 								<value2>1</value2>
 								<value3>1</value3>
 							</m_kLightColor>
-							<m_fLightStrength>1</m_fLightStrength>
-							<m_fRange>17.042001724243164</m_fRange>
+							<m_fLightStrength>20</m_fLightStrength>
+							<m_fRange>44.373001098632813</m_fRange>
 							<m_fConeSize>10</m_fConeSize>
 						</data>
 					</ptr_wrapper>
@@ -1022,7 +1022,7 @@
 				<value0>
 					<m_kLocalPosition>
 						<value0>0</value0>
-						<value1>0</value1>
+						<value1>5</value1>
 						<value2>0</value2>
 					</m_kLocalPosition>
 					<m_kScale>
@@ -1051,8 +1051,8 @@
 									<value2>0</value2>
 									<value3>1</value3>
 								</m_kLightColor>
-								<m_fLightStrength>1</m_fLightStrength>
-								<m_fRange>4.5020003318786621</m_fRange>
+								<m_fLightStrength>7.3950004577636719</m_fLightStrength>
+								<m_fRange>6.7520003318786621</m_fRange>
 								<m_fConeSize>10</m_fConeSize>
 							</data>
 						</ptr_wrapper>
@@ -1065,7 +1065,7 @@
 				<value0>
 					<m_kLocalPosition>
 						<value0>0</value0>
-						<value1>0</value1>
+						<value1>1</value1>
 						<value2>0</value2>
 					</m_kLocalPosition>
 					<m_kScale>
@@ -1080,7 +1080,27 @@
 						<value3>0</value3>
 					</m_kLocalOrientation>
 				</value0>
-				<m_kComponent size="dynamic"/>
+				<m_kComponent size="dynamic">
+					<value0>
+						<polymorphic_id>2</polymorphic_id>
+						<ptr_wrapper>
+							<id>2147483677</id>
+							<data>
+								<IsUSED>true</IsUSED>
+								<m_eLight>2</m_eLight>
+								<m_kLightColor>
+									<value0>1</value0>
+									<value1>1</value1>
+									<value2>1</value2>
+									<value3>1</value3>
+								</m_kLightColor>
+								<m_fLightStrength>3.7940001487731934</m_fLightStrength>
+								<m_fRange>19.293001174926758</m_fRange>
+								<m_fConeSize>10</m_fConeSize>
+							</data>
+						</ptr_wrapper>
+					</value0>
+				</m_kComponent>
 				<uiNbChildren>0</uiNbChildren>
 			</GameObject>
 		</GameObject>

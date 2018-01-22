@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cereal>
+	<value0>
+		<m_kShaderFilename>media/shaders/StandardPBRMeshMaterial.shader</m_kShaderFilename>
+		<m_bBlendColors>true</m_bBlendColors>
+		<m_bBlendSeparate>false</m_bBlendSeparate>
+		<m_eSRCBlend>1</m_eSRCBlend>
+		<m_eDSTBlend>0</m_eDSTBlend>
+		<m_eSRCBlendAlpha>1</m_eSRCBlendAlpha>
+		<m_eDSTBlendAlpha>1</m_eDSTBlendAlpha>
+		<m_eBlendFunc>32774</m_eBlendFunc>
+	</value0>
+</cereal>
+

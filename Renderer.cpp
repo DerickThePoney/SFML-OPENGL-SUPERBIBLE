@@ -167,7 +167,7 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 
 		//set modelview and proj matrix
 		glUniformMatrix4fv(0, 1, GL_FALSE, kVisibleObjectsList[i].m_pkTransform->GetWorldSpaceTransform());
-		glUniformMatrix4fv(1, 1, GL_FALSE, vmath::invert(kVisibleObjectsList[i].m_pkTransform->GetWorldSpaceTransform()));
+		//glUniformMatrix4fv(1, 1, GL_FALSE, vmath::invert(kVisibleObjectsList[i].m_pkTransform->GetWorldSpaceTransform()));
 
 		//draw call
 		glDrawElements(GL_TRIANGLES, kVisibleObjectsList[i].m_pkMeshRenderer->m_pkMesh->m_aiIndices.size(), GL_UNSIGNED_INT, 0);

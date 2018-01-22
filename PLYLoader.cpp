@@ -91,9 +91,9 @@ bool PLYLoader::LoadFromPLYFile(Mesh * pkMeshObject, const std::string & kFilena
 			{
 				bHasColor = true;
 			}
-			else /*if (fChar == "x" || fChar == "x" || fChar == "x")  --- UV?*/ 
+			else if (fChar == 's'|| fChar == 't') 
 			{
-				//bHasUV = true;
+				bHasUV = true;
 			}
 		}
 	}
