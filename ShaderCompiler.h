@@ -6,6 +6,16 @@ struct ShaderInformation
 	GLenum m_eShaderType;
 };
 
+struct InterpolatorInformation
+{
+	std::string m_kInterpolatorCode;
+};
+
+struct UniformsInformation
+{
+	std::string m_kUniformsCode;
+};
+
 class ShaderCompiler
 {
 public:
@@ -22,9 +32,10 @@ private:
 	void AdvanceToNext(char c);
 	bool IsAtEnd();
 	std::string NextWord();
+	std::string NextLine();
 	void Rewind(int size);
 
-	bool ParseNextShader(ShaderInformation& kInfo);
+	I32 ParseNextShader(ShaderInformation& kShInfo, InterpolatorInformation& kIInfo, UniformsInformation& kUInfo);
 
 	int m_iCurrent;
 	std::string m_kFileSource;

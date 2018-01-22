@@ -14,6 +14,10 @@ bool ShaderCompiler::RetrieveShaders(std::vector<ShaderInformation>& akShaderInf
 	}
 
 	//look for pragma
+	//std::vector<ShaderInformation> akLocalShaderInformation;
+	std::string version = "#version 430 core";
+	InterpolatorInformation iinfo;
+	UniformsInformation uinfo;
 	m_iCurrent = 0;
 	while (!IsAtEnd())
 	{
@@ -22,11 +26,20 @@ bool ShaderCompiler::RetrieveShaders(std::vector<ShaderInformation>& akShaderInf
 		{
 		case '#':
 		{
-			if (NextWord() == "sh")
+			std::string nextWord = NextWord();
+			if (nextWord == "sh")
 			{
-				ShaderInformation info;
-				ParseNextShader(info);
-				akShaderInformation.push_back(info);
+				ShaderInformation shinfo;
+				if(ParseNextShader(shinfo, iinfo, uinfo) == 0)
+				{ 
+					akShaderInformation.push_back(shinfo);
+				}
+			}
+			else if (nextWord ==  "version")
+			{
+				std::stringstream sstr;
+				sstr << "#version " << NextLine();
+				version = sstr.str();
 			}
 			break;
 		}
@@ -35,7 +48,44 @@ bool ShaderCompiler::RetrieveShaders(std::vector<ShaderInformation>& akShaderInf
 		}
 	}
 
-	return false;
+	//add the informations
+	for (UI32 i = 0; i < akShaderInformation.size(); ++i)
+	{
+		std::stringstream sstr;
+		if (iinfo.m_kInterpolatorCode.size() > 0 && uinfo.m_kUniformsCode.size() > 0)
+		{
+			sstr << version << std::endl;
+		}
+
+		//add the interpolator
+		if (iinfo.m_kInterpolatorCode.size() > 0)
+		{
+			switch(akShaderInformation[i].m_eShaderType)
+			{
+			case  GL_VERTEX_SHADER:
+				sstr << "out ";
+				break;
+			case GL_FRAGMENT_SHADER:
+				sstr << "in ";
+				break;
+			default:
+				break;
+			}
+			sstr << iinfo.m_kInterpolatorCode << std::endl;
+		}
+
+		//add the uniforms
+		if (uinfo.m_kUniformsCode.size() > 0)
+		{
+			sstr << uinfo.m_kUniformsCode << std::endl;
+		}
+
+		//add the code
+		sstr << akShaderInformation[i].m_kShaderCode;
+		akShaderInformation[i].m_kShaderCode = sstr.str();
+	}
+	
+	return true;
 }
 
 ShaderCompiler::ShaderCompiler()
@@ -76,27 +126,48 @@ std::string ShaderCompiler::NextWord()
 	return m_kFileSource.substr(thisChar, size);
 }
 
+std::string ShaderCompiler::NextLine()
+{
+	int thisChar = m_iCurrent;
+	AdvanceToNext('\n');
+
+	int size = m_iCurrent - thisChar;
+	return m_kFileSource.substr(thisChar, size);
+}
+
 void ShaderCompiler::Rewind(int size)
 {
 	m_iCurrent -= size;
 }
 
-bool ShaderCompiler::ParseNextShader(ShaderInformation& kInfo)
+I32 ShaderCompiler::ParseNextShader(ShaderInformation& kShInfo, InterpolatorInformation& kIInfo, UniformsInformation& kUInfo)
 {
 	//look for next space
 	Advance();
 	int thisChar = m_iCurrent;	
 	std::string kToken = NextWord();
 
+	I32 type = -1;
 	//L
 	if (kToken == "VERTEX")
 	{
-		kInfo.m_eShaderType = GL_VERTEX_SHADER;
+		kShInfo.m_eShaderType = GL_VERTEX_SHADER;
+		type = 0;
 	}
 	else if (kToken == "FRAGMENT")
 	{
-		kInfo.m_eShaderType = GL_FRAGMENT_SHADER;
+		kShInfo.m_eShaderType = GL_FRAGMENT_SHADER;
+		type = 0;
 	}
+	else if (kToken == "INTERPOLATOR")
+	{
+		type = 1;
+	}
+	else if (kToken == "UNIFORMS")
+	{
+		type = 2;
+	}
+
 	thisChar = m_iCurrent;
 	
 	AdvanceToNext('#');
@@ -104,7 +175,19 @@ bool ShaderCompiler::ParseNextShader(ShaderInformation& kInfo)
 
 	if(!IsAtEnd()) Rewind(3);
 
-	kInfo.m_kShaderCode = m_kFileSource.substr(thisChar, m_iCurrent - thisChar);
+	switch (type)
+	{
+	case 0:
+		kShInfo.m_kShaderCode = m_kFileSource.substr(thisChar, m_iCurrent - thisChar);
+		break;
+	case 1:
+		kIInfo.m_kInterpolatorCode = m_kFileSource.substr(thisChar, m_iCurrent - thisChar);
+		break;
+	case 2:
+		kUInfo.m_kUniformsCode = m_kFileSource.substr(thisChar, m_iCurrent - thisChar);
+		break;
+	}
 	
-	return true;
+	
+	return type;
 }

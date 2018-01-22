@@ -63,6 +63,8 @@ public:
 
 	bool operator==(const Material& other) { return m_uiMaterialID == other.m_uiMaterialID; }
 
+	bool LoadProgram();
+
 	void Inspect();
 
 	template<class Archive>

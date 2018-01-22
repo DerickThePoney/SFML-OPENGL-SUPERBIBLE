@@ -36,11 +36,8 @@ bool Material::InitMaterialFromRessource(const std::string & kFilename)
 	}
 
 	//"Compile" Material
-	m_pkProgram = ProgramManager::Instance()->InstantiateFromRessource(m_kMaterialData.m_kShaderFilename);
-
-	if (m_pkProgram == nullptr) // bail if link did not work
+	if (!LoadProgram())
 	{
-		Delete();
 		return false;
 	}
 
@@ -86,6 +83,26 @@ void Material::Use()
 	}
 }
 
+
+
+bool Material::LoadProgram()
+{
+	if (m_pkProgram != nullptr)
+	{
+		Delete();
+	}
+
+	m_pkProgram = ProgramManager::Instance()->InstantiateFromRessource(m_kMaterialData.m_kShaderFilename);
+
+	if (m_pkProgram == nullptr) // bail if link did not work
+	{
+		Delete();
+		return false;
+	}
+
+	return true;
+}
+
 void Material::Inspect()
 {
 	std::stringstream sstr;
@@ -99,6 +116,12 @@ void Material::Inspect()
 		//Scene testLoading;
 		cereal::XMLOutputArchive output(ofstr);
 		output(m_kMaterialData);
+	}
+
+	ImGui::SameLine();
+	if (ImGui::Button("Reload shaders"))
+	{
+		LoadProgram();
 	}
 
 	//color blending
