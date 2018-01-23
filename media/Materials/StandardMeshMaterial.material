@@ -9,6 +9,66 @@
 		<m_eSRCBlendAlpha>1</m_eSRCBlendAlpha>
 		<m_eDSTBlendAlpha>1</m_eDSTBlendAlpha>
 		<m_eBlendFunc>32774</m_eBlendFunc>
+		<m_akDataForShader size="dynamic">
+			<value0>
+				<polymorphic_id>2147483649</polymorphic_id>
+				<polymorphic_name>DataContainer&lt;vec3&gt;</polymorphic_name>
+				<ptr_wrapper>
+					<id>2147483649</id>
+					<data>
+						<value0>ambiant_light</value0>
+						<value1>3</value1>
+						<value2>
+							<value0>0.20000000298023224</value0>
+							<value1>0.20000000298023224</value1>
+							<value2>0.20000000298023224</value2>
+						</value2>
+					</data>
+				</ptr_wrapper>
+			</value0>
+			<value1>
+				<polymorphic_id>1</polymorphic_id>
+				<ptr_wrapper>
+					<id>2147483650</id>
+					<data>
+						<value0>diffuse_albedo</value0>
+						<value1>4</value1>
+						<value2>
+							<value0>0.80000001192092896</value0>
+							<value1>0.80000001192092896</value1>
+							<value2>0.80000001192092896</value2>
+						</value2>
+					</data>
+				</ptr_wrapper>
+			</value1>
+			<value2>
+				<polymorphic_id>1</polymorphic_id>
+				<ptr_wrapper>
+					<id>2147483651</id>
+					<data>
+						<value0>specular_albedo</value0>
+						<value1>5</value1>
+						<value2>
+							<value0>0.69999998807907104</value0>
+							<value1>0.69999998807907104</value1>
+							<value2>0.69999998807907104</value2>
+						</value2>
+					</data>
+				</ptr_wrapper>
+			</value2>
+			<value3>
+				<polymorphic_id>2147483650</polymorphic_id>
+				<polymorphic_name>DataContainer&lt;float&gt;</polymorphic_name>
+				<ptr_wrapper>
+					<id>2147483652</id>
+					<data>
+						<value0>specular_power</value0>
+						<value1>6</value1>
+						<value2>8</value2>
+					</data>
+				</ptr_wrapper>
+			</value3>
+		</m_akDataForShader>
 	</value0>
 </cereal>
 

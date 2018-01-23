@@ -49,6 +49,8 @@
 #include "imgui-events-SFML.h"
 #include "imgui-rendering-SFML.h"
 
+#include "MaterialUniformData.h"
+
 
 
 // TODO: faites référence ici aux en-têtes supplémentaires nécessaires au programme

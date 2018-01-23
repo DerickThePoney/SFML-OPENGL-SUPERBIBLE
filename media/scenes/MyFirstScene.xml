@@ -957,9 +957,9 @@
 					<value2>1</value2>
 				</m_kScale>
 				<m_kLocalOrientation>
-					<value0>0.70710676908493042</value0>
+					<value0>1</value0>
 					<value1>0</value1>
-					<value2>0.70710676908493042</value2>
+					<value2>0</value2>
 					<value3>0</value3>
 				</m_kLocalOrientation>
 			</value0>
@@ -978,7 +978,7 @@
 								<value2>1</value2>
 								<value3>1</value3>
 							</m_kLightColor>
-							<m_fLightStrength>1.8650001287460327</m_fLightStrength>
+							<m_fLightStrength>0</m_fLightStrength>
 							<m_fRange>13.826000213623047</m_fRange>
 							<m_fConeSize>10</m_fConeSize>
 						</data>
@@ -992,7 +992,7 @@
 			<value0>
 				<m_kLocalPosition>
 					<value0>0</value0>
-					<value1>50</value1>
+					<value1>10</value1>
 					<value2>0</value2>
 				</m_kLocalPosition>
 				<m_kScale>
@@ -1021,8 +1021,8 @@
 								<value2>1</value2>
 								<value3>1</value3>
 							</m_kLightColor>
-							<m_fLightStrength>3.0870001316070557</m_fLightStrength>
-							<m_fRange>37.299003601074219</m_fRange>
+							<m_fLightStrength>9.1319999694824219</m_fLightStrength>
+							<m_fRange>1.9290001392364502</m_fRange>
 							<m_fConeSize>10</m_fConeSize>
 						</data>
 					</ptr_wrapper>
@@ -1034,7 +1034,7 @@
 				<value0>
 					<m_kLocalPosition>
 						<value0>0</value0>
-						<value1>5</value1>
+						<value1>-5</value1>
 						<value2>0</value2>
 					</m_kLocalPosition>
 					<m_kScale>
@@ -1063,7 +1063,7 @@
 									<value2>0</value2>
 									<value3>1</value3>
 								</m_kLightColor>
-								<m_fLightStrength>7.3950004577636719</m_fLightStrength>
+								<m_fLightStrength>20</m_fLightStrength>
 								<m_fRange>6.7520003318786621</m_fRange>
 								<m_fConeSize>10</m_fConeSize>
 							</data>
@@ -1076,8 +1076,8 @@
 				<m_kName>Point light 3</m_kName>
 				<value0>
 					<m_kLocalPosition>
-						<value0>0</value0>
-						<value1>1</value1>
+						<value0>3</value0>
+						<value1>-15</value1>
 						<value2>0</value2>
 					</m_kLocalPosition>
 					<m_kScale>
@@ -1107,7 +1107,7 @@
 									<value3>1</value3>
 								</m_kLightColor>
 								<m_fLightStrength>3.7940001487731934</m_fLightStrength>
-								<m_fRange>19.293001174926758</m_fRange>
+								<m_fRange>51.447002410888672</m_fRange>
 								<m_fConeSize>10</m_fConeSize>
 							</data>
 						</ptr_wrapper>

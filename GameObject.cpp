@@ -112,6 +112,10 @@ void GameObject::Update(double fElapsedTime)
 	{
 		m_kComponent[i]->Update(fElapsedTime);
 	}
+	for (std::size_t i = 0; i < m_apkChildren.size(); ++i)
+	{
+		m_apkChildren[i]->Update(fElapsedTime);
+	}
 }
 
 bool GameObject::CheckPresenceInChildren(GameObject * pkGameObject)
@@ -154,6 +158,10 @@ void GameObject::OnPreRender()
 	for (UI32 i = 0; i < m_kComponent.size(); ++i)
 	{
 		m_kComponent[i]->OnPreRender();
+	}
+	for (std::size_t i = 0; i < m_apkChildren.size(); ++i)
+	{
+		m_apkChildren[i]->OnPreRender();
 	}
 }
 

@@ -18,7 +18,7 @@ struct MaterialData
 	GLenum m_eDSTBlendAlpha;
 	GLenum m_eBlendFunc;
 
-	std::vector<UniformDataContainer*> m_akDataForShader;
+	std::vector<IUniformDataContainerPtr> m_akDataForShader;
 
 	template<class Archive>
 	void save(Archive & archive) const
@@ -30,7 +30,10 @@ struct MaterialData
 			CEREAL_NVP(m_eDSTBlend),
 			CEREAL_NVP(m_eSRCBlendAlpha),
 			CEREAL_NVP(m_eDSTBlendAlpha),
-			CEREAL_NVP(m_eBlendFunc));
+			CEREAL_NVP(m_eBlendFunc)
+		);
+
+		archive(CEREAL_NVP(m_akDataForShader));
 	}
 
 	template<class Archive>
@@ -44,7 +47,8 @@ struct MaterialData
 		DEARCHIVE_WITH_DEFAULT(m_eSRCBlendAlpha, GL_ZERO);
 		DEARCHIVE_WITH_DEFAULT(m_eDSTBlendAlpha, GL_ONE);
 		DEARCHIVE_WITH_DEFAULT(m_eBlendFunc, GL_FUNC_ADD);
-		//DEARCHIVE_WITH_DEFAULT(m_akDataForShader, std::vector<UniformDataContainer>());
+		
+		DEARCHIVE_WITH_DEFAULT(m_akDataForShader, std::vector<std::shared_ptr<IUniformDataContainer>>());
 	}
 };
 
@@ -88,6 +92,14 @@ public:
 private:
 	I32 BlendFuncToIndex(GLenum blendFunc);
 	GLenum IndexToBlendFunc(I32 blendFunc);
+
+	void PrepareDataForContainers();
+
+	bool IsAlreadyMapped(const ActiveProgramInformations& info);
+	void Map(const ActiveProgramInformations& info);
+
+	void LoadDataInGPU();
+	void InspectData();
 
 public:
 

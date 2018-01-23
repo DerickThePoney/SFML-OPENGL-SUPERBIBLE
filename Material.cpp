@@ -42,8 +42,6 @@ bool Material::InitMaterialFromRessource(const std::string & kFilename)
 		return false;
 	}
 
-	//get the id
-	//m_uiMaterialID = Material::s_uiMaxMaterialID++;
 	m_kFilename = kFilename;
 
 	return true;
@@ -82,6 +80,8 @@ void Material::Use()
 	{
 		glDisable(GL_BLEND);
 	}
+
+	LoadDataInGPU();
 }
 
 
@@ -100,6 +100,8 @@ bool Material::LoadProgram()
 		Delete();
 		return false;
 	}
+
+	PrepareDataForContainers();
 
 	return true;
 }
@@ -175,12 +177,7 @@ void Material::Inspect()
 
 	}
 	
-	const std::vector<ActiveProgramInformations>& uniforms = m_pkProgram->GetUniformsInformation();
-	for (size_t i = 0; i < uniforms.size(); ++i)
-	{
-		if (uniforms[i].m_bIsFromBlock) continue;
-		m_pkProgram->InspectUniformProgramInformation(uniforms[i]);
-	}	
+	InspectData();
 	
 }
 
@@ -237,5 +234,173 @@ GLenum Material::IndexToBlendFunc(I32 blendFunc)
 	case 18: return GL_ONE_MINUS_SRC1_ALPHA;
 	default:
 		return GL_ZERO;
+	}
+}
+
+void Material::PrepareDataForContainers()
+{
+	//check unknown uniforms
+	const std::vector<ActiveProgramInformations>& uniforms = m_pkProgram->GetUniformsInformation();
+	for (size_t i = 0; i < uniforms.size(); ++i)
+	{
+		if (uniforms[i].m_bIsFromBlock) continue;
+
+		if (!IsAlreadyMapped(uniforms[i]))
+		{
+			Map(uniforms[i]);
+		}
+	}
+
+
+	//delete containers that are not existent
+	if (m_kMaterialData.m_akDataForShader.size() != uniforms.size())
+	{
+		for (auto it = m_kMaterialData.m_akDataForShader.begin(); it != m_kMaterialData.m_akDataForShader.end(); ++it)
+		{
+			bool bFound = false;
+			std::string thisName = (*it)->GetName();
+			for (size_t j = 0; j < uniforms.size(); ++j)
+			{
+				if (std::string(uniforms[j].m_pcName) == thisName)
+				{
+					bFound = true;
+					break;
+				}
+			}
+
+			if (!bFound)
+			{
+				it = m_kMaterialData.m_akDataForShader.erase(it);
+			}
+		}
+	}
+}
+
+bool Material::IsAlreadyMapped(const ActiveProgramInformations & info)
+{
+	//Create loop through data to check the data is already mapped
+	for (size_t i = 0; i < m_kMaterialData.m_akDataForShader.size(); ++i)
+	{
+		if (std::string(info.m_pcName) == m_kMaterialData.m_akDataForShader[i]->GetName())
+		{
+			if (!m_kMaterialData.m_akDataForShader[i]->Verify(*m_pkProgram))
+			{
+				m_kMaterialData.m_akDataForShader[i]->UpdateUniformLocation(info.m_iLocation);
+			}
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void Material::Map(const ActiveProgramInformations & info)
+{
+	IUniformDataContainerPtr container;
+	switch (info.m_eType)
+	{
+	case GL_FLOAT:
+	{
+		container = IUniformDataContainerPtr(new DataContainer<float>());
+		break;
+	}
+	case GL_FLOAT_VEC2:
+	{
+		container = IUniformDataContainerPtr(new DataContainer<vec2>());
+		break;
+	}
+	case GL_FLOAT_VEC3:
+	{
+		container = IUniformDataContainerPtr(new DataContainer<vec3>());
+		break;
+	}
+	case GL_FLOAT_VEC4:
+	{
+		container = IUniformDataContainerPtr(new DataContainer<vec4>());
+		break;
+	}
+	case GL_FLOAT_MAT2:
+	case GL_FLOAT_MAT3:
+	case GL_FLOAT_MAT4:
+	case GL_FLOAT_MAT2x3:
+	case GL_FLOAT_MAT2x4:
+	case GL_FLOAT_MAT3x2:
+	case GL_FLOAT_MAT3x4:
+	case GL_FLOAT_MAT4x2:
+	case GL_FLOAT_MAT4x3: {return; }
+	case GL_INT:
+	{
+		container = IUniformDataContainerPtr(new DataContainer<I32>());
+		break;
+	}
+	case GL_INT_VEC2:
+	{
+		container = IUniformDataContainerPtr(new DataContainer<ivec2>());
+		break;
+	}
+	case GL_INT_VEC3:
+	{
+		container = IUniformDataContainerPtr(new DataContainer<ivec3>());
+		break;
+	}
+	case GL_INT_VEC4:
+	{
+		container = IUniformDataContainerPtr(new DataContainer<ivec4>());
+		break;
+	}
+	case GL_UNSIGNED_INT:
+	{
+		container = IUniformDataContainerPtr(new DataContainer<UI32>());
+		break;
+	}
+	case GL_UNSIGNED_INT_VEC2:
+	{
+		container = IUniformDataContainerPtr(new DataContainer<uvec2>());
+		break;
+	}
+	case GL_UNSIGNED_INT_VEC3:
+	{
+		container = IUniformDataContainerPtr(new DataContainer<uvec3>());
+		break;
+	}
+	case GL_UNSIGNED_INT_VEC4:
+	{
+		container = IUniformDataContainerPtr(new DataContainer<uvec4>());
+		break;
+	}
+	case GL_DOUBLE_MAT2:
+	case GL_DOUBLE_MAT3:
+	case GL_DOUBLE_MAT4:
+	case GL_DOUBLE_MAT2x3:
+	case GL_DOUBLE_MAT2x4:
+	case GL_DOUBLE_MAT3x2:
+	case GL_DOUBLE_MAT3x4:
+	case GL_DOUBLE_MAT4x2:
+	case GL_DOUBLE_MAT4x3:
+	default:
+	{return; }
+	}
+
+	container->SetName(info.m_pcName);
+	container->UpdateUniformLocation(info.m_iLocation);
+	container->LoadDataFromProgram(*m_pkProgram);
+
+	m_kMaterialData.m_akDataForShader.push_back(container);
+}
+
+void Material::LoadDataInGPU()
+{
+	for (size_t i = 0; i < m_kMaterialData.m_akDataForShader.size(); ++i)
+	{
+		m_kMaterialData.m_akDataForShader[i]->UploadValues();
+	}
+}
+
+void Material::InspectData()
+{
+	for (size_t i = 0; i < m_kMaterialData.m_akDataForShader.size(); ++i)
+	{
+		m_kMaterialData.m_akDataForShader[i]->Inspect();
 	}
 }
