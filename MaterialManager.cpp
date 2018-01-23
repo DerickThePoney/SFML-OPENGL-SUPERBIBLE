@@ -55,7 +55,15 @@ Material * MaterialManager::InstantiateFromFile(const std::string & kFilename)
 	}
 	else
 	{
-		newObj = m_akMaterials[*itFind->second.begin()];// Instantiate(m_akMaterials[*itFind->second.begin()]);
+		if (m_akMaterials[*itFind->second.begin()]->m_kMaterialData.m_bPerInstanceData)
+		{
+			newObj = Instantiate(m_akMaterials[*itFind->second.begin()]);
+		}
+		else
+		{
+			newObj = m_akMaterials[*itFind->second.begin()];// Instantiate(m_akMaterials[*itFind->second.begin()]);
+		}		
+		
 	}
 
 	return newObj;

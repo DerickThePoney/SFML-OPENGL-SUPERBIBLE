@@ -13,12 +13,15 @@ public:
 	~CameraComponent();
 	
 	void Init();
+	void InitCamera();
 
 	void ReleaseCamera();
 
 	virtual void OnPreRender() override;
 
 	virtual void Inspect() override;
+	// Hérité via IComponent
+	virtual void Clone(std::shared_ptr<IComponent> pkComponent) override;
 
 	template<class Archive>
 	void save(Archive & archive) const 
@@ -60,7 +63,7 @@ public:
 
 		if (bIsUsed)
 		{
-			if (m_pkCameraStruct == nullptr) Init();
+			if (m_pkCameraStruct == nullptr) InitCamera();
 
 			archive(cereal::make_nvp("IsMAIN", bIsMain));
 

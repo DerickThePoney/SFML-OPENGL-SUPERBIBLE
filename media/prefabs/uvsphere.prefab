@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cereal>
+	<GameObject>
+		<m_kName>Middle3</m_kName>
+		<value0>
+			<m_kLocalPosition>
+				<value0>5</value0>
+				<value1>3</value1>
+				<value2>0</value2>
+			</m_kLocalPosition>
+			<m_kScale>
+				<value0>1</value0>
+				<value1>1</value1>
+				<value2>1</value2>
+			</m_kScale>
+			<m_kLocalOrientation>
+				<value0>1</value0>
+				<value1>0</value1>
+				<value2>0</value2>
+				<value3>0</value3>
+			</m_kLocalOrientation>
+		</value0>
+		<m_kComponent size="dynamic">
+			<value0>
+				<polymorphic_id>2147483650</polymorphic_id>
+				<polymorphic_name>MeshRendererComponent</polymorphic_name>
+				<ptr_wrapper>
+					<id>2147483650</id>
+					<data>
+						<m_kMeshFilename>media/meshes/UVSphere.ply</m_kMeshFilename>
+						<MeshID>2</MeshID>
+						<m_kMaterialFilename>media/Materials/StandardPBRMeshMaterial.material</m_kMaterialFilename>
+					</data>
+				</ptr_wrapper>
+			</value0>
+		</m_kComponent>
+		<uiNbChildren>0</uiNbChildren>
+	</GameObject>
+</cereal>

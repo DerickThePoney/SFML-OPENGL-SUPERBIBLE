@@ -25,8 +25,8 @@
 
 #define DEARCHIVE_WITH_DEFAULT(x, def) \
 	try{archive(CEREAL_NVP(x));}catch(std::exception e){x = def;}
-#define DEARCHIVE_WITH_DEFAULT_FROM_NVP(x, def) \
-	try{archive(x);}catch(std::exception e){x = def;}
+#define DEARCHIVE_WITH_DEFAULT_FROM_NVP(x, str, def) \
+	try{archive(cereal::make_nvp(str, x));}catch(std::exception e){x = def;}
 #define OGL_ARRAYSIZE(_ARR)  ((int)(sizeof(_ARR)/sizeof(*_ARR)))
 
 #include <iostream>

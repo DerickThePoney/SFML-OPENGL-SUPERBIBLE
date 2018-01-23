@@ -41,6 +41,11 @@ public:
 		DataUpload<T>(m_iLocation, data);
 	}
 
+	virtual void SetValue(T& d)
+	{
+		data = d;
+	}
+
 	virtual void Inspect() override
 	{
 		DataInspection<T>(m_kName, data);

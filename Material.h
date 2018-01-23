@@ -10,6 +10,7 @@
 struct MaterialData
 {
 	std::string m_kShaderFilename;
+	bool m_bPerInstanceData;
 	bool m_bBlendColors;
 	bool m_bBlendSeparate;
 	GLenum m_eSRCBlend;
@@ -24,7 +25,9 @@ struct MaterialData
 	void save(Archive & archive) const
 	{
 		archive(CEREAL_NVP(m_kShaderFilename));
-		archive(CEREAL_NVP(m_bBlendColors),
+		archive(
+			CEREAL_NVP(m_bPerInstanceData),
+			CEREAL_NVP(m_bBlendColors),
 			CEREAL_NVP(m_bBlendSeparate),
 			CEREAL_NVP(m_eSRCBlend),
 			CEREAL_NVP(m_eDSTBlend),
@@ -40,6 +43,7 @@ struct MaterialData
 	void load(Archive& archive)
 	{
 		archive(CEREAL_NVP(m_kShaderFilename));
+		DEARCHIVE_WITH_DEFAULT(m_bPerInstanceData, false);
 		DEARCHIVE_WITH_DEFAULT(m_bBlendColors, false);
 		DEARCHIVE_WITH_DEFAULT(m_bBlendSeparate, false);
 		DEARCHIVE_WITH_DEFAULT(m_eSRCBlend, GL_ZERO);
@@ -62,8 +66,6 @@ protected:
 	~Material();
 
 public:
-	Material* Clone();
-
 	bool InitMaterialFromRessource(const std::string& kFilename);
 	void Delete();
 
@@ -78,7 +80,10 @@ public:
 	template<class Archive>
 	void save(Archive & archive) const
 	{
-		archive(CEREAL_NVP(m_kFilename), cereal::make_nvp("MaterialID", s_uiMaxMaterialID));
+		archive(
+			CEREAL_NVP(m_kFilename),
+			cereal::make_nvp("MaterialID", s_uiMaxMaterialID)
+		);
 	}
 
 	template<class Archive>
@@ -87,6 +92,20 @@ public:
 		DEARCHIVE_WITH_DEFAULT(m_kFilename, "");
 
 		if(m_kFilename != "") InitMaterialFromRessource(m_kFilename);		
+	}
+
+	template <class T>
+	bool SetData(const std::string& kPropertyName, T& data)
+	{
+		for (UI32 i = 0; i < m_kMaterialData.m_akDataForShader.size(); ++i)
+		{
+			if (m_kMaterialData.m_akDataForShader[i]->GetName() == kPropertyName)
+			{
+				std::dynamic_pointer_cast<DataContainer<T>>(m_kMaterialData.m_akDataForShader[i])->SetValue(data);
+				return true;
+			}
+		}
+		return false;
 	}
 
 private:

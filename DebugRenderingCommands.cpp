@@ -71,10 +71,13 @@ void DebugRenderingCommands::LineDrawingCommands::Terminate()
 
 void DebugRenderingCommands::LineDrawingCommands::RenderLines(UI32 uiLineCommandsNb, Camera* kCamera)
 {
-	m_pkMaterial->Use();
-	kCamera->LoadProjectionOnGraphics(0);
-	m_hkVao.Bind();
-	UpdateData();
-	glDrawArrays(GL_LINES, 0, endpoints.size());
-	//glDrawArraysInstanced(GL_LINES, 2, 2, uiLineCommandsNb);
+	if (uiLineCommandsNb > 0)
+	{
+		m_pkMaterial->Use();
+		kCamera->LoadProjectionOnGraphics(0);
+		m_hkVao.Bind();
+		UpdateData();
+		glDrawArrays(GL_LINES, 0, endpoints.size());
+		//glDrawArraysInstanced(GL_LINES, 2, 2, uiLineCommandsNb);
+	}
 }

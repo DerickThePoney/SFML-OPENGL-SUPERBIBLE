@@ -15,7 +15,7 @@ protected:
 	GameObject(const std::string& rkName);
 	~GameObject();
 
-	GameObject(const GameObject& other) = delete;
+	GameObject(const GameObject& other);
 	GameObject(GameObject&& other) = delete;
 
 	GameObject& operator=(const GameObject& other) = delete;
@@ -26,6 +26,7 @@ public:
 	bool AddChild(GameObject* pkObject);
 	bool RemoveChild(const UI32 iIndex);
 	bool RemoveChild(const std::string& rkName);
+	void ClearChildren();
 	std::size_t GetNumberOfChildren();
 
 	void FindChildrenInHierarchy(const std::string& rkName, std::vector<GameObject*> apkReturnVector);
@@ -34,6 +35,7 @@ public:
 
 
 	//runtime methods
+	void Initialise();
 	void Update(double fElapsedTime);
 	virtual void UpdateAllTransformsInHierarchy();
 	void OnPreRender();
@@ -50,7 +52,8 @@ public:
 	{
 		for (UI32 i = 0; i < m_kComponent.size(); ++i)
 		{
-			if (m_kComponent[i]->GetType() == T::TYPE)
+			const RTTI thisType = m_kComponent[i]->GetType();
+			if (thisType == T::TYPE)
 				return std::dynamic_pointer_cast<T>(m_kComponent[i]);
 		}
 		return nullptr;

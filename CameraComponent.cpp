@@ -16,6 +16,11 @@ CameraComponent::~CameraComponent()
 
 void CameraComponent::Init()
 {
+	if (m_pkCameraStruct == nullptr) InitCamera();
+}
+
+void CameraComponent::InitCamera()
+{
 	m_pkCameraStruct = CameraManager::Instance()->Instantiate();
 }
 
@@ -74,4 +79,23 @@ void CameraComponent::Inspect()
 		}
 	}
 
+}
+
+void CameraComponent::Clone(std::shared_ptr<IComponent> pkComponent)
+{
+	std::shared_ptr<CameraComponent> pkData = std::dynamic_pointer_cast<CameraComponent>(pkComponent);
+	if (pkData == nullptr) return;
+
+	InitCamera();
+
+	if (m_pkCameraStruct != nullptr) return;
+	m_pkCameraStruct->aspectRatio = pkData->m_pkCameraStruct->aspectRatio;
+	m_pkCameraStruct->m_bottom = pkData->m_pkCameraStruct->m_bottom;
+	m_pkCameraStruct->m_eType = pkData->m_pkCameraStruct->m_eType;
+	m_pkCameraStruct->m_left = pkData->m_pkCameraStruct->m_left;
+	m_pkCameraStruct->m_right = pkData->m_pkCameraStruct->m_right;
+	m_pkCameraStruct->m_top = pkData->m_pkCameraStruct->m_top;
+	m_pkCameraStruct->fFarPlane = pkData->m_pkCameraStruct->fFarPlane;
+	m_pkCameraStruct->fNearPlane = pkData->m_pkCameraStruct->fNearPlane;
+	m_pkCameraStruct->focal = pkData->m_pkCameraStruct->focal;
 }

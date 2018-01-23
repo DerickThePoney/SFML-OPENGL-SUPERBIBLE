@@ -54,3 +54,24 @@ void MeshRendererComponent::Inspect()
 	}
 }
 
+void MeshRendererComponent::Clone(std::shared_ptr<IComponent> pkComponent)
+{
+	std::shared_ptr<MeshRendererComponent> pkData = std::dynamic_pointer_cast<MeshRendererComponent>(pkComponent);
+	if (pkData == nullptr) return;
+
+
+	m_kMeshFilename = pkData->m_kMeshFilename;
+	m_kMaterialFilename = pkData->m_kMaterialFilename;
+	
+	m_pkMesh = pkData->m_pkMesh;
+
+	if (pkData->m_pkMaterial->m_kMaterialData.m_bPerInstanceData)
+	{
+		m_pkMaterial = MaterialManager::Instance()->InstantiateFromFile(m_kMaterialFilename);
+	}
+	else
+	{
+		m_pkMaterial = pkData->m_pkMaterial;
+	}
+}
+

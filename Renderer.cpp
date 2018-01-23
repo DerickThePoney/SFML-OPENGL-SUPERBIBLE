@@ -151,8 +151,6 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 		m_kGlobalRendererSettings.kClearColor[2], m_kGlobalRendererSettings.kClearColor[3]);
 	glClearDepth(1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//glClearBufferfv(GL_COLOR, 0, m_kGlobalRendererSettings.kClearColor);
-	//glClearBufferfv(GL_DEPTH, 0, &one);
 	
 	// Load the camera projections
 	pkCamera->LoadProjectionOnGraphics(0);
@@ -244,7 +242,8 @@ void Renderer::ApplyGameObjectRenderData(GameObjectRenderData & data)
 {
 	if (data.m_pkMeshRenderer->m_pkMaterial != nullptr)
 	{
-		if (data.m_pkMeshRenderer->m_pkMaterial->m_uiMaterialID != m_auiRenderingState[MATERIAL])
+		if (data.m_pkMeshRenderer->m_pkMaterial->m_uiMaterialID != m_auiRenderingState[MATERIAL] ||
+			data.m_pkMeshRenderer->m_pkMaterial->m_kMaterialData.m_bPerInstanceData)
 		{
 			data.m_pkMeshRenderer->m_pkMaterial->Use();
 			m_auiRenderingState[MATERIAL] = data.m_pkMeshRenderer->m_pkMaterial->m_uiMaterialID;

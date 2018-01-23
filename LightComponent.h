@@ -12,10 +12,14 @@ public:
 	~LightComponent();
 
 	void Init();
+	void InitLight();
 	
 	virtual void OnPreRender() override;
 
 	virtual void Inspect() override;
+
+	// Hérité via IComponent
+	virtual void Clone(std::shared_ptr<IComponent> pkComponent) override;
 
 	template<class Archive>
 	void save(Archive & archive) const
@@ -45,7 +49,7 @@ public:
 		archive(cereal::make_nvp("IsUSED", bIsUsed));
 		if (bIsUsed)
 		{
-			if (m_pkLight == nullptr) Init();
+			if (m_pkLight == nullptr) InitLight();
 
 			archive(
 				cereal::make_nvp("m_eLight", m_pkLight->m_eLight),
@@ -70,6 +74,9 @@ private:
 private:
 
 	Light* m_pkLight;
+
+
+	
 
 };
 

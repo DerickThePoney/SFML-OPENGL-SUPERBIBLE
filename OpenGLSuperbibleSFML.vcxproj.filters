@@ -67,6 +67,9 @@
     <Filter Include="Rendering\Camera">
       <UniqueIdentifier>{1f9b5fb8-6a74-4c2c-9871-24c30b788f05}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameObjects\TestAndDemoComponents">
+      <UniqueIdentifier>{5f738ea4-b5a3-4742-b9ca-6633490eafd2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -243,6 +246,9 @@
     <ClInclude Include="MaterialUniformData.h">
       <Filter>Rendering\Materials</Filter>
     </ClInclude>
+    <ClInclude Include="TestPBRMaterialComponent.h">
+      <Filter>GameObjects\TestAndDemoComponents</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -379,6 +385,9 @@
     </ClCompile>
     <ClCompile Include="MaterialUniformData.cpp">
       <Filter>Rendering\Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="TestPBRMaterialComponent.cpp">
+      <Filter>GameObjects\TestAndDemoComponents</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

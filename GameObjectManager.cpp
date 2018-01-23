@@ -37,10 +37,20 @@ GameObjectManager::~GameObjectManager()
 	}
 }
 
-GameObject * GameObjectManager::Instantiate()
+GameObject * GameObjectManager::Instantiate(GameObject* prefab)
 {
-	GameObject* newObj = new GameObject();
+	GameObject* newObj;
+	if (prefab == nullptr)
+	{
+		newObj = new GameObject();
+	}
+	else
+	{
+		newObj = new GameObject(*prefab);
+	}
+	
 	m_akGameObjectsMap[newObj->GetID()] = newObj;
+
 	return newObj;
 }
 

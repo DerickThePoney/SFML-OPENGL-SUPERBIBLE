@@ -19,6 +19,7 @@ public:
 	virtual void Render() {}
 
 	virtual void Inspect() = 0;
+	virtual void Clone(std::shared_ptr<IComponent> pkComponent) = 0;
 
 public:
 	GameObject* m_pkParent;
@@ -31,5 +32,6 @@ typedef std::shared_ptr<IComponent> IComponentPtr;
 static const C8* Components[] =
 {
 	ADDCOMPONENT(MeshRendererComponent),
-	ADDCOMPONENT(LightComponent)
+	ADDCOMPONENT(LightComponent),
+	ADDCOMPONENT(TestPBRMaterialComponent)
 };

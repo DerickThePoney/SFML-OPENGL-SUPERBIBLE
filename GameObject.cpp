@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "GameObject.h"
+#include "GameObjectManager.h"
 
 UI32 GameObject::s_uiIDCounter = 0;
 
@@ -27,7 +28,27 @@ GameObject::GameObject(const std::string & rkName)
 
 GameObject::~GameObject()
 {
-	m_apkChildren.clear();
+	ClearChildren();
+}
+
+GameObject::GameObject(const GameObject & other)
+{
+	if (this == &other) return;
+	m_pkParent = nullptr;
+	m_kName = other.m_kName;
+	m_uiID = s_uiIDCounter++;
+
+	for (UI32 i = 0; i < other.m_kComponent.size(); ++i)
+	{
+		IComponentPtr component = CREATE_NEW_COMPONENT(other.m_kComponent[i]->GetType(), this);
+		component->Clone(other.m_kComponent[i]);
+		m_kComponent.push_back(component);
+	}
+
+	for (UI32 i = 0; other.m_apkChildren.size(); ++i)
+	{
+		AddChild(GameObjectManager::Instance()->Instantiate(other.m_apkChildren[i]));
+	}
 }
 
 bool GameObject::AddChild(GameObject * pkObject)
@@ -64,6 +85,15 @@ bool GameObject::RemoveChild(const std::string & rkName)
 	}
 
 	return false;
+}
+
+void GameObject::ClearChildren()
+{
+	for (UI32 i = 0; i < m_apkChildren.size(); ++i)
+	{
+		GameObjectManager::Instance()->Destroy(m_apkChildren[i]);
+	}
+	m_apkChildren.clear();
 }
 
 std::size_t GameObject::GetNumberOfChildren()
@@ -104,6 +134,18 @@ GameObject * GameObject::GetChild(const std::string & rkName)
 	}
 
 	return nullptr;
+}
+
+void GameObject::Initialise()
+{
+	for (UI32 i = 0; i < m_kComponent.size(); ++i)
+	{
+		m_kComponent[i]->Init();
+	}
+	for (std::size_t i = 0; i < m_apkChildren.size(); ++i)
+	{
+		m_apkChildren[i]->Initialise();
+	}
 }
 
 void GameObject::Update(double fElapsedTime)

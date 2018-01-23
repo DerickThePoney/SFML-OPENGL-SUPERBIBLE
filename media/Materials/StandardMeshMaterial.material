@@ -2,6 +2,7 @@
 <cereal>
 	<value0>
 		<m_kShaderFilename>media/shaders/StandardMeshMaterial.shader</m_kShaderFilename>
+		<m_bPerInstanceData>true</m_bPerInstanceData>
 		<m_bBlendColors>true</m_bBlendColors>
 		<m_bBlendSeparate>false</m_bBlendSeparate>
 		<m_eSRCBlend>1</m_eSRCBlend>

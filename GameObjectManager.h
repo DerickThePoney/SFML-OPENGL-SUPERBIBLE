@@ -13,7 +13,7 @@ protected:
 	~GameObjectManager();
 
 public:
-	GameObject* Instantiate();
+	GameObject* Instantiate(GameObject* prefab = nullptr);
 	bool Destroy(GameObject* pkObj);
 
 

@@ -10,9 +10,11 @@ Material::Material()
 }
 
 Material::Material(const Material & other)
-	:m_kFilename(other.m_kFilename), m_kMaterialData(other.m_kMaterialData), m_pkProgram(other.m_pkProgram)
+	: m_kFilename(other.m_kFilename), m_kMaterialData(other.m_kMaterialData), m_pkProgram(other.m_pkProgram)
 {
 	m_uiMaterialID = Material::s_uiMaxMaterialID++;
+	m_kMaterialData.m_akDataForShader.clear();
+	PrepareDataForContainers();
 }
 
 
@@ -126,6 +128,8 @@ void Material::Inspect()
 	{
 		LoadProgram();
 	}
+
+	ImGui::Checkbox("Per Instance data", &m_kMaterialData.m_bPerInstanceData);
 
 	//color blending
 	ImGui::Checkbox("Blend colors", &m_kMaterialData.m_bBlendColors);

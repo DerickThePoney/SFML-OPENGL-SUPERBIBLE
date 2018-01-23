@@ -16,10 +16,21 @@ public:
 
 	void Inspect();
 
+	// Hérité via IComponent
+	virtual void Clone(std::shared_ptr<IComponent> pkComponent) override;
+
 	template<class Archive>
 	void save(Archive & archive) const
 	{
 		archive(CEREAL_NVP(m_kMeshFilename), cereal::make_nvp("MeshID", (m_pkMesh != nullptr)?m_pkMesh->m_uiMeshID : -1), CEREAL_NVP(m_kMaterialFilename));
+
+		if (m_pkMaterial != nullptr)
+		{
+			if (m_pkMaterial->m_kMaterialData.m_bPerInstanceData)
+			{
+				archive(cereal::make_nvp("InstanceData", m_pkMaterial->m_kMaterialData.m_akDataForShader));
+			}
+		}
 	}
 
 	template<class Archive>
@@ -40,6 +51,16 @@ public:
 		if (m_kMaterialFilename != "")
 		{
 			m_pkMaterial = MaterialManager::Instance()->InstantiateFromFile(m_kMaterialFilename);
+
+			if (m_pkMaterial->m_kMaterialData.m_bPerInstanceData)
+			{
+				std::vector<IUniformDataContainerPtr> akDataForShader;
+				DEARCHIVE_WITH_DEFAULT_FROM_NVP(akDataForShader, "InstanceData", std::vector<std::shared_ptr<IUniformDataContainer>>());
+				if (akDataForShader.size() > 0)
+				{
+					m_pkMaterial->m_kMaterialData.m_akDataForShader = akDataForShader;
+				}
+			}
 		}
 	}
 
@@ -48,6 +69,8 @@ public:
 	std::string m_kMaterialFilename;
 	Mesh* m_pkMesh;
 	Material* m_pkMaterial;
+
+	
 };
 
 CEREAL_REGISTER_TYPE(MeshRendererComponent);

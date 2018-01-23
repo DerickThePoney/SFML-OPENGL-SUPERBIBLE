@@ -16,6 +16,11 @@ LightComponent::~LightComponent()
 
 void LightComponent::Init()
 {
+	if (m_pkLight == nullptr) InitLight();
+}
+
+void LightComponent::InitLight()
+{
 	if (m_pkLight != nullptr) return;
 	m_pkLight = LightingManager::Instance()->GetPointerToNextUnusedLight();
 	m_pkLight->m_eLight = DIRECTIONAL_LIGHT;
@@ -74,4 +79,19 @@ void LightComponent::ReleaseLight()
 		m_pkLight->m_eLight = UNUSED;
 		m_pkLight = nullptr;
 	}
+}
+
+void LightComponent::Clone(std::shared_ptr<IComponent> pkComponent)
+{
+	std::shared_ptr<LightComponent> pkData = std::dynamic_pointer_cast<LightComponent>(pkComponent);
+	if (pkData == nullptr) return;
+
+	InitLight();
+
+	if (m_pkLight != nullptr) return;
+	m_pkLight->m_eLight = pkData->m_pkLight->m_eLight;
+	m_pkLight->m_kLightColor = pkData->m_pkLight->m_kLightColor;
+	m_pkLight->m_fLightStrength = pkData->m_pkLight->m_fLightStrength;
+	m_pkLight->m_fRange = pkData->m_pkLight->m_fRange;
+	m_pkLight->m_fConeSize = pkData->m_pkLight->m_fConeSize;
 }

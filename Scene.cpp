@@ -37,6 +37,13 @@ void Scene::Initialise(UI32 width, UI32 height)
 	m_kTexture.SetData(0, 0, 0, size, size, GL_RGBA, GL_UNSIGNED_BYTE, data, false);
 	
 	delete[] data;
+
+
+	//init the children
+	for (UI32 i = 0; i < m_akRootObjects.size(); ++i)
+	{
+		m_akRootObjects[i]->Initialise();
+	}
 }
 
 void Scene::Terminate()
