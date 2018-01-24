@@ -6,7 +6,7 @@ public:
 	~OGLTexture2D();
 
 	void Initialise();
-	void InitialiseStorage(I32 iWidth, I32 iHeight, I32 iLevels, GLenum eSamplerFormat);
+	void InitialiseStorage(I32 iWidth, I32 iHeight, I32 iLevels, GLenum eSamplerFormat, bool bIsMultisample = false);
 	void SetData(I32 iLevel, I32 iXOffset, I32 iYOffset, 
 		I32 iWidth, I32 iHeight, 
 		GLenum eDataFormat, GLenum eDataType,
@@ -34,6 +34,7 @@ private:
 	I32 m_iNbLevels;
 
 	bool m_bIsStorageInitialised;
+	bool m_bIsMultisample;
 	
 	GLenum m_eSamplerFormat;
 

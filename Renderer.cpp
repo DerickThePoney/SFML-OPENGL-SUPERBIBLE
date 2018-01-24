@@ -80,6 +80,8 @@ void Renderer::InitDefaultState()
 	m_pkScreenQuad->LoadBuffersOnGraphicsCard();
 
 	//for testing
+	
+	glEnable(GL_MULTISAMPLE);
 	m_kFrameBuffer.Init();
 	m_kFrameBuffer.Bind(GL_FRAMEBUFFER);
 	//glViewport(0, 0, m_window->getSize().x, m_window->getSize().y);
@@ -138,7 +140,7 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 
 	auto sz = m_window->getSize();
 
-	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
 	m_kFrameBuffer.BindForDrawing(GL_DRAW_FRAMEBUFFER);
 	//glViewport(0, 0, sz.x, sz.y);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0);

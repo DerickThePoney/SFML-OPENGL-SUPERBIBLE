@@ -17,7 +17,7 @@ void OGLTexture2D::Initialise()
 	glGenTextures(1, &m_hiTexture);
 }
 
-void OGLTexture2D::InitialiseStorage(I32 iWidth, I32 iHeight, I32 iLevels, GLenum eSamplerFormat)
+void OGLTexture2D::InitialiseStorage(I32 iWidth, I32 iHeight, I32 iLevels, GLenum eSamplerFormat, bool bIsMultisample)
 {
 	if (m_bIsStorageInitialised)
 	{
@@ -26,14 +26,24 @@ void OGLTexture2D::InitialiseStorage(I32 iWidth, I32 iHeight, I32 iLevels, GLenu
 		m_bIsStorageInitialised = false;
 	}
 
-	Bind();
+	
 
 	m_iWidth = iWidth;
 	m_iHeight = iHeight;
 	m_iNbLevels = iLevels;
 	m_eSamplerFormat = eSamplerFormat;
+	m_bIsMultisample = bIsMultisample;
+	
+	Bind();
 
-	glTexStorage2D(GL_TEXTURE_2D, m_iNbLevels, eSamplerFormat, m_iWidth, m_iHeight);
+	if (m_bIsMultisample)
+	{
+		glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 8, eSamplerFormat, m_iWidth, m_iHeight, GL_FALSE);
+	}
+	else
+	{
+		glTexStorage2D(GL_TEXTURE_2D, m_iNbLevels, eSamplerFormat, m_iWidth, m_iHeight);
+	}
 
 	SetSamplingParameters();
 
@@ -56,7 +66,15 @@ void OGLTexture2D::SetData(I32 iLevel, I32 iXOffset, I32 iYOffset, I32 iWidth, I
 
 void OGLTexture2D::Bind(GLint iUnit)
 {
-	glBindTexture(GL_TEXTURE_2D, m_hiTexture);
+	if (m_bIsMultisample)
+	{
+		glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, m_hiTexture);
+	}
+	else
+	{
+		glBindTexture(GL_TEXTURE_2D, m_hiTexture);
+	}
+	
 }
 
 
