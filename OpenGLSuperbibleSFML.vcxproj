@@ -177,6 +177,7 @@
     <ClInclude Include="CameraComponent.h" />
     <ClInclude Include="DebugRenderingCommands.h" />
     <ClInclude Include="Delegate.h" />
+    <ClInclude Include="FreeCameraComponent.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameObjectApplication.h" />
     <ClInclude Include="GameObjectManager.h" />
@@ -236,6 +237,7 @@
     <ClCompile Include="CameraManager.cpp" />
     <ClCompile Include="CameraComponent.cpp" />
     <ClCompile Include="DebugRenderingCommands.cpp" />
+    <ClCompile Include="FreeCameraComponent.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameObjectApplication.cpp" />
     <ClCompile Include="GameObjectManager.cpp" />

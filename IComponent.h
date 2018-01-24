@@ -33,5 +33,6 @@ static const C8* Components[] =
 {
 	ADDCOMPONENT(MeshRendererComponent),
 	ADDCOMPONENT(LightComponent),
-	ADDCOMPONENT(TestPBRMaterialComponent)
+	ADDCOMPONENT(TestPBRMaterialComponent),
+	ADDCOMPONENT(FreeCameraComponent)
 };

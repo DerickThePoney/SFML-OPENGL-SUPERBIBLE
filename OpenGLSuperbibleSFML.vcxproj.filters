@@ -162,9 +162,6 @@
     <ClInclude Include="Transform.h">
       <Filter>GameObjects\Components</Filter>
     </ClInclude>
-    <ClInclude Include="MeshRendererComponent.h">
-      <Filter>GameObjects\Components</Filter>
-    </ClInclude>
     <ClInclude Include="Material.h">
       <Filter>Rendering\Materials</Filter>
     </ClInclude>
@@ -231,23 +228,29 @@
     <ClInclude Include="LightingManager.h">
       <Filter>Rendering\Lighting</Filter>
     </ClInclude>
-    <ClInclude Include="LightComponent.h">
-      <Filter>GameObjects\Components</Filter>
-    </ClInclude>
     <ClInclude Include="CameraManager.h">
       <Filter>Rendering\Camera</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Rendering\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="CameraComponent.h">
-      <Filter>GameObjects\Components</Filter>
-    </ClInclude>
     <ClInclude Include="MaterialUniformData.h">
       <Filter>Rendering\Materials</Filter>
     </ClInclude>
     <ClInclude Include="TestPBRMaterialComponent.h">
       <Filter>GameObjects\TestAndDemoComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="FreeCameraComponent.h">
+      <Filter>Rendering\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraComponent.h">
+      <Filter>Rendering\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="LightComponent.h">
+      <Filter>Rendering\Lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshRendererComponent.h">
+      <Filter>Rendering\Mesh</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -317,9 +320,6 @@
     <ClCompile Include="Transform.cpp">
       <Filter>GameObjects\Components</Filter>
     </ClCompile>
-    <ClCompile Include="MeshRendererComponent.cpp">
-      <Filter>GameObjects\Components</Filter>
-    </ClCompile>
     <ClCompile Include="Material.cpp">
       <Filter>Rendering\Materials</Filter>
     </ClCompile>
@@ -371,23 +371,29 @@
     <ClCompile Include="LightingManager.cpp">
       <Filter>Rendering\Lighting</Filter>
     </ClCompile>
-    <ClCompile Include="LightComponent.cpp">
-      <Filter>GameObjects\Components</Filter>
-    </ClCompile>
     <ClCompile Include="CameraManager.cpp">
       <Filter>Rendering\Camera</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Rendering\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="CameraComponent.cpp">
-      <Filter>GameObjects\Components</Filter>
-    </ClCompile>
     <ClCompile Include="MaterialUniformData.cpp">
       <Filter>Rendering\Materials</Filter>
     </ClCompile>
     <ClCompile Include="TestPBRMaterialComponent.cpp">
       <Filter>GameObjects\TestAndDemoComponents</Filter>
+    </ClCompile>
+    <ClCompile Include="FreeCameraComponent.cpp">
+      <Filter>Rendering\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraComponent.cpp">
+      <Filter>Rendering\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="LightComponent.cpp">
+      <Filter>Rendering\Lighting</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshRendererComponent.cpp">
+      <Filter>Rendering\Mesh</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
