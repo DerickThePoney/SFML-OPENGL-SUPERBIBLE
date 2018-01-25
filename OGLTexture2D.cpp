@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "OGLTexture2D.h"
 
+//#define STB_IMAGE_IMPLEMENTATION
+#include "stb/stb_image.h"
+
 
 OGLTexture2D::OGLTexture2D()
 	:m_bIsStorageInitialised(false), m_eTextureFilter(GL_LINEAR), m_eWrapMode(GL_REPEAT)//, m_eMagFilter(GL_LINEAR)
@@ -25,9 +28,7 @@ void OGLTexture2D::InitialiseStorage(I32 iWidth, I32 iHeight, I32 iLevels, GLenu
 		Initialise();
 		m_bIsStorageInitialised = false;
 	}
-
 	
-
 	m_iWidth = iWidth;
 	m_iHeight = iHeight;
 	m_iNbLevels = iLevels;
@@ -62,6 +63,29 @@ void OGLTexture2D::SetData(I32 iLevel, I32 iXOffset, I32 iYOffset, I32 iWidth, I
 
 	//TODO MIPMAPPING
 	glTexSubImage2D(GL_TEXTURE_2D, iLevel, iXOffset, iYOffset, iWidth, iHeight, eDataFormat, eDataType, data);
+}
+
+void OGLTexture2D::InitialiseFromRessource(const std::string & kFilename)
+{
+	int width, height, nrChannels;
+	UC8 *data = stbi_load(kFilename.c_str(), &width, &height, &nrChannels, 0);
+
+	Initialise();
+
+	switch (nrChannels)
+	{
+	case 1:
+		SetData(0, 0, 0, width, height, GL_R, GL_UNSIGNED_BYTE, data, false);
+	case 2:
+		SetData(0, 0, 0, width, height, GL_RG, GL_UNSIGNED_BYTE, data, false);
+	case 3:
+		SetData(0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, data, false);
+	case 4:
+		SetData(0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, data, false);
+	}
+
+	
+	stbi_image_free(data);
 }
 
 void OGLTexture2D::Bind(GLint iUnit)

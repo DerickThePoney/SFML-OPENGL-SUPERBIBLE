@@ -1,4 +1,6 @@
 #pragma once
+
+
 class OGLTexture2D
 {
 public:
@@ -12,6 +14,8 @@ public:
 		GLenum eDataFormat, GLenum eDataType,
 		void * data,
 		bool bGenerateMipMaps);
+
+	void InitialiseFromRessource(const std::string& kFilename);
 
 	void Bind(GLint iUnit = 0);
 

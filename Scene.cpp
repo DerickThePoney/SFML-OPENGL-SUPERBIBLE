@@ -22,7 +22,7 @@ void Scene::Initialise(UI32 width, UI32 height)
 	//m_kCamera.Init(width, height);
 
 	//Just make a simple texture
-	static I32 size = 16;
+	/*static I32 size = 16;
 	char* data = new char[size * size * 4];
 	//memset(data, 255, size * size * 4);
 
@@ -30,13 +30,15 @@ void Scene::Initialise(UI32 width, UI32 height)
 	{
 		char value = rand() & 0xFF;
 		data[i] = value;
-	}
+	}*/
 	
-	m_kTexture.Initialise();
+	/*m_kTexture.Initialise();
 	m_kTexture.InitialiseStorage(size, size, 1, GL_RGBA32F);
 	m_kTexture.SetData(0, 0, 0, size, size, GL_RGBA, GL_UNSIGNED_BYTE, data, false);
 	
-	delete[] data;
+	delete[] data;*/
+
+	m_kTexture.InitialiseFromRessource("media/textures/Test4Component.png");
 
 
 	//init the children

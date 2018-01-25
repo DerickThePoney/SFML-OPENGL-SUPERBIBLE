@@ -44,3 +44,7 @@ Release/
 media/meshes/dragon_vrip.ply
 media/meshes/dragon_vrip_scaled.ply
 media/meshes/BlendFiles/StanfordDragon.blend
+stb/data/
+stb/deprecated/
+stb/tests/
+stb/tools/
