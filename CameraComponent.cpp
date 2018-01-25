@@ -38,45 +38,42 @@ void CameraComponent::OnPreRender()
 
 void CameraComponent::Inspect()
 {
-	if (ImGui::CollapsingHeader(GetType().GetName().c_str()))
-	{
-		bool bHasChanged = false;
+	bool bHasChanged = false;
 
-		//Camera type
-		const char* listbox_items[] = { "Orthographic", "Perspective" };
-		int listbox_item_current = (int)m_pkCameraStruct->m_eType;
-		if (ImGui::ListBox("Type of camera", &listbox_item_current, listbox_items, 2, 2))
+	//Camera type
+	const char* listbox_items[] = { "Orthographic", "Perspective" };
+	int listbox_item_current = (int)m_pkCameraStruct->m_eType;
+	if (ImGui::ListBox("Type of camera", &listbox_item_current, listbox_items, 2, 2))
+	{
+		m_pkCameraStruct->m_eType = (CameraType)listbox_item_current;
+		bHasChanged = true;
+	}
+
+	//set the data
+	if (m_pkCameraStruct->m_eType == ORTHOGRAPHIC)
+	{
+		float size = m_pkCameraStruct->m_top - m_pkCameraStruct->m_bottom;
+
+		if (ImGui::DragFloat("Size", &size))
 		{
-			m_pkCameraStruct->m_eType = (CameraType)listbox_item_current;
+			m_pkCameraStruct->m_top = size / 2;
+			m_pkCameraStruct->m_bottom = -size / 2;
+			m_pkCameraStruct->m_left = m_pkCameraStruct->m_bottom * m_pkCameraStruct->aspectRatio;
+			m_pkCameraStruct->m_right = m_pkCameraStruct->m_top * m_pkCameraStruct->aspectRatio;
 			bHasChanged = true;
 		}
+	}
+	else
+	{
+		if (ImGui::DragFloat("Focal", &m_pkCameraStruct->focal)) bHasChanged = true;
+	}
 
-		//set the data
-		if (m_pkCameraStruct->m_eType == ORTHOGRAPHIC)
-		{
-			float size = m_pkCameraStruct->m_top - m_pkCameraStruct->m_bottom;
+	if (ImGui::DragFloat("Near plane", &m_pkCameraStruct->fNearPlane)) bHasChanged = true;
+	if (ImGui::DragFloat("Far plane", &m_pkCameraStruct->fFarPlane)) bHasChanged = true;
 
-			if (ImGui::DragFloat("Size", &size))
-			{
-				m_pkCameraStruct->m_top = size / 2;
-				m_pkCameraStruct->m_bottom = -size / 2;
-				m_pkCameraStruct->m_left = m_pkCameraStruct->m_bottom * m_pkCameraStruct->aspectRatio;
-				m_pkCameraStruct->m_right = m_pkCameraStruct->m_top * m_pkCameraStruct->aspectRatio;
-				bHasChanged = true;
-			}
-		}
-		else
-		{
-			if (ImGui::DragFloat("Focal", &m_pkCameraStruct->focal)) bHasChanged = true;
-		}
-
-		if (ImGui::DragFloat("Near plane", &m_pkCameraStruct->fNearPlane)) bHasChanged = true;
-		if (ImGui::DragFloat("Far plane", &m_pkCameraStruct->fFarPlane)) bHasChanged = true;
-
-		if (bHasChanged)
-		{
-			m_pkCameraStruct->ComputeProjection();
-		}
+	if (bHasChanged)
+	{
+		m_pkCameraStruct->ComputeProjection();
 	}
 
 }

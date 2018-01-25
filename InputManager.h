@@ -26,6 +26,7 @@ public:
 	bool IsMouseButtonJustRelease(sf::Mouse::Button key);
 	float GetMouseWheelDelta();
 	ivec2 GetMousePosition();
+	ivec2 GetMousePositionDelta();
 
 	void Inspect();
 
@@ -51,8 +52,10 @@ protected:
 	struct Mouse
 	{
 		ivec2 m_kPosition;
+		ivec2 m_kPositionDelta;
 		float m_fWheelDelta;
 		bool m_bScrolled;
+		bool m_bHasMoved;
 
 		std::vector<bool> m_pbIsDown[2];
 		UI32 current_queue;

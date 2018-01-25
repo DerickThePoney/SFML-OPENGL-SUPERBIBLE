@@ -21,25 +21,24 @@ void TestPBRMaterialComponent::Init()
 
 void TestPBRMaterialComponent::Inspect()
 {
-	if (ImGui::CollapsingHeader(GetType().GetName().c_str()))
+	
+	ImGui::LabelText("Prefab", m_kPrefabFile.c_str());
+
+	if (ImGui::SliderFloat2("Translation", m_kTranslation.GetData(), 1, 3))
 	{
-		ImGui::LabelText("Prefab", m_kPrefabFile.c_str());
-
-		if (ImGui::SliderFloat2("Translation", m_kTranslation.GetData(), 1, 3))
-		{
-			ChildrenParameters();
-		}
-
-		if (ImGui::ColorEdit3("albedo", m_kAlbedo.GetData()))
-		{
-			ChildrenParameters();
-		}
-
-		bool fullmodif = false;
-		if (ImGui::SliderFloat("roughness increment", &m_fRoughnessIncrement, 0.01f, 0.2f)) fullmodif = true;
-		if (ImGui::SliderFloat("metallic increment", &m_fMetallicIncrement, 0.01f, 0.2f)) fullmodif = true;
-		//if (fullmodif) Init();
+		ChildrenParameters();
 	}
+
+	if (ImGui::ColorEdit3("albedo", m_kAlbedo.GetData()))
+	{
+		ChildrenParameters();
+	}
+
+	bool fullmodif = false;
+	if (ImGui::SliderFloat("roughness increment", &m_fRoughnessIncrement, 0.01f, 0.2f)) fullmodif = true;
+	if (ImGui::SliderFloat("metallic increment", &m_fMetallicIncrement, 0.01f, 0.2f)) fullmodif = true;
+	//if (fullmodif) Init();
+	
 }
 
 void TestPBRMaterialComponent::Clone(std::shared_ptr<IComponent> pkComponent)
@@ -87,7 +86,7 @@ void TestPBRMaterialComponent::CreateChildren()
 void TestPBRMaterialComponent::ChildrenParameters()
 {
 	UI32 i = 0, j = 0;
-	UI32 nbMetallic = 1 / m_fMetallicIncrement;
+	UI32 nbMetallic = (UI32) (1 / m_fMetallicIncrement);
 	for (F32 roughness = 0; roughness < 1; roughness += m_fRoughnessIncrement, ++i)
 	{
 		for (F32 metallicness = 0; metallicness < 1; metallicness += m_fMetallicIncrement, ++j)

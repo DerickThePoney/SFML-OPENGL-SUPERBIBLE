@@ -41,6 +41,7 @@ public:
 private:
 	void HandleTranslations(double deltaTime);
 	void HandleZoom(double deltaTime);
+	void HandleCameraRotation(double deltaTime);
 
 private:
 	std::shared_ptr<CameraComponent> m_pkCamera;
@@ -48,6 +49,7 @@ private:
 	F32 m_fForwardSpeed;
 	F32 m_fLateralSpeed;
 	F32 m_fZoomSpeed;
+	F32 m_fAngularRotationSpeed;
 };
 
 CEREAL_REGISTER_TYPE(FreeCameraComponent);

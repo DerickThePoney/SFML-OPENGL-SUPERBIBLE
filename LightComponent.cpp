@@ -40,34 +40,31 @@ void LightComponent::OnPreRender()
 
 void LightComponent::Inspect()
 {
-	if (ImGui::CollapsingHeader(GetType().GetName().c_str()))
+	if (m_pkLight == nullptr)
 	{
-		if (m_pkLight == nullptr)
+		ImGui::TextColored(ImVec4(1, 0, 0, 1), "There are too many lights already in the scene!");
+	}
+	else
+	{
+		const C8* pcLightTypes[] = { "Direction", "Point", "Spot" };
+		I32 lightType = (I32)m_pkLight->m_eLight - 1;
+		if (ImGui::Combo("Light type", &lightType, pcLightTypes, 3))
 		{
-			ImGui::TextColored(ImVec4(1, 0, 0, 1), "There are too many lights already in the scene!");
+			m_pkLight->m_eLight = (LIGHT_TYPE)(lightType + 1);
 		}
-		else
+
+		ImGui::ColorEdit4("Light color", m_pkLight->m_kLightColor.GetData(), false);
+		ImGui::SliderFloat("Light strength", &m_pkLight->m_fLightStrength, 0, 20);
+
+		switch (m_pkLight->m_eLight)
 		{
-			const C8* pcLightTypes[] = { "Direction", "Point", "Spot" };
-			I32 lightType = (I32)m_pkLight->m_eLight - 1;
-			if (ImGui::Combo("Light type", &lightType, pcLightTypes, 3))
-			{
-				m_pkLight->m_eLight = (LIGHT_TYPE)(lightType + 1);
-			}
-
-			ImGui::ColorEdit4("Light color", m_pkLight->m_kLightColor.GetData(), false);
-			ImGui::SliderFloat("Light strength", &m_pkLight->m_fLightStrength, 0, 20);
-
-			switch (m_pkLight->m_eLight)
-			{
-			case SPOT_LIGHT:
-				ImGui::SliderAngle("Light cone", &m_pkLight->m_fConeSize, 0, 90);
-			case POINT_LIGHT:
-				ImGui::SliderFloat("Light range", &m_pkLight->m_fRange, 0, 100);
-				break;
-			default:
-				break;
-			}
+		case SPOT_LIGHT:
+			ImGui::SliderAngle("Light cone", &m_pkLight->m_fConeSize, 0, 90);
+		case POINT_LIGHT:
+			ImGui::SliderFloat("Light range", &m_pkLight->m_fRange, 0, 100);
+			break;
+		default:
+			break;
 		}
 	}
 }

@@ -162,10 +162,14 @@ void InputManager::HandleKeyboardMessages(sf::Event event)
 
 void InputManager::HandleMouseMessages(sf::Event event)
 {
+	ivec2 kCurrentPosition;
 	switch (event.type)
 	{
 	case sf::Event::MouseMoved:
-		m_kMouseData.m_kPosition = ivec2(event.mouseMove.x, event.mouseMove.y);
+		kCurrentPosition = ivec2(event.mouseMove.x, event.mouseMove.y);
+		m_kMouseData.m_kPositionDelta = kCurrentPosition - m_kMouseData.m_kPosition;
+		m_kMouseData.m_kPosition = kCurrentPosition;
+		m_kMouseData.m_bHasMoved = true;
 		break;
 	case sf::Event::MouseButtonPressed:
 		m_kMouseData.m_pbIsDown[m_kMouseData.current_queue][event.mouseButton.button] = true;
@@ -197,6 +201,15 @@ void InputManager::PrepareNewFrame()
 	else
 	{
 		m_kMouseData.m_fWheelDelta = 0;
+	}
+
+	if (m_kMouseData.m_bHasMoved)
+	{
+		m_kMouseData.m_bHasMoved = false;
+	}
+	else
+	{
+		m_kMouseData.m_kPositionDelta = ivec2(0);
 	}
 }
 
@@ -251,6 +264,11 @@ float InputManager::GetMouseWheelDelta()
 ivec2 InputManager::GetMousePosition()
 {
 	return m_kMouseData.m_kPosition;
+}
+
+ivec2 InputManager::GetMousePositionDelta()
+{
+	return m_kMouseData.m_kPositionDelta;
 }
 
 void InputManager::Inspect()
@@ -309,6 +327,7 @@ void InputManager::Inspect()
 	if (bShowMouse)
 	{
 		ImGui::InputInt2("Mouse position", m_kMouseData.m_kPosition.GetData(), ImGuiInputTextFlags_ReadOnly);
+		ImGui::InputInt2("Mouse position delta", m_kMouseData.m_kPositionDelta.GetData(), ImGuiInputTextFlags_ReadOnly);
 		ImGui::InputFloat("Mouse wheel delta", &m_kMouseData.m_fWheelDelta, 0, 0, -1, ImGuiInputTextFlags_ReadOnly);
 
 		static int valueMouse = 0;

@@ -245,7 +245,10 @@ void GameObject::Inspector()
 
 	for (UI32 i = 0; i < m_kComponent.size(); ++i)
 	{
-		m_kComponent[i]->Inspect();
+		if (ImGui::CollapsingHeader(m_kComponent[i]->GetType().GetName().c_str()))
+		{
+			m_kComponent[i]->Inspect();
+		}
 	}
 
 	ImGui::Separator();
