@@ -2,7 +2,7 @@
 #include "OGLTexture2D.h"
 
 //#define STB_IMAGE_IMPLEMENTATION
-#include "stb/stb_image.h"
+//#include "stb/stb_image.h"
 
 
 OGLTexture2D::OGLTexture2D()

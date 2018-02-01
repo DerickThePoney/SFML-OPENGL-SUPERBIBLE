@@ -6,6 +6,7 @@
 #include "CameraComponent.h"
 #include "LightingManager.h"
 #include "Camera.h"
+#include "Skybox.h"
 
 struct GameObjectRenderData
 {
@@ -133,6 +134,8 @@ private:
 	OGLRenderBuffer m_kDepthBuffer;
 	OGLTexture2D m_kScreenTexture;
 	OGLTexture2D m_kDepthTexture;
+
+	Skybox m_kSkybox;
 
 
 	//Projection block index

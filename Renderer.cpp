@@ -98,6 +98,8 @@ void Renderer::InitDefaultState()
 	m_kDepthBuffer.Init(GL_DEPTH_COMPONENT, m_window->getSize().x,
 		m_window->getSize().y);
 	m_kFrameBuffer.AddRenderBufferAttachement(GL_FRAMEBUFFER, m_kDepthBuffer, GL_DEPTH_ATTACHMENT);
+
+	m_kSkybox.Initialise();
 }
 
 void Renderer::Terminate()
@@ -107,6 +109,8 @@ void Renderer::Terminate()
 
 void Renderer::TerminateDefaultState()
 {
+	m_kSkybox.Delete();
+
 	//Off screen rendering
 	m_kDepthBuffer.Delete();
 	m_kDepthTexture.Delete();
@@ -173,7 +177,12 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 		glDrawElements(GL_TRIANGLES, kVisibleObjectsList[i].m_pkMeshRenderer->m_pkMesh->m_aiIndices.size(), GL_UNSIGNED_INT, 0);
 	}
 
-	if (kVisibleObjectsList.size() > 0)
+	mat4 projMat = pkCamera->GetProjection();
+	mat4 viewMat = pkCamera->GetLookAt();
+	viewMat[3] = vec4(0, 0, 0, 1);
+	m_kSkybox.Draw(viewMat, projMat);
+
+	/*if (kVisibleObjectsList.size() > 0)
 	{
 		//draw a line onto the screen
 		vec4 objectWorldPos = kVisibleObjectsList[1].m_pkTransform->GetWorldspacePosition();
@@ -189,7 +198,7 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 	}
 
 	//Draw rendering commands
-	DebugRenderingCommands::Instance()->RenderDebugCommands(pkCamera);
+	DebugRenderingCommands::Instance()->RenderDebugCommands(pkCamera);*/
 
 	m_kFrameBuffer.UnBind(GL_DRAW_FRAMEBUFFER);
 	glViewport(0, 0, sz.x, sz.y);

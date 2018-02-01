@@ -13,6 +13,8 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
+#include "stb/stb_image.h"
+
 //#include "Macros.h"
 #include <cereal/cereal.hpp>
 #include <cereal/archives/xml.hpp>

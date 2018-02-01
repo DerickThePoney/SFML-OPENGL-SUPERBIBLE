@@ -70,6 +70,9 @@
     <Filter Include="GameObjects\TestAndDemoComponents">
       <UniqueIdentifier>{5f738ea4-b5a3-4742-b9ca-6633490eafd2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Rendering\Skybox">
+      <UniqueIdentifier>{79537604-749a-442d-9842-8eec7e245150}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -252,6 +255,12 @@
     <ClInclude Include="MeshRendererComponent.h">
       <Filter>Rendering\Mesh</Filter>
     </ClInclude>
+    <ClInclude Include="OGLCubeMap.h">
+      <Filter>Rendering\OGLImplementations\OGLObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Skybox.h">
+      <Filter>Rendering\Skybox</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -394,6 +403,12 @@
     </ClCompile>
     <ClCompile Include="MeshRendererComponent.cpp">
       <Filter>Rendering\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="OGLCubeMap.cpp">
+      <Filter>Rendering\OGLImplementations\OGLObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Skybox.cpp">
+      <Filter>Rendering\Skybox</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

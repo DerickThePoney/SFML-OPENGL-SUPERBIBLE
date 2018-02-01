@@ -7,3 +7,4 @@
 #include "OGLTexture2D.h"
 #include "OGLRenderBuffer.h"
 #include "OGLFrameBuffer.h"
+#include "OGLCubeMap.h"

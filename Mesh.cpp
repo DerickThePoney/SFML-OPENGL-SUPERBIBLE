@@ -28,21 +28,35 @@ void Mesh::BindForDrawing()
 
 void Mesh::LoadBuffersOnGraphicsCard()
 {
+	if (m_akVertices.size() > 0)
+	{
+		//generate vertex buffer
+		m_kOGLBindings.m_kVertices.Init(GL_ARRAY_BUFFER, m_akVertices.size() * sizeof(vec4), m_akVertices.data(), 0);
+	}
 	
-	//generate vertex buffer
-	m_kOGLBindings.m_kVertices.Init(GL_ARRAY_BUFFER, m_akVertices.size() * sizeof(vec4), m_akVertices.data(), 0);
-	
-	//generate normal buffer
-	m_kOGLBindings.m_kNormals.Init(GL_ARRAY_BUFFER, m_akNormals.size() * sizeof(vec3), m_akNormals.data(), 0);
+	if (m_akNormals.size() > 0)
+	{
+		//generate normal buffer
+		m_kOGLBindings.m_kNormals.Init(GL_ARRAY_BUFFER, m_akNormals.size() * sizeof(vec3), m_akNormals.data(), 0);
+	}
 
-	//generate color buffer
-	m_kOGLBindings.m_kColor.Init(GL_ARRAY_BUFFER, m_akColor.size() * sizeof(vec4), m_akColor.data(), 0);
+	if (m_akColor.size() > 0)
+	{
+		//generate color buffer
+		m_kOGLBindings.m_kColor.Init(GL_ARRAY_BUFFER, m_akColor.size() * sizeof(vec4), m_akColor.data(), 0);
+	}
 
-	//generate UVS buffer
-	m_kOGLBindings.m_kUVs.Init(GL_ARRAY_BUFFER, m_akUVs.size() * sizeof(vec2), m_akUVs.data(), 0);
+	if (m_akUVs.size() > 0)
+	{
+		//generate UVS buffer
+		m_kOGLBindings.m_kUVs.Init(GL_ARRAY_BUFFER, m_akUVs.size() * sizeof(vec2), m_akUVs.data(), 0);
+	}
 
-	//generate indices buffer
-	m_kOGLBindings.m_kIndices.Init(GL_ELEMENT_ARRAY_BUFFER, m_aiIndices.size() * sizeof(UI32), m_aiIndices.data(), 0);
+	if (m_aiIndices.size() > 0)
+	{
+		//generate indices buffer
+		m_kOGLBindings.m_kIndices.Init(GL_ELEMENT_ARRAY_BUFFER, m_aiIndices.size() * sizeof(UI32), m_aiIndices.data(), 0);
+	}
 
 	SetAttributes();
 

@@ -199,6 +199,7 @@
     <ClInclude Include="Material.h" />
     <ClInclude Include="MaterialUniformData.h" />
     <ClInclude Include="ObjLoader.h" />
+    <ClInclude Include="OGLCubeMap.h" />
     <ClInclude Include="OGLRenderBuffer.h" />
     <ClInclude Include="PLYLoader.h" />
     <ClInclude Include="ProgramManager.h" />
@@ -220,6 +221,7 @@
     <ClInclude Include="OGLVertexArray.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Singleton.h" />
+    <ClInclude Include="Skybox.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StringHash.h" />
     <ClInclude Include="targetver.h" />
@@ -252,6 +254,7 @@
     <ClCompile Include="Line.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MaterialUniformData.cpp" />
+    <ClCompile Include="OGLCubeMap.cpp" />
     <ClCompile Include="OGLRenderBuffer.cpp" />
     <ClCompile Include="PLYLoader.cpp" />
     <ClCompile Include="ProgramManager.cpp" />
@@ -272,6 +275,7 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SFML_Project.cpp" />
     <ClCompile Include="ObjLoader.cpp" />
+    <ClCompile Include="Skybox.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
