@@ -63,7 +63,7 @@ void Skybox::Initialise()
 	m_kVAO.UnBind();
 
 	m_kCubeMap.Initialise();
-	m_kCubeMap.InitialiseFromRessource("media/texture/ame_iceflats/");
+	m_kCubeMap.InitialiseFromRessource("media/textures/skybox/");
 
 	m_pkSkyboxProgram = ProgramManager::Instance()->InstantiateFromRessource("media/shaders/SkyboxShader.shader");
 }

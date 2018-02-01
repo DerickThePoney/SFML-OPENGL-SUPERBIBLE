@@ -62,22 +62,22 @@ std::string OGLCubeMap::GetFilenameFromIndex(I32 index)
 	switch (index)
 	{
 	case 0:
-		return "iceflats_rt.tga";
+		return "right.jpg";
 		break;
 	case 1:
-		return "iceflats_lf.tga";
+		return "left.jpg";
 		break;
 	case 2:
-		return "iceflats_up.tga";
+		return "top.jpg";
 		break;
 	case 3:
-		return "iceflats_dn.tga";
+		return "bottom.jpg";
 		break;
 	case 4:
-		return "iceflats_ft.tga";
+		return "front.jpg";
 		break;
 	case 5:
-		return "iceflats_bk.tga";
+		return "back.jpg";
 		break;
 	}
 
