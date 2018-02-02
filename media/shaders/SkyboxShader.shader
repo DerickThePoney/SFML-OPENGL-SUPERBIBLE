@@ -3,18 +3,18 @@
 //vertex attributes
 layout (location = 0) in vec4 position;
 
-
-layout (location = 0) uniform mat4 worldViewMatrix;
-layout (location = 1) uniform mat4 projectionMatrix;
-
+layout(std140, binding = 0) uniform ProjectionData
+{
+	mat4 worldViewMatrix;
+	mat4 projectionMatrix;
+} projData;
 
 out vec3 TexCoords;
 
 void main(void)
 {
-	TexCoords = vec3(position);
-	vec4 pos = projectionMatrix * worldViewMatrix * position;	
-	gl_Position = pos.xyww;
+	TexCoords = mat3(projData.worldViewMatrix) * vec3(position);	
+	gl_Position = position;
 }
 
 #sh FRAGMENT 
@@ -23,7 +23,7 @@ out vec4 FragColor;
 
 in vec3 TexCoords;
 
-uniform samplerCube skybox;
+uniform layout(binding=0) samplerCube skybox;
 
 void main()
 {    

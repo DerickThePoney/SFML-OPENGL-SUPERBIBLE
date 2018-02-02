@@ -14,10 +14,9 @@ public:
 	void Initialise();
 	void Delete();
 
-	void Draw(mat4 viewMatrix, mat4 projMatrix);
+	void Draw();
 private:
-	OGLBuffer m_kMesh;
-	OGLVertexArray m_kVAO;
+	Mesh* m_pkMesh;
 	OGLCubeMap m_kCubeMap;
 	OGLProgram* m_pkSkyboxProgram;
 };

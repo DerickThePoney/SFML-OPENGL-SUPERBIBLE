@@ -91,6 +91,7 @@ void * OGLBuffer::Map(GLenum eTarget, GLenum eFlags)
 
 void OGLBuffer::Unmap(GLenum eTarget)
 {
+	Bind(eTarget);
 	glUnmapBuffer(eTarget);
 }
 

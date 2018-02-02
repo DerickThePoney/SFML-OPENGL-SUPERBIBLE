@@ -17,20 +17,38 @@ void OGLCubeMap::Initialise()
 
 void OGLCubeMap::InitialiseFromRessource(const std::string & pathName)
 {
+	Bind();
 	I32 nrChannels;
 	UC8* data;
-	for (GLuint i = 0; i < 6; i++)
+
+	std::string filename = pathName + GetFilenameFromIndex(0);
+
+	data = stbi_load(filename.c_str(), &m_iWidth, &m_iHeight, &nrChannels, 0);
+	if (data)
 	{
-		std::string filename = pathName + GetFilenameFromIndex(i);
+		// init the texture storage
+		glTexStorage2D(GL_TEXTURE_CUBE_MAP, 1, GL_RGBA8, m_iWidth, m_iHeight);
+
+		//input the first data
+		glTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, 0, 0, m_iWidth, m_iHeight, GL_RGB, GL_UNSIGNED_BYTE, data);
+		stbi_image_free(data);
+	}
+	else
+	{
+		std::cout << "Cubemap texture failed to load at path: " << filename << std::endl;
+		stbi_image_free(data);
+		Delete();
+	}
+
+	for (GLuint i = 1; i < 6; i++)
+	{
+		filename = pathName + GetFilenameFromIndex(i);
 
 		data = stbi_load(filename.c_str(), &m_iWidth, &m_iHeight, &nrChannels, 0);
 
 		if (data)
 		{
-			glTexImage2D(
-				GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
-				0, GL_RGB, m_iWidth, m_iHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, data
-			);
+			glTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, 0, 0, m_iWidth, m_iHeight, GL_RGB, GL_UNSIGNED_BYTE, data);
 			stbi_image_free(data);
 		}
 		else
@@ -41,9 +59,7 @@ void OGLCubeMap::InitialiseFromRessource(const std::string & pathName)
 	}
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 }
 
 void OGLCubeMap::Bind()

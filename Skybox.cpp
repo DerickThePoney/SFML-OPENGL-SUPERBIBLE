@@ -11,57 +11,15 @@ Skybox::~Skybox()
 
 void Skybox::Initialise()
 {
-	const std::vector<vec4> skyboxVertices = {
-		// positions          
-		vec4(-1.0f,  1.0f, -1.0f, 1.0f),
-		vec4(-1.0f, -1.0f, -1.0f,1.0f),
-		vec4(1.0f, -1.0f, -1.0f,1.0f),
-		vec4(1.0f, -1.0f, -1.0f,1.0f),
-		vec4(1.0f,  1.0f, -1.0f,1.0f),
-		vec4(-1.0f,  1.0f, -1.0f,1.0f),
+	BMesh bmesh;
+	MakeCube kMakeCube;
+	kMakeCube.Apply(bmesh);
 
-		vec4(-1.0f, -1.0f,  1.0f,1.0f),
-		vec4(-1.0f, -1.0f, -1.0f,1.0f),
-		vec4(-1.0f,  1.0f, -1.0f,1.0f),
-		vec4(-1.0f,  1.0f, -1.0f,1.0f),
-		vec4(-1.0f,  1.0f,  1.0f,1.0f),
-		vec4(-1.0f, -1.0f,  1.0f,1.0f),
+	m_pkMesh = MeshManager::Instance()->Instantiate();
+	bmesh.BuildMesh(*m_pkMesh);
 
-		vec4(1.0f, -1.0f, -1.0f,1.0f),
-		vec4(1.0f, -1.0f,  1.0f,1.0f),
-		vec4(1.0f,  1.0f,  1.0f,1.0f),
-		vec4(1.0f,  1.0f,  1.0f,1.0f),
-		vec4(1.0f,  1.0f, -1.0f,1.0f),
-		vec4(1.0f, -1.0f, -1.0f,1.0f),
-
-		vec4(-1.0f, -1.0f,  1.0f,1.0f),
-		vec4(-1.0f,  1.0f,  1.0f,1.0f),
-		vec4(1.0f,  1.0f,  1.0f,1.0f),
-		vec4(1.0f,  1.0f,  1.0f,1.0f),
-		vec4(1.0f, -1.0f,  1.0f,1.0f),
-		vec4(-1.0f, -1.0f,  1.0f,1.0f),
-
-		vec4(-1.0f,  1.0f, -1.0f,1.0f),
-		vec4(1.0f,  1.0f, -1.0f,1.0f),
-		vec4(1.0f,  1.0f,  1.0f,1.0f),
-		vec4(1.0f,  1.0f,  1.0f,1.0f),
-		vec4(-1.0f,  1.0f,  1.0f,1.0f),
-		vec4(-1.0f,  1.0f, -1.0f,1.0f),
-
-		vec4(-1.0f, -1.0f, -1.0f,1.0f),
-		vec4(-1.0f, -1.0f,  1.0f,1.0f),
-		vec4(1.0f, -1.0f, -1.0f,1.0f),
-		vec4(1.0f, -1.0f, -1.0f,1.0f),
-		vec4(-1.0f, -1.0f,  1.0f,1.0f),
-		vec4(1.0f, -1.0f,  1.0f,1.0f)
-	};
-
-	m_kVAO.Init();
-	m_kMesh.Init(GL_ARRAY_BUFFER, skyboxVertices.size() * sizeof(vec4), (vec4*)skyboxVertices.data(), 0);
-	m_kMesh.Bind(GL_ARRAY_BUFFER);
-	m_kVAO.SetAttribute(0, 4, GL_FLOAT, GL_FALSE, 0, NULL);
-	m_kVAO.UnBind();
-
+	m_pkMesh->LoadBuffersOnGraphicsCard();
+	
 	m_kCubeMap.Initialise();
 	m_kCubeMap.InitialiseFromRessource("media/textures/skybox/");
 
@@ -70,25 +28,24 @@ void Skybox::Initialise()
 
 void Skybox::Delete()
 {
+
 	ProgramManager::Instance()->Destroy(m_pkSkyboxProgram);
 	m_kCubeMap.Delete();
-	m_kMesh.Delete();
-	m_kVAO.Delete();
+	MeshManager::Instance()->Destroy(m_pkMesh);
 }
 
-void Skybox::Draw(mat4 viewMatrix, mat4 projMatrix)
+void Skybox::Draw()
 {
 	glDepthFunc(GL_LEQUAL);
 	glDepthMask(GL_FALSE);
 	m_pkSkyboxProgram->UseProgram();
-	glUniformMatrix4fv(0, 1, GL_FALSE, viewMatrix);
-	glUniformMatrix4fv(1, 1, GL_FALSE, projMatrix);
 
-	m_kVAO.Bind();
-	m_kMesh.Bind(GL_ARRAY_BUFFER);
 	m_kCubeMap.Bind();
-	glDrawArrays(GL_TRIANGLES, 0, 36);
-	m_kVAO.UnBind();
+	m_pkMesh->BindForDrawing();
+
+	//draw call
+	glDrawElements(GL_TRIANGLES, m_pkMesh->m_aiIndices.size(), GL_UNSIGNED_INT, 0);
+
 	glDepthMask(GL_TRUE);
 	glDepthFunc(GL_LESS);
 }

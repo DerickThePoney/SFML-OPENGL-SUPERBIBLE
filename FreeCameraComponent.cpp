@@ -116,7 +116,7 @@ void FreeCameraComponent::HandleCameraRotation(double deltaTime)
 		quaternion xAxisRotation = vmath::FromAngleAxis(-m_fAngularRotationSpeed * (F32)(deltaTime / 1000) * kMouseDelta[1], vec3(1, 0, 0));
 		quaternion yAxisRotation = vmath::FromAngleAxis(-m_fAngularRotationSpeed * (F32)(deltaTime / 1000) * kMouseDelta[0], vec3(0, 1, 0));
 
-		quaternion finalRotation = xAxisRotation * yAxisRotation;
+		quaternion finalRotation = normalize(yAxisRotation * xAxisRotation);
 
 		m_pkParent->m_kTransform.RotateInLocalSpace(finalRotation);
 	}

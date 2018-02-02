@@ -48,29 +48,21 @@ void Renderer::InitDefaultState()
 	m_pkScreenQuad->m_akVertices.push_back(vec4(-1, -1, 0, 1));
 	m_pkScreenQuad->m_akVertices.push_back(vec4(1, -1, 0, 1));
 	m_pkScreenQuad->m_akVertices.push_back(vec4(-1, 1, 0, 1));
-	//m_pkScreenQuad->m_akVertices.push_back(vec4(-1, 1, 0, 1));
-	//m_pkScreenQuad->m_akVertices.push_back(vec4(1, -1, 0, 1));
 	m_pkScreenQuad->m_akVertices.push_back(vec4(1, 1, 0, 1));
 
 	m_pkScreenQuad->m_akNormals.push_back(vec3(0, 0, 1));
 	m_pkScreenQuad->m_akNormals.push_back(vec3(0, 0, 1));
 	m_pkScreenQuad->m_akNormals.push_back(vec3(0, 0, 1));
-	//m_pkScreenQuad->m_akVertices.push_back(vec4(-1, 1, 0, 1));
-	//m_pkScreenQuad->m_akVertices.push_back(vec4(1, -1, 0, 1));
 	m_pkScreenQuad->m_akNormals.push_back(vec3(0, 0, 1));
 
 	m_pkScreenQuad->m_akColor.push_back(vec4(1));
 	m_pkScreenQuad->m_akColor.push_back(vec4(1));
 	m_pkScreenQuad->m_akColor.push_back(vec4(1));
-	//m_pkScreenQuad->m_akVertices.push_back(vec4(-1, 1, 0, 1));
-	//m_pkScreenQuad->m_akVertices.push_back(vec4(1, -1, 0, 1));
 	m_pkScreenQuad->m_akColor.push_back(vec4(1));
 
 	m_pkScreenQuad->m_akUVs.push_back(vec2(0, 0));
 	m_pkScreenQuad->m_akUVs.push_back(vec2(1, 0));
 	m_pkScreenQuad->m_akUVs.push_back(vec2(0, 1));
-	//m_pkScreenQuad->m_akUVs.push_back(vec2(0, 1));
-	//m_pkScreenQuad->m_akUVs.push_back(vec2(1, 0));
 	m_pkScreenQuad->m_akUVs.push_back(vec2(1, 1));
 
 
@@ -84,7 +76,6 @@ void Renderer::InitDefaultState()
 	glEnable(GL_MULTISAMPLE);
 	m_kFrameBuffer.Init();
 	m_kFrameBuffer.Bind(GL_FRAMEBUFFER);
-	//glViewport(0, 0, m_window->getSize().x, m_window->getSize().y);
 
 	//const I32 size = 512;
 	m_kScreenTexture.Initialise();
@@ -177,12 +168,9 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 		glDrawElements(GL_TRIANGLES, kVisibleObjectsList[i].m_pkMeshRenderer->m_pkMesh->m_aiIndices.size(), GL_UNSIGNED_INT, 0);
 	}
 
-	mat4 projMat = pkCamera->GetProjection();
-	mat4 viewMat = pkCamera->GetLookAt();
-	viewMat[3] = vec4(0, 0, 0, 1);
-	m_kSkybox.Draw(viewMat, projMat);
+	m_kSkybox.Draw();
 
-	/*if (kVisibleObjectsList.size() > 0)
+	if (kVisibleObjectsList.size() > 0)
 	{
 		//draw a line onto the screen
 		vec4 objectWorldPos = kVisibleObjectsList[1].m_pkTransform->GetWorldspacePosition();
@@ -198,7 +186,7 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 	}
 
 	//Draw rendering commands
-	DebugRenderingCommands::Instance()->RenderDebugCommands(pkCamera);*/
+	DebugRenderingCommands::Instance()->RenderDebugCommands(pkCamera);
 
 	m_kFrameBuffer.UnBind(GL_DRAW_FRAMEBUFFER);
 	glViewport(0, 0, sz.x, sz.y);
