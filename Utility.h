@@ -52,3 +52,15 @@ T Lerp(const T& P1, const T& P2, float t)
 {
 	return (1 - t) * P1 + t * P2;
 }
+
+#define TRY_READ_DATA(file, data) \
+try \
+{ \
+	std::ifstream ifstr(file); \
+	cereal::XMLInputArchive output(ifstr); \
+	output(data); \
+} \
+catch (std::exception& e) \
+{ \
+	std::cout << e.what() << std::endl; \
+}

@@ -151,7 +151,11 @@ void Application::MainLoop()
 	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, GL_FALSE);
 
 	//intialise stuff
+	auto beforeInit = std::chrono::high_resolution_clock::now();
 	Initialise();
+	auto timeElapsedForInit = std::chrono::high_resolution_clock::now() - beforeInit;
+
+	std::cout << "Time elapsed for init: " << TIME_MSEC_FLOAT(timeElapsedForInit) << "ms" << std::endl;
 
 	//init imgui
 	ImGui::SFML::SetRenderTarget(m_window);

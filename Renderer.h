@@ -31,14 +31,15 @@ enum RENDER_STATE
 
 struct RendererGlobalSettings
 {
-	bool m_bVSync;
+	Skybox m_kSkybox;
 	vec4 kClearColor;
+	GLenum ePolygonMode;
+	bool m_bVSync;
 	bool bDepthTesting;
 	bool bCullFaces;
 	bool bIsCCW;
 	bool bCullBack;
 	bool bCullFront;
-	GLenum ePolygonMode;
 	bool bBlit;
 
 	RendererGlobalSettings()
@@ -57,7 +58,8 @@ struct RendererGlobalSettings
 			CEREAL_NVP(ePolygonMode),
 			CEREAL_NVP(kClearColor),
 			CEREAL_NVP(bDepthTesting),
-			CEREAL_NVP(bBlit)
+			CEREAL_NVP(bBlit),
+			CEREAL_NVP(m_kSkybox)
 		);
 	}
 
@@ -73,6 +75,7 @@ struct RendererGlobalSettings
 		DEARCHIVE_WITH_DEFAULT(kClearColor, vec4(0, 0, 0, 1));
 		DEARCHIVE_WITH_DEFAULT(bDepthTesting, true);
 		DEARCHIVE_WITH_DEFAULT(bBlit, false);
+		DEARCHIVE_WITH_DEFAULT(m_kSkybox, Skybox());
 	}
 };
 
@@ -134,8 +137,6 @@ private:
 	OGLRenderBuffer m_kDepthBuffer;
 	OGLTexture2D m_kScreenTexture;
 	OGLTexture2D m_kDepthTexture;
-
-	Skybox m_kSkybox;
 
 
 	//Projection block index

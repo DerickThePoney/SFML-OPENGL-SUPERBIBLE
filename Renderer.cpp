@@ -90,7 +90,7 @@ void Renderer::InitDefaultState()
 		m_window->getSize().y);
 	m_kFrameBuffer.AddRenderBufferAttachement(GL_FRAMEBUFFER, m_kDepthBuffer, GL_DEPTH_ATTACHMENT);
 
-	m_kSkybox.Initialise();
+	m_kGlobalRendererSettings.m_kSkybox.Initialise();
 }
 
 void Renderer::Terminate()
@@ -100,7 +100,7 @@ void Renderer::Terminate()
 
 void Renderer::TerminateDefaultState()
 {
-	m_kSkybox.Delete();
+	m_kGlobalRendererSettings.m_kSkybox.Delete();
 
 	//Off screen rendering
 	m_kDepthBuffer.Delete();
@@ -168,7 +168,7 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 		glDrawElements(GL_TRIANGLES, kVisibleObjectsList[i].m_pkMeshRenderer->m_pkMesh->m_aiIndices.size(), GL_UNSIGNED_INT, 0);
 	}
 
-	m_kSkybox.Draw();
+	m_kGlobalRendererSettings.m_kSkybox.Draw();
 
 	if (kVisibleObjectsList.size() > 0)
 	{
@@ -403,7 +403,15 @@ void Renderer::GraphicsSettings()
 
 		modif = true;
 	}
-	
+
+	static bool bShowSkybox = false;
+	ImGui::Checkbox("Show skybox", &bShowSkybox);
+
+	if(bShowSkybox)
+	{
+		m_kGlobalRendererSettings.m_kSkybox.Inspect();
+	}
+
 	ImGui::End();
 
 	if (modif) ApplyGraphicsSettings();

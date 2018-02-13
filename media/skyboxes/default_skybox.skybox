@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cereal>
+	<value0>
+		<m_akFilenames size="dynamic">
+			<value0>media/textures/skybox/right.jpg</value0>
+			<value1>media/textures/skybox/left.jpg</value1>
+			<value2>media/textures/skybox/top.jpg</value2>
+			<value3>media/textures/skybox/bottom.jpg</value3>
+			<value4>media/textures/skybox/front.jpg</value4>
+			<value5>media/textures/skybox/back.jpg</value5>
+		</m_akFilenames>
+		<m_kProgram>media/shaders/SkyboxShader.shader</m_kProgram>
+	</value0>
+</cereal>
+

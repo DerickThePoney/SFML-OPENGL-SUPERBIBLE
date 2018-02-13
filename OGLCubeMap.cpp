@@ -15,15 +15,15 @@ void OGLCubeMap::Initialise()
 	glGenTextures(1, &m_hiTexture);
 }
 
-void OGLCubeMap::InitialiseFromRessource(const std::string & pathName)
+void OGLCubeMap::InitialiseFromRessource(const std::vector<std::string>& files)
 {
 	Bind();
 	I32 nrChannels;
 	UC8* data;
 
-	std::string filename = pathName + GetFilenameFromIndex(0);
+	//std::string filename = pathName + GetFilenameFromIndex(0);
 
-	data = stbi_load(filename.c_str(), &m_iWidth, &m_iHeight, &nrChannels, 0);
+	data = stbi_load(files[0].c_str(), &m_iWidth, &m_iHeight, &nrChannels, 0);
 	if (data)
 	{
 		// init the texture storage
@@ -35,16 +35,16 @@ void OGLCubeMap::InitialiseFromRessource(const std::string & pathName)
 	}
 	else
 	{
-		std::cout << "Cubemap texture failed to load at path: " << filename << std::endl;
+		std::cout << "Cubemap texture failed to load at path: " << files[0] << std::endl;
 		stbi_image_free(data);
 		Delete();
 	}
 
 	for (GLuint i = 1; i < 6; i++)
 	{
-		filename = pathName + GetFilenameFromIndex(i);
+		//filename = pathName + GetFilenameFromIndex(i);
 
-		data = stbi_load(filename.c_str(), &m_iWidth, &m_iHeight, &nrChannels, 0);
+		data = stbi_load(files[i].c_str(), &m_iWidth, &m_iHeight, &nrChannels, 0);
 
 		if (data)
 		{
@@ -53,7 +53,7 @@ void OGLCubeMap::InitialiseFromRessource(const std::string & pathName)
 		}
 		else
 		{
-			std::cout << "Cubemap texture failed to load at path: " << filename << std::endl;
+			std::cout << "Cubemap texture failed to load at path: " << files[i] << std::endl;
 			stbi_image_free(data);
 		}
 	}
@@ -78,22 +78,22 @@ std::string OGLCubeMap::GetFilenameFromIndex(I32 index)
 	switch (index)
 	{
 	case 0:
-		return "right.jpg";
+		return "right";
 		break;
 	case 1:
-		return "left.jpg";
+		return "left";
 		break;
 	case 2:
-		return "top.jpg";
+		return "top";
 		break;
 	case 3:
-		return "bottom.jpg";
+		return "bottom";
 		break;
 	case 4:
-		return "front.jpg";
+		return "front";
 		break;
 	case 5:
-		return "back.jpg";
+		return "back";
 		break;
 	}
 

@@ -7,15 +7,15 @@ public:
 	~OGLCubeMap();
 
 	void Initialise();
-	void InitialiseFromRessource(const std::string& pathName);
+	void InitialiseFromRessource(const std::vector<std::string>& files);
 	void Bind();
 
 	void Delete();
 
+
+	static std::string GetFilenameFromIndex(I32 index);
+
 private:
-	std::string GetFilenameFromIndex(I32 index);
-
-
 	GLuint m_hiTexture;
 
 	//texture size
