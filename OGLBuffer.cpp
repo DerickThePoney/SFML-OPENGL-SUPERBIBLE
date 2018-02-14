@@ -67,6 +67,18 @@ void OGLBuffer::UpdateData(GLenum eTarget, I32 iSize, void * pData, GLbitfield e
 #endif
 }
 
+void OGLBuffer::UpdateSubData(GLenum eTarget, I32 iOffset, I32 iSize, void * pData)
+{
+	if (iOffset + iSize > m_iSize)
+	{
+		//if size is different, just clear the buffer, and reinit it
+		Delete();
+		return;
+	}
+	
+	glBufferSubData(eTarget, iOffset, iSize, pData);
+}
+
 void OGLBuffer::Delete()
 {
 	glDeleteBuffers(1, &m_hiBuffer);

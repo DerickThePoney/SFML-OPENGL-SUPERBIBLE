@@ -72,11 +72,8 @@ public:
 	struct OGLMeshBuffers
 	{
 		OGLVertexArray m_hkVao;
-		OGLBuffer m_kVertices;
-		OGLBuffer m_kNormals;
-		OGLBuffer m_kColor;
+		OGLBuffer m_kBuffer;
 		OGLBuffer m_kIndices;
-		OGLBuffer m_kUVs;
 	};
 
 	OGLMeshBuffers m_kOGLBindings;

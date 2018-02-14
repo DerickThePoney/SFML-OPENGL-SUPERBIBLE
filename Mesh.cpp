@@ -28,28 +28,40 @@ void Mesh::BindForDrawing()
 
 void Mesh::LoadBuffersOnGraphicsCard()
 {
+	//1 - get the necessary size
+	I32 iSize = m_akVertices.size() * sizeof(vec4) +
+		m_akNormals.size() * sizeof(vec3) +
+		m_akColor.size() * sizeof(vec4) +
+		m_akUVs.size() * sizeof(vec2);
+
+	m_kOGLBindings.m_kBuffer.Init(GL_ARRAY_BUFFER, iSize, NULL, GL_DYNAMIC_STORAGE_BIT);
+	I32 iOffset = 0;
 	if (m_akVertices.size() > 0)
 	{
 		//generate vertex buffer
-		m_kOGLBindings.m_kVertices.Init(GL_ARRAY_BUFFER, m_akVertices.size() * sizeof(vec4), m_akVertices.data(), 0);
+		m_kOGLBindings.m_kBuffer.UpdateSubData(GL_ARRAY_BUFFER, iOffset, m_akVertices.size() * sizeof(vec4), m_akVertices.data());
+		iOffset += m_akVertices.size() * sizeof(vec4);
 	}
-	
+
 	if (m_akNormals.size() > 0)
 	{
 		//generate normal buffer
-		m_kOGLBindings.m_kNormals.Init(GL_ARRAY_BUFFER, m_akNormals.size() * sizeof(vec3), m_akNormals.data(), 0);
+		m_kOGLBindings.m_kBuffer.UpdateSubData(GL_ARRAY_BUFFER, iOffset, m_akNormals.size() * sizeof(vec3), m_akNormals.data());
+		iOffset += m_akNormals.size() * sizeof(vec3);
 	}
 
 	if (m_akColor.size() > 0)
 	{
 		//generate color buffer
-		m_kOGLBindings.m_kColor.Init(GL_ARRAY_BUFFER, m_akColor.size() * sizeof(vec4), m_akColor.data(), 0);
+		m_kOGLBindings.m_kBuffer.UpdateSubData(GL_ARRAY_BUFFER, iOffset, m_akColor.size() * sizeof(vec4), m_akColor.data());
+		iOffset += m_akColor.size() * sizeof(vec4);
 	}
 
 	if (m_akUVs.size() > 0)
 	{
 		//generate UVS buffer
-		m_kOGLBindings.m_kUVs.Init(GL_ARRAY_BUFFER, m_akUVs.size() * sizeof(vec2), m_akUVs.data(), 0);
+		m_kOGLBindings.m_kBuffer.UpdateSubData(GL_ARRAY_BUFFER, iOffset, m_akUVs.size() * sizeof(vec2), m_akUVs.data());
+		iOffset += m_akUVs.size() * sizeof(vec2);
 	}
 
 	if (m_aiIndices.size() > 0)
@@ -69,21 +81,27 @@ void Mesh::SetAttributes()
 	//generate vertex array
 	m_kOGLBindings.m_hkVao.Init();
 
-	//set vertex array as attributes
-	m_kOGLBindings.m_kVertices.Bind(GL_ARRAY_BUFFER);
-	m_kOGLBindings.m_hkVao.SetAttribute(0, 4, GL_FLOAT, GL_FALSE, 0, NULL);
+	m_kOGLBindings.m_kBuffer.Bind(GL_ARRAY_BUFFER);
+	I32 iOffset = 0;
+
+	//set vertex array as attributes	
+	m_kOGLBindings.m_hkVao.SetAttribute(0, 4, GL_FLOAT, GL_FALSE, 0, (void*)iOffset);
+	//glVertexAttribBinding(0, 0);
+	iOffset += m_akVertices.size() * sizeof(vec4);
 
 	//set normals array as attributes
-	m_kOGLBindings.m_kNormals.Bind(GL_ARRAY_BUFFER);
-	m_kOGLBindings.m_hkVao.SetAttribute(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+	m_kOGLBindings.m_hkVao.SetAttribute(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)iOffset);
+	//glVertexAttribBinding(1, 0);
+	iOffset += m_akNormals.size() * sizeof(vec3);
 
 	//set color array as attributes
-	m_kOGLBindings.m_kColor.Bind(GL_ARRAY_BUFFER);
-	m_kOGLBindings.m_hkVao.SetAttribute(2, 4, GL_FLOAT, GL_FALSE, 0, NULL);
+	m_kOGLBindings.m_hkVao.SetAttribute(2, 4, GL_FLOAT, GL_FALSE, 0, (void*)iOffset);
+	//glVertexAttribBinding(2, 0);
+	iOffset += m_akColor.size() * sizeof(vec4);
 
 	//set UVs array as attributes
-	m_kOGLBindings.m_kUVs.Bind(GL_ARRAY_BUFFER);
-	m_kOGLBindings.m_hkVao.SetAttribute(3, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+	m_kOGLBindings.m_hkVao.SetAttribute(3, 2, GL_FLOAT, GL_FALSE, 0, (void*)iOffset);
+	//glVertexAttribBinding(3, 0);
 
 	m_kOGLBindings.m_hkVao.UnBind();
 }
@@ -99,10 +117,7 @@ void Mesh::ClearLocalData()
 
 void Mesh::Delete()
 {
-	m_kOGLBindings.m_kVertices.Delete();
-	m_kOGLBindings.m_kNormals.Delete();
-	m_kOGLBindings.m_kColor.Delete();
-	m_kOGLBindings.m_kUVs.Delete();
+	m_kOGLBindings.m_kBuffer.Delete();
 	m_kOGLBindings.m_kIndices.Delete();
 	m_kOGLBindings.m_hkVao.Delete();
 }
