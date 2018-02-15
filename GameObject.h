@@ -59,6 +59,20 @@ public:
 		return nullptr;
 	}
 
+	template<typename T>
+	std::shared_ptr<T> AddComponent()
+	{
+		IComponentPtr pkComponent = CREATE_NEW_COMPONENT(T::TYPE, this);
+
+		if (pkComponent != nullptr)
+		{
+			m_kComponent.push_back(pkComponent);
+			pkComponent->Init();
+		}
+
+		return std::dynamic_pointer_cast<T>(pkComponent);
+	}
+
 
 	void AddComponent(const RTTI* pkComponentType);
 

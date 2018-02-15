@@ -364,6 +364,32 @@ void MakeCube::Apply(BMesh & rkMesh)
 
 }
 
+void MakeGrid::Apply(BMesh & rkMesh)
+{
+	F32 fStartPos = -m_fSize / 2;
+	F32 fIncrement = m_fSize / (m_iResolution + 1);
+	//build up vertices
+	for (int i = 0; i < m_iResolution; ++i)
+	{
+		for (int j = 0; j < m_iResolution; ++j)
+		{
+			rkMesh.m_akVertices.push_back(Vertice(i*fIncrement + fStartPos, 0, j*fIncrement + fStartPos, 1));//0
+
+			if (i > 0 && j > 0)
+			{
+				UI32 id = rkMesh.m_akFaces.size();
+				rkMesh.m_akFaces[id] = Face();
+				rkMesh.m_akFaces[id].m_apkVerticesMap = std::vector<I32>{
+					(i) * m_iResolution + j,
+					(i)* m_iResolution + j - 1,
+					(i - 1) * m_iResolution + j - 1,
+					(i - 1) * m_iResolution + j 					
+				};
+			}
+		}
+	}
+}
+
 void MakeSpaceShip::Apply(BMesh & rkMesh)
 {
 	std::uniform_real_distribution<F32> kCubeScale(0.3f, 2.0f);

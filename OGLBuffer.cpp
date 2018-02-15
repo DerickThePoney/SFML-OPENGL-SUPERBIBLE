@@ -67,7 +67,7 @@ void OGLBuffer::UpdateData(GLenum eTarget, I32 iSize, void * pData, GLbitfield e
 #endif
 }
 
-void OGLBuffer::UpdateSubData(GLenum eTarget, I32 iOffset, I32 iSize, void * pData)
+void OGLBuffer::UpdateSubData(GLenum eTarget, UI32 iOffset, UI32 iSize, void * pData)
 {
 	if (iOffset + iSize > m_iSize)
 	{

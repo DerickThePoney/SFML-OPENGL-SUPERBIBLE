@@ -59,47 +59,5 @@ layout (location = 0) out vec4 color;
 
 void main(void)
 {	
-	float dx = dot(fs_in.N, vec3(1.0,0,0));
-	float dy = dot(fs_in.N, vec3(0,1.0,0));
-	float dz = dot(fs_in.N, vec3(0,0,1.0));
-	
-	if(abs(dx) > abs(dy) && abs(dx) > abs(dz))
-	{
-		if(dx > 0)
-		{
-			color = vec4(1,0,0,1); // red
-		}
-		else
-		{
-			color = vec4(0,1,0,1); // green
-		}
-	}
-	else if(abs(dy) > abs(dx) && abs(dy) > abs(dz))
-	{
-		if(dy > 0)
-		{
-			color = vec4(0,0,1,1); // blue
-		}
-		else
-		{
-			color = vec4(1,1,0,1); // red + green
-		}
-	}
-	else if(abs(dz) > abs(dx) && abs(dz) > abs(dy))
-	{
-		if(dz > 0)
-		{
-			color = vec4(1,0,1,1); // red + blue
-		}
-		else
-		{
-			color = vec4(0,1,1,1); // green + blue
-		}
-	}
-	else
-	{
-		color = vec4(fs_in.N,1);
-	}
-	
-	color = color * fs_in.color * vec4(diffuse_color,1);
+	color = clamp(vec4(diffuse_color,1), 0 , 1);
 }

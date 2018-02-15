@@ -81,6 +81,8 @@ void TestPBRMaterialComponent::CreateChildren()
 			m_pkParent->AddChild(obj);
 		}
 	}
+
+	GameObjectManager::Instance()->Destroy(prefab);
 }
 
 void TestPBRMaterialComponent::ChildrenParameters()

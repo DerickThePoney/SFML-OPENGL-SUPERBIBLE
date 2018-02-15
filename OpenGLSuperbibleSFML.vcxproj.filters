@@ -73,6 +73,9 @@
     <Filter Include="Rendering\Skybox">
       <UniqueIdentifier>{79537604-749a-442d-9842-8eec7e245150}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TerrainSystem">
+      <UniqueIdentifier>{49f7b87c-3b15-4d29-995c-6f0b807cb96b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -261,6 +264,9 @@
     <ClInclude Include="Skybox.h">
       <Filter>Rendering\Skybox</Filter>
     </ClInclude>
+    <ClInclude Include="TerrainComponent.h">
+      <Filter>TerrainSystem</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -409,6 +415,9 @@
     </ClCompile>
     <ClCompile Include="Skybox.cpp">
       <Filter>Rendering\Skybox</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainComponent.cpp">
+      <Filter>TerrainSystem</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

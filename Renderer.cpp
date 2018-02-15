@@ -170,7 +170,7 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 
 	m_kGlobalRendererSettings.m_kSkybox.Draw();
 
-	if (kVisibleObjectsList.size() > 0)
+	/*if (kVisibleObjectsList.size() > 0)
 	{
 		//draw a line onto the screen
 		vec4 objectWorldPos = kVisibleObjectsList[1].m_pkTransform->GetWorldspacePosition();
@@ -183,7 +183,7 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 		direction = objectWorldPos - cameraWorldPos;
 		DebugRenderingCommands::Instance()->DrawLine(cameraWorldPos, objectWorldPos, vec4(1,0,0,1));
 
-	}
+	}*/
 
 	//Draw rendering commands
 	DebugRenderingCommands::Instance()->RenderDebugCommands(pkCamera);

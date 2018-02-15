@@ -198,6 +198,21 @@ private:
 	mat4 m_kPositionMatrix;
 };
 
+class MakeGrid : public BMeshOperation
+{
+public:
+	MakeGrid(F32 fSize, I32 iResolution, mat4 kPositionMatrix = mat4::identity())
+		: m_fSize(fSize), m_iResolution(iResolution), m_kPositionMatrix(kPositionMatrix) {}
+
+	// Hérité via BMeshOperation
+	virtual void Apply(BMesh & rkMesh) override;
+
+private:
+	F32 m_fSize;
+	I32 m_iResolution;
+	mat4 m_kPositionMatrix;
+};
+
 
 class MakeSpaceShip : public BMeshOperation
 {
