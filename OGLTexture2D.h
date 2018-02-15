@@ -29,6 +29,15 @@ public:
 
 	void SetSamplingParameters();
 
+	template<class Archive>
+	void save(Archive & archive) const
+	{}
+
+	template<class Archive>
+	void load(Archive& archive)
+	{}
+
+
 private:
 	GLuint m_hiTexture;
 	

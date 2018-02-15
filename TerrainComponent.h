@@ -37,6 +37,8 @@ private:
 	F32 m_fSize;
 	I32 m_iResolution;
 	bool m_bUseHeightMap;
+	std::string m_kHeightMapName;
+	OGLTexture2D m_kHeightMapTexture;
 
 
 	Mesh* m_pkMesh; 

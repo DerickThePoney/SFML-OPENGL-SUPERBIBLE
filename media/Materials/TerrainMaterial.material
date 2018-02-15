@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cereal>
+	<value0>
+		<m_kShaderFilename>media/shaders/TerrainShader.shader</m_kShaderFilename>
+		<m_bPerInstanceData>true</m_bPerInstanceData>
+		<m_bBlendColors>false</m_bBlendColors>
+		<m_bBlendSeparate>false</m_bBlendSeparate>
+		<m_eSRCBlend>0</m_eSRCBlend>
+		<m_eDSTBlend>1</m_eDSTBlend>
+		<m_eSRCBlendAlpha>0</m_eSRCBlendAlpha>
+		<m_eDSTBlendAlpha>1</m_eDSTBlendAlpha>
+		<m_eBlendFunc>32774</m_eBlendFunc>
+		<m_akDataForShader size="dynamic">
+			<value0>
+				<polymorphic_id>2147483649</polymorphic_id>
+				<polymorphic_name>DataContainer&lt;OGLTexture2D&gt;</polymorphic_name>
+				<ptr_wrapper>
+					<id>2147483649</id>
+					<data>
+						<value0>heightMap</value0>
+						<value1>2</value1>
+						<value2/>
+					</data>
+				</ptr_wrapper>
+			</value0>
+			<value1>
+				<polymorphic_id>2147483650</polymorphic_id>
+				<polymorphic_name>DataContainer&lt;float&gt;</polymorphic_name>
+				<ptr_wrapper>
+					<id>2147483650</id>
+					<data>
+						<value0>displacementStrength</value0>
+						<value1>3</value1>
+						<value2>5</value2>
+					</data>
+				</ptr_wrapper>
+			</value1>
+		</m_akDataForShader>
+	</value0>
+</cereal>
+

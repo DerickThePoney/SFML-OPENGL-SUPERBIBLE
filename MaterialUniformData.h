@@ -128,6 +128,9 @@ CEREAL_REGISTER_POLYMORPHIC_RELATION(IUniformDataContainer, DataContainer<uvec3>
 CEREAL_REGISTER_TYPE(DataContainer<uvec4>);
 CEREAL_REGISTER_POLYMORPHIC_RELATION(IUniformDataContainer, DataContainer<uvec4>);
 
+CEREAL_REGISTER_TYPE(DataContainer<OGLTexture2D>);
+CEREAL_REGISTER_POLYMORPHIC_RELATION(IUniformDataContainer, DataContainer<OGLTexture2D>);
+
 
 /*********************************/
 template<>
@@ -194,6 +197,12 @@ template<>
 inline void DataInspection<uvec4>(const std::string& kName, uvec4& data)
 {
 	ImGui::InputInt3(kName.c_str(), (I32*)data.GetData());
+}
+
+template<>
+inline void DataInspection<OGLTexture2D>(const std::string& kName, OGLTexture2D& data)
+{
+	ImGui::LabelText(kName.c_str(), "A texture");
 }
 
 
@@ -263,6 +272,13 @@ inline void DataUpload<uvec4>(const I32& iLocation, uvec4& data)
 	glUniform4uiv(iLocation, 1, data.GetData());
 }
 
+template<>
+inline void DataUpload<OGLTexture2D>(const I32& iLocation, OGLTexture2D& data)
+{
+	glActiveTexture(GL_TEXTURE0);
+	data.Bind();
+}
+
 
 
 /*********************************/
@@ -330,4 +346,11 @@ template<>
 inline void DataLoader<uvec4>(const GLuint& hProgram, const I32& iLocation, uvec4& data)
 {
 	glGetUniformuiv(hProgram, iLocation, data.GetData());
+}
+
+template<>
+inline void DataLoader<OGLTexture2D>(const GLuint& hProgram, const I32& iLocation, OGLTexture2D& data)
+{
+	glActiveTexture(GL_TEXTURE0);
+	data.Bind();
 }

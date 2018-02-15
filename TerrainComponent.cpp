@@ -49,7 +49,7 @@ void TerrainComponent::Clone(std::shared_ptr<IComponent> pkComponent)
 void TerrainComponent::BuildTerrain()
 {
 	//build up a grid for now :-)
-	MakeGrid grid(50, 50);
+	MakeGrid grid(m_fSize, m_iResolution);
 	BMesh bmesh;
 	grid.Apply(bmesh);
 
@@ -61,6 +61,15 @@ void TerrainComponent::BuildTerrain()
 	m_pkMesh = MeshManager::Instance()->Instantiate();
 
 	bmesh.BuildMesh(*m_pkMesh);
+	F32 fIncrement = 1.0f / (m_iResolution + 1);
+	for (int i = 0; i < m_iResolution; ++i)
+	{
+		for (int j = 0; j < m_iResolution; ++j)
+		{
+			m_pkMesh->m_akUVs[i*m_iResolution + j] = vec2(j * fIncrement, i*fIncrement);
+		}
+	}
+
 	m_pkMesh->LoadBuffersOnGraphicsCard();
 
 	std::shared_ptr<MeshRendererComponent> renderer = m_pkParent->FindComponent<MeshRendererComponent>();
@@ -71,9 +80,14 @@ void TerrainComponent::BuildTerrain()
 
 	if (m_pkTerrainMaterial == nullptr)
 	{
-		m_pkTerrainMaterial = MaterialManager::Instance()->InstantiateFromFile("media/Materials/StandardUnlitMeshMaterial.material");
+		m_pkTerrainMaterial = MaterialManager::Instance()->InstantiateFromFile("media/Materials/TerrainMaterial.material");
 	}
 	
 	renderer->m_pkMesh = m_pkMesh;
 	renderer->m_pkMaterial = m_pkTerrainMaterial;
+
+	//load texture
+	m_kHeightMapTexture.InitialiseFromRessource("media/textures/HeightMap.png");
+
+	m_pkTerrainMaterial->SetData("heightMap", m_kHeightMapTexture);
 }
