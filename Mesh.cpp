@@ -115,6 +115,29 @@ void Mesh::ClearLocalData()
 	m_aiIndices.clear();
 }
 
+Sphere Mesh::GetBoundingSphere()
+{
+	vec4 center(0);
+	F32 radius = 0;
+
+	for (std::size_t i = 0; i < m_akVertices.size(); ++i)
+	{
+		center += m_akVertices[i];
+	}
+	center /= center[3];
+
+	for (std::size_t i = 0; i < m_akVertices.size(); ++i)
+	{
+		F32 dist = vmath::length(m_akVertices[i] - center);
+		if (dist > radius)
+		{
+			radius = dist;
+		}
+	}
+
+	return Sphere(center, radius);
+}
+
 void Mesh::Delete()
 {
 	m_kOGLBindings.m_kBuffer.Delete();

@@ -76,6 +76,9 @@
     <Filter Include="TerrainSystem">
       <UniqueIdentifier>{49f7b87c-3b15-4d29-995c-6f0b807cb96b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Maths\GeometricPrimitives">
+      <UniqueIdentifier>{20545894-6ed1-4bcc-a7c9-55f969c396ed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -189,9 +192,6 @@
     <ClInclude Include="Intersection.h">
       <Filter>Maths</Filter>
     </ClInclude>
-    <ClInclude Include="Line.h">
-      <Filter>Maths</Filter>
-    </ClInclude>
     <ClInclude Include="ShaderCompiler.h">
       <Filter>Rendering\Materials</Filter>
     </ClInclude>
@@ -266,6 +266,18 @@
     </ClInclude>
     <ClInclude Include="TerrainComponent.h">
       <Filter>TerrainSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Line.h">
+      <Filter>Maths\GeometricPrimitives</Filter>
+    </ClInclude>
+    <ClInclude Include="Sphere.h">
+      <Filter>Maths\GeometricPrimitives</Filter>
+    </ClInclude>
+    <ClInclude Include="Plane.h">
+      <Filter>Maths\GeometricPrimitives</Filter>
+    </ClInclude>
+    <ClInclude Include="GeometricPrimitives.h">
+      <Filter>Maths\GeometricPrimitives</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -347,9 +359,6 @@
     <ClCompile Include="Intersection.cpp">
       <Filter>Maths</Filter>
     </ClCompile>
-    <ClCompile Include="Line.cpp">
-      <Filter>Maths</Filter>
-    </ClCompile>
     <ClCompile Include="ShaderCompiler.cpp">
       <Filter>Rendering\Materials</Filter>
     </ClCompile>
@@ -418,6 +427,15 @@
     </ClCompile>
     <ClCompile Include="TerrainComponent.cpp">
       <Filter>TerrainSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Line.cpp">
+      <Filter>Maths\GeometricPrimitives</Filter>
+    </ClCompile>
+    <ClCompile Include="Sphere.cpp">
+      <Filter>Maths\GeometricPrimitives</Filter>
+    </ClCompile>
+    <ClCompile Include="Plane.cpp">
+      <Filter>Maths\GeometricPrimitives</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

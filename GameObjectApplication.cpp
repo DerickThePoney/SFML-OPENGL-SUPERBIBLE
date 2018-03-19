@@ -29,7 +29,7 @@ void GameObjectApplication::Initialise()
 
 	try
 	{
-		std::ifstream ifstr("media/scenes/MyFirstScene.xml");
+		std::ifstream ifstr("media/scenes/MyFirstScene_PBR.xml");
 		//Scene testLoading;
 		cereal::XMLInputArchive output(ifstr);
 		output(m_kScene);

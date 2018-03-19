@@ -1,6 +1,7 @@
 #pragma once
 //#include "vmath.h"
 #include "Utility.h"
+#include "Sphere.h"
 #include "OGLRendering.h"
 
 //using namespace vmath;
@@ -33,6 +34,7 @@ public:
 	void LoadBuffersOnGraphicsCard();
 	void SetAttributes();
 	void ClearLocalData();
+	Sphere GetBoundingSphere();
 
 	void Delete();
 

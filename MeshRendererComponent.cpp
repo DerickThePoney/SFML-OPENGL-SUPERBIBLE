@@ -7,12 +7,14 @@ void MeshRendererComponent::Init(Mesh* kMesh, Material* kMaterial)
 {
 	m_pkMaterial = kMaterial;
 	m_pkMesh = kMesh;
+	m_kLocalBoundingSphere = m_pkMesh->GetBoundingSphere();
 }
 
 void MeshRendererComponent::InitMeshFromRessource(const std::string & kFilename)
 {
 	m_kMeshFilename = kFilename;
 	m_pkMesh = MeshManager::Instance()->InstantiateFromFile(m_kMeshFilename);
+	m_kLocalBoundingSphere = m_pkMesh->GetBoundingSphere();
 }
 
 void MeshRendererComponent::Inspect()

@@ -48,6 +48,8 @@ public:
 			m_pkMesh = MeshManager::Instance()->InstantiateFromFile(m_kMeshFilename);
 		}
 
+		if (m_pkMesh != nullptr) m_kLocalBoundingSphere = m_pkMesh->GetBoundingSphere();
+
 		if (m_kMaterialFilename != "")
 		{
 			m_pkMaterial = MaterialManager::Instance()->InstantiateFromFile(m_kMaterialFilename);
@@ -69,8 +71,7 @@ public:
 	std::string m_kMaterialFilename;
 	Mesh* m_pkMesh;
 	Material* m_pkMaterial;
-
-	
+	Sphere m_kLocalBoundingSphere;	
 };
 
 CEREAL_REGISTER_TYPE(MeshRendererComponent);
