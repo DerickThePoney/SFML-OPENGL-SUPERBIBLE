@@ -87,7 +87,7 @@ bool Intersect::Find(const Line & rkLine, const vmath::vec4 * apkVertices, const
 	return false;
 }
 
-bool Intersect::FindHalfSpace(const Sphere & rkSphere, const Plane & rkPlane, IntersectionContact & rkContact)
+bool Intersect::Find(const Sphere & rkSphere, const Plane & rkPlane, IntersectionContact & rkContact, const bool halfSpace)
 {
 	F32 distance = vmath::dot(rkSphere.GetCenter(), rkPlane.GetNormal()) + rkSphere.GetRadius() - rkPlane.GetDistance();
 
