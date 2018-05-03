@@ -75,9 +75,11 @@
     <ExecutablePath>$(VC_ExecutablePath_x86);$(WindowsSDK_ExecutablePath);$(VS_ExecutablePath);$(MSBuild_ExecutablePath);$(SystemRoot)\SysWow64;$(FxCopDir);$(PATH);%INSTALL_CEGUI%\bin;%INSTALL_CEGUI%\dendencies\bin</ExecutablePath>
     <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86;%INSTALL_CEGUI%\bin;%INSTALL_CEGUI%\dendencies\bin</LibraryPath>
     <LibraryWPath>$(WindowsSDK_MetadataPath);%INSTALL_CEGUI%\bin;%INSTALL_CEGUI%\dendencies\bin</LibraryWPath>
+    <IntDir>TEMP\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IntDir>TEMP\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -85,9 +87,11 @@
     <ExecutablePath>$(VC_ExecutablePath_x86);$(WindowsSDK_ExecutablePath);$(VS_ExecutablePath);$(MSBuild_ExecutablePath);$(SystemRoot)\SysWow64;$(FxCopDir);$(PATH);%INSTALL_CEGUI%\bin;%INSTALL_CEGUI%\dendencies\bin</ExecutablePath>
     <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86;%INSTALL_CEGUI%\bin;%INSTALL_CEGUI%\dendencies\bin</LibraryPath>
     <LibraryWPath>$(WindowsSDK_MetadataPath);%INSTALL_CEGUI%\bin;%INSTALL_CEGUI%\dendencies\bin</LibraryWPath>
+    <IntDir>TEMP\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <IntDir>TEMP\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
