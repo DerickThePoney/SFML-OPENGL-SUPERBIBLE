@@ -162,7 +162,7 @@ private:
 		CreateFrameBuffers();
 		CreateCommandPool();
 		CreateVertexBuffers();
-		CreateIndexBuffers();
+		//CreateIndexBuffers();
 		CreateCommandBuffers();
 		CreateSemaphores();
 	}
@@ -196,8 +196,8 @@ private:
 		vkDestroySemaphore(device, renderFinishedSemaphore, nullptr);
 		vkDestroySemaphore(device, imageAvailableSemaphore, nullptr);
 
-		vkDestroyBuffer(device, indexBuffer, nullptr);
-		vkFreeMemory(device, indexBufferMemory, nullptr);
+		//vkDestroyBuffer(device, indexBuffer, nullptr);
+		//vkFreeMemory(device, indexBufferMemory, nullptr);
 
 		vkDestroyBuffer(device, vertexBuffer, nullptr);
 		vkFreeMemory(device, vertexBufferMemory, nullptr);
@@ -715,7 +715,7 @@ private:
 
 	void CreateVertexBuffers()
 	{
-		VkDeviceSize size = sizeof(vertices[0]) * vertices.size();
+		VkDeviceSize size = sizeof(vertices[0]) * vertices.size() + sizeof(indices[0]) * indices.size();
 		
 		//create the staging buffer
 		VkBuffer stagingBuffer;
@@ -724,12 +724,16 @@ private:
 
 		//mem map
 		void* data;
-		vkMapMemory(device, stagingMemory, 0, size, 0, &data);
-		memcpy(data, vertices.data(), (size_t)size);
+		vkMapMemory(device, stagingMemory, 0, sizeof(vertices[0]) * vertices.size(), 0, &data);
+		memcpy(data, vertices.data(), (size_t)sizeof(vertices[0]) * vertices.size());
+		vkUnmapMemory(device, stagingMemory);
+
+		vkMapMemory(device, stagingMemory, sizeof(vertices[0]) * vertices.size(), sizeof(indices[0]) * indices.size(), 0, &data);
+		memcpy(data, indices.data(), (size_t)sizeof(indices[0]) * indices.size());
 		vkUnmapMemory(device, stagingMemory);
 
 		//actual buffer creation
-		CreateBuffer(size, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertexBuffer, vertexBufferMemory);
+		CreateBuffer(size, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertexBuffer, vertexBufferMemory);
 
 		//copy the buffer
 		CopyBuffer(stagingBuffer, vertexBuffer, size);
@@ -806,7 +810,7 @@ private:
 			VkBuffer vertexBuffers[] = { vertexBuffer };
 			VkDeviceSize offsets[] = { 0 };
 			vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
-			vkCmdBindIndexBuffer(commandBuffers[i], indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+			vkCmdBindIndexBuffer(commandBuffers[i], vertexBuffer, sizeof(vertices[0]) * vertices.size(), VK_INDEX_TYPE_UINT16);
 
 			vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
 
