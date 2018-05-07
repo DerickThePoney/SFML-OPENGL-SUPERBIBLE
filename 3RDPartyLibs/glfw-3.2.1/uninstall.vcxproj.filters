@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="D:\Programmation\SFMLGame\OpenGLSuperbibleSFMLGIT\3RDPartyLibs\glfw-3.2.1\CMakeLists.txt" />
+    <CustomBuild Include="D:\Programmation\SFMLGame\OpenGLSuperbibleSFMLGIT\3RDPartyLibs\glfw-3.2.1\CMakeFiles\d8e7ab248f374c3d39b80a267fa2e75f\uninstall.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="D:\Programmation\SFMLGame\OpenGLSuperbibleSFMLGIT\3RDPartyLibs\glfw-3.2.1\CMakeFiles\uninstall" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{3714F6BB-A77D-3855-8A2A-95102D2ADC89}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

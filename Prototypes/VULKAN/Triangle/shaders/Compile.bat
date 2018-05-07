@@ -1,3 +1,3 @@
-C:\VulkanSDK\1.1.70.1\Bin32\glslangValidator.exe -V Triangle.vert
-C:\VulkanSDK\1.1.70.1\Bin32\glslangValidator.exe -V Triangle.frag
+%VULKAN_SDK%\Bin32\glslangValidator.exe -V shaders/Triangle.vert -o shaders/vert.spv
+%VULKAN_SDK%\Bin32\glslangValidator.exe -V shaders/Triangle.frag -o shaders/frag.spv
 pause
