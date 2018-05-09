@@ -48,3 +48,4 @@ stb/data/
 stb/deprecated/
 stb/tests/
 stb/tools/
+*.zip

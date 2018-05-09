@@ -209,14 +209,14 @@ private:
 		{
 			glfwPollEvents();
 
-			/*int width, height;
+			int width, height;
 			glfwGetWindowSize(window, &width, &height);
 			if (width != WIDTH || height != HEIGHT)
 			{
 				WIDTH = width;
 				HEIGHT = height;
 				RecreateSwapChain();
-			}*/
+			}
 
 			UpdateUniformBufferData();
 			DrawFrame();
