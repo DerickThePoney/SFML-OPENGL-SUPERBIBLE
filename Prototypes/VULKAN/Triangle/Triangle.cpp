@@ -1,57 +1,15 @@
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
-
-#include <iostream>
-#include <stdexcept>
-#include <functional>
-#include <cstdlib>
-#include <vector>
-#include <set>
-#include <algorithm>
-#include <fstream>
-
-#define GLM_FORCE_RADIANS
-#define GLM_FORCE_DEPTH_ZERO_TO_ONE
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
-#include <chrono>
-#include <array>
+#include "stdafx.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-VkResult CreateDebugReportCallbackEXT(VkInstance instance, const VkDebugReportCallbackCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugReportCallbackEXT* pCallback) {
-	auto func = (PFN_vkCreateDebugReportCallbackEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugReportCallbackEXT");
-	if (func != nullptr) {
-		return func(instance, pCreateInfo, pAllocator, pCallback);
-	}
-	else {
-		return VK_ERROR_EXTENSION_NOT_PRESENT;
-	}
-}
+#include "VulkanInstance.h"
+#include "VulkanSurface.h"
+#include "VulkanPhysicalDevice.h"
 
-void DestroyDebugReportCallbackEXT(VkInstance instance, VkDebugReportCallbackEXT callback, const VkAllocationCallbacks* pAllocator) {
-	auto func = (PFN_vkDestroyDebugReportCallbackEXT)vkGetInstanceProcAddr(instance, "vkDestroyDebugReportCallbackEXT");
-	if (func != nullptr) {
-		func(instance, callback, pAllocator);
-	}
-}
+#include "VulkanBuffer.h"
 
-static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
-	VkDebugReportFlagsEXT flags,
-	VkDebugReportObjectTypeEXT objType,
-	uint64_t obj,
-	size_t location,
-	int32_t code,
-	const char* layerPrefix,
-	const char* msg,
-	void* userData) {
 
-	std::cerr << "validation layer: " << msg << std::endl;
-
-	return VK_FALSE;
-}
 
 static std::vector<char> readFile(const std::string& filename) {
 	std::ifstream file(filename, std::ios::ate | std::ios::binary);
@@ -72,84 +30,7 @@ static std::vector<char> readFile(const std::string& filename) {
 }
 
 
-struct QueueFamilyIndices {
-	int graphicsFamily = -1;
-	int presentFamily = -1;
-	int transferFamily = -1;
 
-	bool isComplete() {
-		return graphicsFamily >= 0 && presentFamily >= 0 && transferFamily >= 0;
-	}
-};
-
-struct SwapChainSupportDetails {
-	VkSurfaceCapabilitiesKHR capabilities;
-	std::vector<VkSurfaceFormatKHR> formats;
-	std::vector<VkPresentModeKHR> presentModes;
-};
-
-
-struct Vertex
-{
-	glm::vec3 pos;
-	glm::vec3 color;
-	glm::vec2 texCoord;
-
-	static VkVertexInputBindingDescription getBindingDescription() {
-		VkVertexInputBindingDescription bindingDescription = {};
-
-		bindingDescription.binding = 0;
-		bindingDescription.stride = sizeof(Vertex);
-		bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-
-		return bindingDescription;
-	}
-
-
-	static std::array<VkVertexInputAttributeDescription, 3> GetAttributeDescriptions() {
-		std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions = {};
-		attributeDescriptions[0].binding = 0;
-		attributeDescriptions[0].location = 0;
-		attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
-		attributeDescriptions[0].offset = offsetof(Vertex, pos);
-
-		attributeDescriptions[1].binding = 0;
-		attributeDescriptions[1].location = 1;
-		attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
-		attributeDescriptions[1].offset = offsetof(Vertex, color);
-
-		attributeDescriptions[2].binding = 0;
-		attributeDescriptions[2].location = 2;
-		attributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
-		attributeDescriptions[2].offset = offsetof(Vertex, texCoord);
-
-		return attributeDescriptions;
-	}
-
-};
-
-const std::vector<Vertex> vertices = {
-	{ { -0.5f, -0.5f, 0.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f } },
-	{ { 0.5f, -0.5f, 0.0f },{ 0.0f, 1.0f, 0.0f },{ 1.0f, 0.0f } },
-	{ { 0.5f, 0.5f, 0.0f },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 1.0f } },
-	{ { -0.5f, 0.5f, 0.0f },{ 1.0f, 1.0f, 1.0f },{ 0.0f, 1.0f } },
-
-	{ { -0.5f, -0.5f, -0.5f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f } },
-	{ { 0.5f, -0.5f, -0.5f },{ 0.0f, 1.0f, 0.0f },{ 1.0f, 0.0f } },
-	{ { 0.5f, 0.5f, -0.5f },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 1.0f } },
-	{ { -0.5f, 0.5f, -0.5f },{ 1.0f, 1.0f, 1.0f },{ 0.0f, 1.0f } }
-};
-
-const std::vector<uint16_t> indices = {
-	0, 1, 2, 2, 3, 0,
-	4, 5, 6, 6, 7, 4
-};
-
-struct UniformBufferObject {
-	glm::mat4 model;
-	glm::mat4 view;
-	glm::mat4 proj;
-};
 
 class HelloTriangleApplication 
 {
@@ -177,7 +58,6 @@ private:
 	void initVulkan()
 	{
 		CreateInstance();
-		SetupDebugCallback();
 		CreateSurface();
 		PickPhysicalDevice();
 		CreateLogicalDevice();
@@ -239,9 +119,9 @@ private:
 		ubo.proj[1][1] *= -1; // necessary Vulkan is Y down
 
 		void* data;
-		vkMapMemory(device, uniformBufferMemory, 0, sizeof(ubo), 0, &data);
+		uniformBuffer.MapBuffer(device, 0, sizeof(ubo), 0, &data);
 		memcpy(data, &ubo, sizeof(ubo));
-		vkUnmapMemory(device, uniformBufferMemory);
+		uniformBuffer.UnMapBuffer(device);
 	}
 
 	void cleanup()
@@ -256,14 +136,10 @@ private:
 		vkDestroySemaphore(device, renderFinishedSemaphore, nullptr);
 		vkDestroySemaphore(device, imageAvailableSemaphore, nullptr);
 
-		//vkDestroyBuffer(device, indexBuffer, nullptr);
-		//vkFreeMemory(device, indexBufferMemory, nullptr);
 
-		vkDestroyBuffer(device, uniformBuffer, nullptr);
-		vkFreeMemory(device, uniformBufferMemory, nullptr);
+		uniformBuffer.Free(device);
 
-		vkDestroyBuffer(device, vertexBuffer, nullptr);
-		vkFreeMemory(device, vertexBufferMemory, nullptr);
+		vertexBuffer.Free(device);
 
 		vkDestroySampler(device, textureSampler, nullptr);
 		vkDestroyImageView(device, textureImageView, nullptr);
@@ -277,12 +153,9 @@ private:
 
 		vkDestroyDevice(device, nullptr);
 
-		if (enableValidationLayers) 
-		{
-			DestroyDebugReportCallbackEXT(instance, callback, nullptr);
-		}
-		vkDestroySurfaceKHR(instance, surface, nullptr);
-		vkDestroyInstance(instance, nullptr);
+		
+		m_kSurface.Destroy(m_kInstance);
+		m_kInstance.Destroy();
 
 		glfwDestroyWindow(window);
 
@@ -294,105 +167,26 @@ private:
 	//VULKAN METHODS
 	void CreateInstance()
 	{
-		//check validation layers
-		if (enableValidationLayers && !checkValidationLayerSupport()) {
-			throw std::runtime_error("validation layers requested, but not available!");
-		}
-
-
-		//this application informations
-		VkApplicationInfo appInfo = {};
-		appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-		appInfo.pApplicationName = "Hello Triangle";
-		appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-		appInfo.pEngineName = "No Engine";
-		appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-		appInfo.apiVersion = VK_API_VERSION_1_0;
-
-		//creation info for the instance
-		VkInstanceCreateInfo instInfo = {};
-		instInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-		instInfo.pApplicationInfo = &appInfo;
-
-		//get the required extension to draw onto the surface
-		auto extensions = getRequiredExtensions();
-		instInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
-		instInfo.ppEnabledExtensionNames = extensions.data();
-
-		if (enableValidationLayers) {
-			instInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
-			instInfo.ppEnabledLayerNames = validationLayers.data();
-		}
-		else {
-			instInfo.enabledLayerCount = 0;
-		}
-
-		if (vkCreateInstance(&instInfo, nullptr, &instance) != VK_SUCCESS)
-		{
-			throw std::runtime_error("Failed to create Instance!");
-		}
-
-		//Enumerate extensions
-		uint32_t extensionCount = 0;
-		vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
-
-		std::vector<VkExtensionProperties> extensionsProps(extensionCount);
-		vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensionsProps.data());
-
-		std::cout << "available extensions:" << std::endl;
-
-		for (const auto& extension : extensionsProps) {
-			std::cout << "\t" << extension.extensionName << std::endl;
-		}
-	}
-
-	void SetupDebugCallback()
-	{
-		if (!enableValidationLayers) return;
-		VkDebugReportCallbackCreateInfoEXT createInfo = {};
-		createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
-		createInfo.flags = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT;
-		createInfo.pfnCallback = debugCallback;
-
-		if (CreateDebugReportCallbackEXT(instance, &createInfo, nullptr, &callback) != VK_SUCCESS) {
-			throw std::runtime_error("failed to set up debug callback!");
-		}
+		m_kInstance.Init(
+			"Hello Triangle",
+			VK_MAKE_VERSION(1, 0, 0),
+			"No Engine",
+			VK_MAKE_VERSION(1, 0, 0),
+			VK_API_VERSION_1_1,
+			enableValidationLayers,
+			validationLayers
+		);
 	}
 
 	void PickPhysicalDevice()
 	{
-		//enumerate devices
-		uint32_t deviceCount = 0;
-		vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
-
-		if (deviceCount == 0)
-		{
-			throw std::runtime_error("Unable to find a suitable device for VULKAN");
-		}
-
-		std::vector<VkPhysicalDevice> devices(deviceCount);
-		vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
-
-		//check for suitable device
-		for (auto& device : devices)
-		{
-			if (isDeviceSuitable(device))
-			{
-				physicalDevice = device;
-				break;
-			}
-		}
-
-		if (physicalDevice == VK_NULL_HANDLE)
-		{
-			throw std::runtime_error("Unable to find a suitable device for VULKAN");
-		}
+		m_kPhysicalDevice.PickDevice(m_kInstance, m_kSurface, deviceExtensions);
 	}
 
 	void CreateLogicalDevice()
 	{
 		//create queue create info
-		QueueFamilyIndices indices = FindQueueFamilies(physicalDevice);
+		QueueFamilyIndices indices = m_kPhysicalDevice.GetQueueFamilyIndices();
 
 		std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
 		std::set<int> uniqueQueueFamilies = { indices.graphicsFamily, indices.presentFamily, indices.transferFamily };
@@ -433,7 +227,7 @@ private:
 		}
 
 		//creation call
-		if (vkCreateDevice(physicalDevice, &deviceCreateInfo, nullptr, &device) != VK_SUCCESS)
+		if (vkCreateDevice(m_kPhysicalDevice, &deviceCreateInfo, nullptr, &device) != VK_SUCCESS)
 		{
 			throw std::runtime_error("Unable to initialise the logical device!");
 		}
@@ -448,15 +242,12 @@ private:
 
 	void CreateSurface()
 	{
-		if (glfwCreateWindowSurface(instance, window, nullptr, &surface) != VK_SUCCESS)
-		{
-			throw std::runtime_error("Unable to retrieve surface for the window");
-		}
+		m_kSurface.Init(m_kInstance, window);
 	}
 
 	void CreateSwapChain()
 	{
-		SwapChainSupportDetails details = QuerySwapChainSupportDetails(physicalDevice);
+		SwapChainSupportDetails details = m_kPhysicalDevice.GetSwapchainSupportDetails();
 
 		VkSurfaceFormatKHR surfaceFormat = ChooseSwapSurfaceFormat(details.formats);
 		VkPresentModeKHR presentMode = ChooseSwapPresentMode(details.presentModes);
@@ -469,7 +260,7 @@ private:
 
 		VkSwapchainCreateInfoKHR createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-		createInfo.surface = surface;
+		createInfo.surface = m_kSurface;
 		createInfo.minImageCount = imageCount;
 		createInfo.imageFormat = surfaceFormat.format;
 		createInfo.imageColorSpace = surfaceFormat.colorSpace;
@@ -477,7 +268,7 @@ private:
 		createInfo.imageArrayLayers = 1;
 		createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
-		QueueFamilyIndices indices = FindQueueFamilies(physicalDevice);
+		QueueFamilyIndices indices = m_kPhysicalDevice.GetQueueFamilyIndices();
 		uint32_t queueFamilyIndices[] = { (uint32_t)indices.graphicsFamily, (uint32_t)indices.presentFamily };
 
 		if (indices.graphicsFamily != indices.presentFamily) {
@@ -794,7 +585,7 @@ private:
 
 	void CreateCommandPool()
 	{
-		QueueFamilyIndices indices = FindQueueFamilies(physicalDevice);
+		QueueFamilyIndices indices = m_kPhysicalDevice.GetQueueFamilyIndices();
 
 		CreateCommandPool(indices.graphicsFamily, &commandPool, 0);
 
@@ -807,55 +598,38 @@ private:
 		VkDeviceSize size = sizeof(vertices[0]) * vertices.size() + sizeof(indices[0]) * indices.size();
 		
 		//create the staging buffer
-		VkBuffer stagingBuffer;
-		VkDeviceMemory stagingMemory;
-		CreateBuffer(size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingMemory);
+		VulkanBuffer stagingBuffer;
+		//VkBuffer stagingBuffer;
+		//VkDeviceMemory stagingMemory;
+
+		stagingBuffer.Init(m_kPhysicalDevice, device, size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+
+		//CreateBuffer(size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingMemory);
 
 		//mem map
 		void* data;
-		vkMapMemory(device, stagingMemory, 0, sizeof(vertices[0]) * vertices.size(), 0, &data);
+		stagingBuffer.MapBuffer(device, 0, sizeof(vertices[0]) * vertices.size(), 0, &data);
 		memcpy(data, vertices.data(), (size_t)sizeof(vertices[0]) * vertices.size());
-		vkUnmapMemory(device, stagingMemory);
+		stagingBuffer.UnMapBuffer(device);
 
-		vkMapMemory(device, stagingMemory, sizeof(vertices[0]) * vertices.size(), sizeof(indices[0]) * indices.size(), 0, &data);
+		stagingBuffer.MapBuffer(device, sizeof(vertices[0]) * vertices.size(), sizeof(indices[0]) * indices.size(), 0, &data);
 		memcpy(data, indices.data(), (size_t)sizeof(indices[0]) * indices.size());
-		vkUnmapMemory(device, stagingMemory);
+		stagingBuffer.UnMapBuffer(device);
 
 		//actual buffer creation
-		CreateBuffer(size, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertexBuffer, vertexBufferMemory);
+		vertexBuffer.Init(m_kPhysicalDevice, device, size, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+//		CreateBuffer( vertexBuffer, vertexBufferMemory);
 
 		//copy the buffer
-		CopyBuffer(stagingBuffer, vertexBuffer, size);
+		stagingBuffer.CopyBufferTo(vertexBuffer, device, commandPoolTransfer, transferQueue);
 
-		vkDestroyBuffer(device, stagingBuffer, nullptr);
-		vkFreeMemory(device, stagingMemory, nullptr);
+		stagingBuffer.Free(device);
 	}
-
-	/*void CreateIndexBuffers()
-	{
-		VkDeviceSize bufferSize = sizeof(indices[0]) * indices.size();
-
-		VkBuffer stagingBuffer;
-		VkDeviceMemory stagingBufferMemory;
-		CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
-
-		void* data;
-		vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &data);
-		memcpy(data, indices.data(), (size_t)bufferSize);
-		vkUnmapMemory(device, stagingBufferMemory);
-
-		CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indexBuffer, indexBufferMemory);
-
-		CopyBuffer(stagingBuffer, indexBuffer, bufferSize);
-
-		vkDestroyBuffer(device, stagingBuffer, nullptr);
-		vkFreeMemory(device, stagingBufferMemory, nullptr);
-	}*/
 
 	void CreateUniformBuffer() 
 	{
 		VkDeviceSize bufferSize = sizeof(UniformBufferObject);
-		CreateBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, uniformBuffer, uniformBufferMemory);
+		uniformBuffer.Init(m_kPhysicalDevice, device, bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 	}
 
 	void CreateTextureImage()
@@ -870,14 +644,13 @@ private:
 		}
 
 		//put it all into a staging buffer
-		VkBuffer stagingBuffer;
-		VkDeviceMemory stagingBufferMemory;
-		CreateBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+		VulkanBuffer stagingBuffer;
+		stagingBuffer.Init(m_kPhysicalDevice, device, imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
 		void* data;
-		vkMapMemory(device, stagingBufferMemory, 0, imageSize, 0, &data);
+		stagingBuffer.MapBuffer(device, 0, imageSize, 0, &data);
 		memcpy(data, pixels, static_cast<size_t>(imageSize));
-		vkUnmapMemory(device, stagingBufferMemory);
+		stagingBuffer.UnMapBuffer(device);
 
 		stbi_image_free(pixels);
 
@@ -888,8 +661,7 @@ private:
 		CopyBufferToImage(stagingBuffer, textureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
 		TransitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
-		vkDestroyBuffer(device, stagingBuffer, nullptr);
-		vkFreeMemory(device, stagingBufferMemory, nullptr);
+		stagingBuffer.Free(device);
 	}
 
 
@@ -1206,29 +978,11 @@ private:
 		vkUpdateDescriptorSets(device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 	}
 	/////HELPERS
-	VkFormat FindSupportedFormats(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features)
-	{
-		for (VkFormat format : candidates)
-		{
-			VkFormatProperties properties;
-			vkGetPhysicalDeviceFormatProperties(physicalDevice, format, &properties);
-
-			if (tiling == VK_IMAGE_TILING_LINEAR && (properties.linearTilingFeatures & features) == features)
-			{
-				return format;
-			}
-			else if (tiling == VK_IMAGE_TILING_OPTIMAL && (properties.optimalTilingFeatures & features) == features)
-			{
-				return format;
-			}
-		}
-
-		throw std::runtime_error("failed to find supported format!");
-	}
+	
 
 	VkFormat FindDepthFormat()
 	{
-		return FindSupportedFormats({ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT, VK_FORMAT_D16_UNORM, VK_FORMAT_D16_UNORM_S8_UINT },
+		return m_kPhysicalDevice.FindSupportedFormats({ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT, VK_FORMAT_D16_UNORM, VK_FORMAT_D16_UNORM_S8_UINT },
 			VK_IMAGE_TILING_OPTIMAL,
 			VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
 	}
@@ -1238,20 +992,7 @@ private:
 		return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT || format == VK_FORMAT_D16_UNORM_S8_UINT;
 	}
 
-	uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties)
-	{
-		VkPhysicalDeviceMemoryProperties memProperties;
-		vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memProperties);
-
-		for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
-			if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties) {
-				return i;
-			}
-		}
-		throw std::runtime_error("failed to find suitable memory type!");
-	}
-
-
+	
 	bool checkValidationLayerSupport() {
 		uint32_t layerCount;
 		vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
@@ -1335,7 +1076,7 @@ private:
 			}
 
 			VkBool32 presentSupport = false;
-			vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
+			vkGetPhysicalDeviceSurfaceSupportKHR(device, i, m_kSurface, &presentSupport);
 			if (queueFamily.queueCount > 0 && presentSupport)
 			{
 				indices.presentFamily = i;
@@ -1383,24 +1124,24 @@ private:
 		SwapChainSupportDetails details;
 
 		//get capabilities of swap chain
-		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &details.capabilities);
+		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, m_kSurface, &details.capabilities);
 
 		//get supported formats
 		uint32_t formatCount;
-		vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, nullptr);
+		vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_kSurface, &formatCount, nullptr);
 
 		if (formatCount != 0) {
 			details.formats.resize(formatCount);
-			vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, details.formats.data());
+			vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_kSurface, &formatCount, details.formats.data());
 		}
 
 		//get supported present modes
 		uint32_t presentModeCount;
-		vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, nullptr);
+		vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_kSurface, &presentModeCount, nullptr);
 
 		if (presentModeCount != 0) {
 			details.presentModes.resize(presentModeCount);
-			vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, details.presentModes.data());
+			vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_kSurface, &presentModeCount, details.presentModes.data());
 		}
 
 		return details;
@@ -1480,66 +1221,6 @@ private:
 		{
 			throw std::runtime_error("Unable to create graphics command pool");
 		}
-	}
-
-	void CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags memoryProperties, VkBuffer& buffer, VkDeviceMemory& bufferMemory)
-	{
-		QueueFamilyIndices indices = FindQueueFamilies(physicalDevice);
-
-		//buffer creation
-		VkBufferCreateInfo bufferInfo = {};
-		bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-		bufferInfo.size = size;
-		bufferInfo.usage = usage;
-
-		uint32_t queueFamilyIndices[] = { (uint32_t)indices.graphicsFamily, (uint32_t)indices.transferFamily };
-		if (indices.graphicsFamily != indices.transferFamily)
-		{
-			bufferInfo.sharingMode = VK_SHARING_MODE_CONCURRENT;
-			bufferInfo.queueFamilyIndexCount = 2;
-			bufferInfo.pQueueFamilyIndices = queueFamilyIndices;
-		}
-		else
-		{
-			bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-		}
-
-		if (vkCreateBuffer(device, &bufferInfo, nullptr, &buffer) != VK_SUCCESS)
-		{
-			throw std::runtime_error("Unable to create the buffer");
-		}
-
-		//memory allocation 
-
-		VkMemoryRequirements memRequirements;
-		vkGetBufferMemoryRequirements(device, buffer, &memRequirements);
-
-		VkMemoryAllocateInfo allocInfo = {};
-		allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-		allocInfo.allocationSize = memRequirements.size;
-		allocInfo.memoryTypeIndex = FindMemoryType(memRequirements.memoryTypeBits, memoryProperties);
-
-		if (vkAllocateMemory(device, &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS)
-		{
-			throw std::runtime_error("failed to allocate vertex buffer memory!");
-		}
-
-		vkBindBufferMemory(device, buffer, bufferMemory, 0);
-
-	}
-
-	void CopyBuffer(VkBuffer src, VkBuffer dst, VkDeviceSize size)
-	{
-		VkCommandBuffer stagingCommandBuffer = BeginSingleTimeCommands(commandPoolTransfer);
-
-
-		VkBufferCopy bufferCopy = {};
-		bufferCopy.srcOffset = 0;
-		bufferCopy.dstOffset = 0;
-		bufferCopy.size = size;
-		vkCmdCopyBuffer(stagingCommandBuffer, src, dst, 1, &bufferCopy);
-
-		EndSingleTimeCommands(stagingCommandBuffer, transferQueue, commandPoolTransfer);
 	}
 
 	void TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout) 
@@ -1661,7 +1342,7 @@ private:
 		imageInfo.usage = usage;
 		imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-		QueueFamilyIndices indices = FindQueueFamilies(physicalDevice);
+		const QueueFamilyIndices& indices = m_kPhysicalDevice.GetQueueFamilyIndices();
 		uint32_t queueFamilyIndices[] = { (uint32_t)indices.graphicsFamily, (uint32_t)indices.transferFamily };
 		if (indices.graphicsFamily != indices.transferFamily)
 		{
@@ -1689,7 +1370,7 @@ private:
 		VkMemoryAllocateInfo allocInfo = {};
 		allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 		allocInfo.allocationSize = memRequirements.size;
-		allocInfo.memoryTypeIndex = FindMemoryType(memRequirements.memoryTypeBits, memoryFlags);
+		allocInfo.memoryTypeIndex = m_kPhysicalDevice.FindMemoryType(memRequirements.memoryTypeBits, memoryFlags);
 
 		if (vkAllocateMemory(device, &allocInfo, nullptr, &imageMemory) != VK_SUCCESS)
 		{
@@ -1778,14 +1459,15 @@ private:
 	GLFWwindow* window;
 
 	//Vulkan Data
-	VkInstance instance;
-	VkDebugReportCallbackEXT callback;
-	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
+	VulkanInstance m_kInstance;
+	VulkanSurface m_kSurface;
+	VulkanPhysicalDevice m_kPhysicalDevice;
+
 	VkDevice device;
 	VkQueue graphicsQueue;
 	VkQueue presentQueue;
 	VkQueue transferQueue;
-	VkSurfaceKHR surface;
+	
 	VkSwapchainKHR swapChain;
 	std::vector<VkImage> swapChainImages;
 	VkFormat swapChainImageFormat;
@@ -1797,11 +1479,9 @@ private:
 	VkPipeline graphicsPipeline;
 	std::vector<VkFramebuffer> swapchainFrameBuffers;
 
-	VkBuffer vertexBuffer;
-	VkDeviceMemory vertexBufferMemory;
+	VulkanBuffer vertexBuffer;
 
-	VkBuffer uniformBuffer;
-	VkDeviceMemory uniformBufferMemory;
+	VulkanBuffer uniformBuffer;
 
 	VkCommandPool commandPool;
 	std::vector<VkCommandBuffer> commandBuffers;

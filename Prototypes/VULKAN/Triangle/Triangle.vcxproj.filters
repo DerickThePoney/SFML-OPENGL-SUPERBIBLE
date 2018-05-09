@@ -13,13 +13,54 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="VulkanObjects">
+      <UniqueIdentifier>{06161e4e-247d-483e-b3e3-b24f3c021be1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Triangle.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanHelpers.cpp">
+      <Filter>VulkanObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanInstance.cpp">
+      <Filter>VulkanObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanBuffer.cpp">
+      <Filter>VulkanObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanSurface.cpp">
+      <Filter>VulkanObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanPhysicalDevice.cpp">
+      <Filter>VulkanObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Triangle.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanHelpers.h">
+      <Filter>VulkanObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanInstance.h">
+      <Filter>VulkanObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanBuffer.h">
+      <Filter>VulkanObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanSurface.h">
+      <Filter>VulkanObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanPhysicalDevice.h">
+      <Filter>VulkanObjects</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
