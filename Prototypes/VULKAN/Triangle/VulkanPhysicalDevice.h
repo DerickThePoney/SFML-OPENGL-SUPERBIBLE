@@ -18,6 +18,7 @@ public:
 	
 	const SwapChainSupportDetails& GetSwapchainSupportDetails() { return m_kSwapChainSupportDetails; }
 	const QueueFamilyIndices& GetQueueFamilyIndices() { return m_kIndices; }
+	void ResetSwapchainSupportDetails(VulkanSurface& surface) { m_kSwapChainSupportDetails = QuerySwapChainSupportDetails(m_kPhysicalDevice, surface); }
 
 	uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 	VkFormat FindSupportedFormats(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);

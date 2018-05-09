@@ -879,6 +879,7 @@ private:
 		vkDeviceWaitIdle(device);
 
 		CleanUpSwapChain();
+		m_kPhysicalDevice.ResetSwapchainSupportDetails(m_kSurface);
 
 		CreateSwapChain();
 		CreateImageViews();
