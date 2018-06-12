@@ -185,6 +185,11 @@ void Renderer::Render(std::vector<GameObjectRenderData>& kVisibleObjectsList, Ca
 
 	}*/
 
+	vec4 pos = vec4(-3, 0, 0, 1);
+	DebugRenderingCommands::Instance()->DrawLine(pos, pos + vec4(1, 0, 0, 0), vec4(1, 0, 0, 1));
+	DebugRenderingCommands::Instance()->DrawLine(pos, pos + vec4(0, 1, 0, 0), vec4(0, 1, 0, 1));
+	DebugRenderingCommands::Instance()->DrawLine(pos, pos + vec4(0, 0, 1, 0), vec4(0, 0, 1, 1));
+
 	//Draw rendering commands
 	DebugRenderingCommands::Instance()->RenderDebugCommands(pkCamera);
 

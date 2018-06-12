@@ -67,6 +67,14 @@ void VulkanBuffer::UnMapBuffer(const VkDevice & device)
 	vkUnmapMemory(device, m_kBufferMemory);
 }
 
+void VulkanBuffer::CopyDataToBuffer(const VkDevice & device, VkDeviceSize offset, VkMemoryMapFlags flags, VkDeviceSize iDataSize, const void * pData)
+{
+	void* data;
+	MapBuffer(device, offset, iDataSize, flags, &data);
+	memcpy(data, pData, (size_t)iDataSize);
+	UnMapBuffer(device);
+}
+
 void VulkanBuffer::CopyBufferTo(const VulkanBuffer & other, const VkDevice & device, const VkCommandPool & transferPool, const VkQueue& queue)
 {
 	//start

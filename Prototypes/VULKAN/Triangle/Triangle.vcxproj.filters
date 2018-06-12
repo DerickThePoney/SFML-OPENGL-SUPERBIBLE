@@ -39,6 +39,9 @@
     <ClCompile Include="VulkanPhysicalDevice.cpp">
       <Filter>VulkanObjects</Filter>
     </ClCompile>
+    <ClCompile Include="VulkanDevice.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Triangle.vert" />
@@ -61,6 +64,12 @@
     </ClInclude>
     <ClInclude Include="VulkanPhysicalDevice.h">
       <Filter>VulkanObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Triangle.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanDevice.h">
+      <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

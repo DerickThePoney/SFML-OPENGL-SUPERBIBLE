@@ -11,6 +11,7 @@ public:
 
 	void MapBuffer(const VkDevice& device, VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, void** ppData);
 	void UnMapBuffer(const VkDevice& device);
+	void CopyDataToBuffer(const VkDevice& device, VkDeviceSize offset, VkMemoryMapFlags flags, VkDeviceSize iDataSize, const void *pData);
 
 	void CopyBufferTo(const VulkanBuffer& other, const VkDevice& device, const VkCommandPool& transferPool, const VkQueue& queue);
 	

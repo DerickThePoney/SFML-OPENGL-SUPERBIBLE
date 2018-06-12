@@ -27,6 +27,7 @@
     </ClCompile>
     <ClCompile Include="Triangle.cpp" />
     <ClCompile Include="VulkanBuffer.cpp" />
+    <ClCompile Include="VulkanDevice.cpp" />
     <ClCompile Include="VulkanHelpers.cpp" />
     <ClCompile Include="VulkanInstance.cpp" />
     <ClCompile Include="VulkanPhysicalDevice.cpp" />
@@ -37,7 +38,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Triangle.h" />
     <ClInclude Include="VulkanBuffer.h" />
+    <ClInclude Include="VulkanDevice.h" />
     <ClInclude Include="VulkanHelpers.h" />
     <ClInclude Include="VulkanInstance.h" />
     <ClInclude Include="VulkanPhysicalDevice.h" />
