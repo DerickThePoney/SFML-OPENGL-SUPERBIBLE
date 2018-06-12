@@ -9,6 +9,7 @@
 
 #include "VulkanBuffer.h"
 
+const int MAX_FRAMES_IN_FLIGHT = 2;
 
 class HelloTriangleApplication
 {
@@ -41,7 +42,7 @@ private:
 	void CreateTextureSampler();
 	void CreateDepthResources();
 	void CreateCommandBuffers();
-	void CreateSemaphores();
+	void CreateSyncObjects();
 	void DrawFrame();
 	void CleanUpSwapChain();
 	void RecreateSwapChain();
@@ -72,6 +73,7 @@ private:
 	//window stuff
 	int WIDTH = 800;
 	int HEIGHT = 600;
+	
 
 	const std::vector<const char*> validationLayers = {
 		"VK_LAYER_LUNARG_standard_validation"
@@ -86,6 +88,8 @@ private:
 #else
 	const bool enableValidationLayers = true;
 #endif
+
+
 
 	GLFWwindow* window;
 
@@ -119,8 +123,10 @@ private:
 
 	VkCommandPool commandPoolTransfer;
 
-	VkSemaphore imageAvailableSemaphore;
-	VkSemaphore renderFinishedSemaphore;
+	std::vector<VkSemaphore> imageAvailableSemaphores;
+	std::vector<VkSemaphore> renderFinishedSemaphores;
+	std::vector<VkFence> inFlightFences;
+	size_t currentFrame = 0;
 
 	VkDescriptorPool descriptorPool;
 	VkDescriptorSet descriptorSet;

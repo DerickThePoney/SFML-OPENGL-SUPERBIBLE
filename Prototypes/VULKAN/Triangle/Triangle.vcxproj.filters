@@ -40,7 +40,7 @@
       <Filter>VulkanObjects</Filter>
     </ClCompile>
     <ClCompile Include="VulkanDevice.cpp">
-      <Filter>Fichiers sources</Filter>
+      <Filter>VulkanObjects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -69,7 +69,7 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="VulkanDevice.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+      <Filter>VulkanObjects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

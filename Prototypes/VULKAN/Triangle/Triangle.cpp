@@ -64,9 +64,8 @@ void HelloTriangleApplication::InitVulkan()
 	CreateUniformBuffer();
 	CreateDescriptorPool();
 	CreateDescriptorSet();
-	//CreateIndexBuffers();
 	CreateCommandBuffers();
-	CreateSemaphores();
+	CreateSyncObjects();
 }
 
 void HelloTriangleApplication::MainLoop()
@@ -123,8 +122,12 @@ void HelloTriangleApplication::Cleanup()
 	vkDestroyDescriptorSetLayout(m_kDevice, descriptorSetLayout, nullptr);
 
 
-	vkDestroySemaphore(m_kDevice, renderFinishedSemaphore, nullptr);
-	vkDestroySemaphore(m_kDevice, imageAvailableSemaphore, nullptr);
+	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
+	{
+		vkDestroySemaphore(m_kDevice, renderFinishedSemaphores[i], nullptr);
+		vkDestroySemaphore(m_kDevice, imageAvailableSemaphores[i], nullptr);
+		vkDestroyFence(m_kDevice, inFlightFences[i], nullptr);
+	}
 
 
 	uniformBuffer.Free(m_kDevice);
@@ -215,12 +218,14 @@ void HelloTriangleApplication::CreateSwapChain()
 	QueueFamilyIndices indices = m_kPhysicalDevice.GetQueueFamilyIndices();
 	uint32_t queueFamilyIndices[] = { (uint32_t)indices.graphicsFamily, (uint32_t)indices.presentFamily };
 
-	if (indices.graphicsFamily != indices.presentFamily) {
+	if (indices.graphicsFamily != indices.presentFamily)
+	{
 		createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
 		createInfo.queueFamilyIndexCount = 2;
 		createInfo.pQueueFamilyIndices = queueFamilyIndices;
 	}
-	else {
+	else 
+	{
 		createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
 		createInfo.queueFamilyIndexCount = 0; // Optional
 		createInfo.pQueueFamilyIndices = nullptr; // Optional
@@ -701,22 +706,34 @@ void HelloTriangleApplication::CreateCommandBuffers()
 	}
 }
 
-void HelloTriangleApplication::CreateSemaphores()
-{
+void HelloTriangleApplication::CreateSyncObjects() {
+	imageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
+	renderFinishedSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
+	inFlightFences.resize(MAX_FRAMES_IN_FLIGHT);
+
 	VkSemaphoreCreateInfo semaphoreInfo = {};
 	semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
-	if (vkCreateSemaphore(m_kDevice, &semaphoreInfo, nullptr, &imageAvailableSemaphore) != VK_SUCCESS ||
-		vkCreateSemaphore(m_kDevice, &semaphoreInfo, nullptr, &renderFinishedSemaphore) != VK_SUCCESS) {
+	VkFenceCreateInfo fenceInfo = {};
+	fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+	fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-		throw std::runtime_error("failed to create semaphores!");
+	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+		if (vkCreateSemaphore(m_kDevice, &semaphoreInfo, nullptr, &imageAvailableSemaphores[i]) != VK_SUCCESS ||
+			vkCreateSemaphore(m_kDevice, &semaphoreInfo, nullptr, &renderFinishedSemaphores[i]) != VK_SUCCESS ||
+			vkCreateFence(m_kDevice, &fenceInfo, nullptr, &inFlightFences[i]) != VK_SUCCESS) {
+
+			throw std::runtime_error("failed to create synchronization objects for a frame!");
+		}
 	}
 }
 
 void HelloTriangleApplication::DrawFrame()
 {
+	vkWaitForFences(m_kDevice, 1, &inFlightFences[currentFrame], VK_TRUE, std::numeric_limits<uint64_t>::max());
+	vkResetFences(m_kDevice, 1, &inFlightFences[currentFrame]);
 	uint32_t imageIndex = 0;
-	VkResult result = vkAcquireNextImageKHR(m_kDevice, swapChain, std::numeric_limits<uint64_t>::max(), imageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex);
+	VkResult result = vkAcquireNextImageKHR(m_kDevice, swapChain, std::numeric_limits<uint64_t>::max(), imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
 
 	if (result == VK_ERROR_OUT_OF_DATE_KHR)
 	{
@@ -730,7 +747,7 @@ void HelloTriangleApplication::DrawFrame()
 
 	VkSubmitInfo submitInfo = {};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-	VkSemaphore waitSemaphores[] = { imageAvailableSemaphore };
+	VkSemaphore waitSemaphores[] = { imageAvailableSemaphores[currentFrame] };
 	VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 	submitInfo.waitSemaphoreCount = 1;
 	submitInfo.pWaitSemaphores = waitSemaphores;
@@ -739,11 +756,11 @@ void HelloTriangleApplication::DrawFrame()
 	submitInfo.commandBufferCount = 1;
 	submitInfo.pCommandBuffers = &commandBuffers[imageIndex];
 
-	VkSemaphore signalSemaphores[] = { renderFinishedSemaphore };
+	VkSemaphore signalSemaphores[] = { renderFinishedSemaphores[currentFrame] };
 	submitInfo.signalSemaphoreCount = 1;
 	submitInfo.pSignalSemaphores = signalSemaphores;
 
-	if (vkQueueSubmit(graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE) != VK_SUCCESS) {
+	if (vkQueueSubmit(graphicsQueue, 1, &submitInfo, inFlightFences[currentFrame]) != VK_SUCCESS) {
 		throw std::runtime_error("failed to submit draw command buffer!");
 	}
 
@@ -772,10 +789,12 @@ void HelloTriangleApplication::DrawFrame()
 	}
 
 
-	if (enableValidationLayers)
+	/*if (enableValidationLayers)
 	{
 		vkQueueWaitIdle(presentQueue);
-	}
+	}*/
+
+	currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 }
 
 void HelloTriangleApplication::CleanUpSwapChain()
@@ -812,7 +831,7 @@ void HelloTriangleApplication::RecreateSwapChain()
 	CleanUpSwapChain();
 	m_kPhysicalDevice.ResetSwapchainSupportDetails(m_kSurface);
 
-	CreateSwapChain();
+	CreateSwapChain(true);
 	CreateImageViews();
 	CreateRenderPass();
 	CreateGraphicsPipeline();
