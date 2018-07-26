@@ -97,6 +97,11 @@ void VulkanDevice::Initialise(VulkanPhysicalDevice& physicalDevice,
 	}
 }
 
+void VulkanDevice::Destroy()
+{
+	vkDestroyDevice(m_kDevice, nullptr);
+}
+
 void VulkanDevice::GetQueue(uint32_t queueFamilyIndex, uint32_t queueIndex, VkQueue& queue)
 {
 	vkGetDeviceQueue(m_kDevice, queueFamilyIndex, queueIndex, &queue);

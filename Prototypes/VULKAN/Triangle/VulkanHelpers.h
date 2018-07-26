@@ -34,8 +34,8 @@ struct Vertex
 	}
 
 
-	static std::array<VkVertexInputAttributeDescription, 3> GetAttributeDescriptions() {
-		std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions = {};
+	static std::vector<VkVertexInputAttributeDescription> GetAttributeDescriptions() {
+		std::vector<VkVertexInputAttributeDescription> attributeDescriptions = { {} ,{},{} };
 		attributeDescriptions[0].binding = 0;
 		attributeDescriptions[0].location = 0;
 		attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;

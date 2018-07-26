@@ -42,6 +42,12 @@
     <ClCompile Include="VulkanDevice.cpp">
       <Filter>VulkanObjects</Filter>
     </ClCompile>
+    <ClCompile Include="VulkanGraphicsPipeline.cpp">
+      <Filter>VulkanObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanShader.cpp">
+      <Filter>VulkanObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Triangle.vert" />
@@ -69,6 +75,12 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="VulkanDevice.h">
+      <Filter>VulkanObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanShader.h">
+      <Filter>VulkanObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanGraphicsPipeline.h">
       <Filter>VulkanObjects</Filter>
     </ClInclude>
   </ItemGroup>

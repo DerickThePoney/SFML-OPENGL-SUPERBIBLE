@@ -4,37 +4,30 @@
 class Transform
 {
 public:
-	Transform(vec3 kPosition = vec3(0, 0, 0), vec3 kScale = vec3(1, 1, 1), quaternion kOrientation = quaternion(1, vec3(0,0,0)));
+	Transform(vec3 kPosition = vec3(0, 0, 0), float kScale = 1, quaternion kOrientation = quaternion(1, vec3(0,0,0)));
 	~Transform();
 
 	void UpdateWorldSpaceTransform(Transform* pkParent);
 
-	inline const vec3& GetLocalPosition() const { return m_kLocalPosition; }
-	inline void SetLocalPosition(const vec3& kLocalPosition) { m_kLocalPosition = kLocalPosition; m_bUpToDate = false; }
+	inline const vec3& GetLocalPosition() const { return localPosition.m_kPosition; }
+	inline void SetLocalPosition(const vec3& kLocalPosition) { localPosition.m_kPosition = kLocalPosition; m_bUpToDate = false; }
 
-	inline const vec3& GetScale() const { return m_kScale; }
-	inline void SetScale(const vec3& kScale) { m_kScale = kScale; m_bUpToDate = false; }
+	inline const float& GetScale() const { return localPosition.m_fScale; }
+	inline void SetScale(const float& kScale) { localPosition.m_fScale = kScale; m_bUpToDate = false; }
 
-	inline const vec4 GetWorldspacePosition() const { return m_kWorlspaceTransform[3]; }
+	inline const vec3 GetWorldspacePosition() const { return worldPosition.m_kPosition; }
 
-	inline const quaternion& GetLocalOrientation() const { return m_kLocalOrientation; }
-	inline void SetLocalOrientation(const quaternion& kLocalOrientation) { m_kLocalOrientation = kLocalOrientation; m_bUpToDate = false; }
+	inline const quaternion& GetLocalOrientation() const { return localPosition.m_kOrientation; }
+	inline void SetLocalOrientation(const quaternion& kLocalOrientation) { localPosition.m_kOrientation = kLocalOrientation; m_bUpToDate = false; }
 
-	inline const mat4 GetWorldSpaceTransform() const { return m_kWorlspaceTransform; }
+	const mat4 GetWorldSpaceTransform() const;
 
-	inline void TranslateInLocalSpace(const vec3& kTranslate) { m_kLocalPosition += kTranslate; m_bUpToDate = false; }
-	inline void RotateInLocalSpace(const quaternion& kTranslate) { m_kLocalOrientation = normalize(kTranslate * m_kLocalOrientation); m_bUpToDate = false;}
+	inline void TranslateInLocalSpace(const vec3& kTranslate) { localPosition.m_kPosition += kTranslate; m_bUpToDate = false; }
+	inline void RotateInLocalSpace(const quaternion& kRotate) { localPosition.m_kOrientation = normalize(kRotate * localPosition.m_kOrientation); m_bUpToDate = false;}
 
-	inline vec4 GetForwardVector() { return m_kWorlspaceTransform * vec4(0, 0, 1, 0); }
-	inline vec4 GetUpVector() { return m_kWorlspaceTransform * vec4(0, 1, 0, 0); }
-	inline vec4 GetRightVector() { return m_kWorlspaceTransform * vec4(1, 0, 0, 0); }
-
-	void WriteIntoStream(std::ostream& out)
-	{
-		out << "LP:(" << m_kLocalPosition[0] << "," << m_kLocalPosition[1] << "," << m_kLocalPosition[2] << ")\n";
-		vec4 kWPosition = m_kWorlspaceTransform[3];
-		out << "WP:(" << kWPosition[0] << "," << kWPosition[1] << "," << kWPosition[2] << ")\n";
-	}
+	inline vec4 GetForwardVector() { return GetWorldSpaceTransform() * vec4(0, 0, 1, 0); }
+	inline vec4 GetUpVector() { return GetWorldSpaceTransform() * vec4(0, 1, 0, 0); }
+	inline vec4 GetRightVector() { return GetWorldSpaceTransform() * vec4(1, 0, 0, 0); }
 
 	inline void SetValidate(bool bUpToDate) { m_bUpToDate &= bUpToDate; }
 	inline bool IsValid() { return m_bUpToDate; }
@@ -44,24 +37,32 @@ public:
 	template<class Archive>
 	void save(Archive & archive) const
 	{
-		archive(CEREAL_NVP(m_kLocalPosition),
-			CEREAL_NVP(m_kScale),
-			CEREAL_NVP(m_kLocalOrientation));
+		archive(CEREAL_NVP(localPosition.m_kPosition),
+			CEREAL_NVP(localPosition.m_fScale),
+			CEREAL_NVP(localPosition.m_kOrientation));
 	}
 
 	template<class Archive>
 	void load(Archive& archive)
 	{
-		archive(CEREAL_NVP(m_kLocalPosition),
-			CEREAL_NVP(m_kScale),
-			CEREAL_NVP(m_kLocalOrientation));
+		DEARCHIVE_WITH_DEFAULT_FROM_NVP(localPosition.m_kPosition, "m_kLocalPosition", vec3(0, 0, 0));
+		DEARCHIVE_WITH_DEFAULT_FROM_NVP(localPosition.m_fScale, "m_kScale", 1);
+		DEARCHIVE_WITH_DEFAULT_FROM_NVP(localPosition.m_kOrientation, "m_kLocalOrientation", quaternion(1, vec3(0, 0, 0)));
+		/*archive(CEREAL_NVP(localPosition.m_kPosition),
+			CEREAL_NVP(localPosition.m_fScale),
+			CEREAL_NVP(localPosition.m_kOrientation));*/
 	}
 
 private:
-	vec3 m_kLocalPosition;
-	vec3 m_kScale;
-	quaternion m_kLocalOrientation;
-	mat4 m_kWorlspaceTransform;
+	struct TransformData
+	{
+		vec3 m_kPosition;
+		float m_fScale;
+		quaternion m_kOrientation;
+	};
+	
+	TransformData localPosition;
+	TransformData worldPosition;
 
 	bool m_bUpToDate;
 };

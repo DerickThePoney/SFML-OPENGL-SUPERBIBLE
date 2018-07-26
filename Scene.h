@@ -6,7 +6,7 @@
 class Scene
 {
 public:
-	Scene();
+	Scene(std::string kFilename = "default.xml");
 	~Scene();
 
 	void Initialise(UI32 width, UI32 height);

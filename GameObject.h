@@ -98,20 +98,20 @@ public:
 	{
 		//std::vector<std::string> akComponentsNames;
 		archive(CEREAL_NVP(m_kName), m_kTransform);
-		archive(CEREAL_NVP(m_kComponent));		
+		DEARCHIVE_WITH_DEFAULT(m_kComponent, std::vector<std::shared_ptr<IComponent>>());
 
 		for (UI32 i = 0; i < m_kComponent.size(); ++i)
 		{
 			m_kComponent[i]->m_pkParent = this;
 		}
 
-		std::size_t uiNbChildren = m_apkChildren.size();
-		archive(CEREAL_NVP(uiNbChildren));
+		std::size_t uiNbChildren = 0;
+		DEARCHIVE_WITH_DEFAULT(uiNbChildren, 0);
 
 		for (size_t i = 0; i < uiNbChildren; ++i)
 		{
 			GameObject * obj = GameObjectManager::Instance()->Instantiate();
-			archive(cereal::make_nvp("GameObject", (*obj)));
+			DEARCHIVE_NO_DEFAULT_FROM_NVP(*obj, "GameObject", obj);
 			AddChild(obj);
 		}
 	}

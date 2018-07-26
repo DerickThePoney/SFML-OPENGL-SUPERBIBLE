@@ -6,6 +6,8 @@
 #include "VulkanSurface.h"
 #include "VulkanPhysicalDevice.h"
 #include "VulkanDevice.h"
+#include "VulkanShader.h"
+#include "VulkanGraphicsPipeline.h"
 
 #include "VulkanBuffer.h"
 
@@ -110,8 +112,7 @@ private:
 	std::vector<VkImageView> swapChainImageViews;
 	VkRenderPass renderPass;
 	VkDescriptorSetLayout descriptorSetLayout;
-	VkPipelineLayout pipelineLayout;
-	VkPipeline graphicsPipeline;
+	VulkanGraphicsPipeline m_kPipeline;
 	std::vector<VkFramebuffer> swapchainFrameBuffers;
 
 	VulkanBuffer vertexBuffer;

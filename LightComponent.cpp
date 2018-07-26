@@ -34,7 +34,7 @@ void LightComponent::OnPreRender()
 {
 	if (m_pkLight == nullptr) return;
 
-	m_pkLight->m_kPosition = m_pkParent->m_kTransform.GetWorldspacePosition();
+	m_pkLight->m_kPosition = vec4(m_pkParent->m_kTransform.GetWorldspacePosition(),1);
 	m_pkLight->m_kDirection = m_pkParent->m_kTransform.GetForwardVector();
 }
 

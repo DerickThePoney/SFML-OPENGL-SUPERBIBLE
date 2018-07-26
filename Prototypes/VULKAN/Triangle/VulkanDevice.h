@@ -16,6 +16,8 @@ public:
 					const std::vector<const char*> validationLayers, 
 					const std::vector<const char*> deviceExtensions);
 
+	void Destroy();
+
 	operator VkDevice() { return m_kDevice; }
 
 	void GetQueue(uint32_t queueFamilyIndex, uint32_t queueIndex, VkQueue& queue);

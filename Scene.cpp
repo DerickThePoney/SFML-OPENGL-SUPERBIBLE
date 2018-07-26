@@ -2,7 +2,8 @@
 #include "Scene.h"
 
 
-Scene::Scene()
+Scene::Scene(std::string kFilename)
+	: m_kFilename(kFilename)
 {
 }
 

@@ -27,7 +27,7 @@ void GameObjectApplication::Initialise()
 	//create the mesh
 	LoadAndCompileProgram();
 
-	try
+	/*try
 	{
 		std::ifstream ifstr("media/scenes/MyFirstScene_PBR.xml");
 		//Scene testLoading;
@@ -37,7 +37,7 @@ void GameObjectApplication::Initialise()
 	catch (std::exception& e)
 	{
 		std::cout << e.what() << std::endl;
-	}
+	}*/
 	
 	//Initialise the scene
 	m_kScene.Initialise(width, height);

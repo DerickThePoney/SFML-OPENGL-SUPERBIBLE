@@ -795,6 +795,20 @@ static inline Tquaternion<T> conjugate(const Tquaternion<T>& q)
 	return quaternion(q.r, -q.v);
 }
 
+template <typename T>
+static inline vec3 Rotate(const Tquaternion<T>& q, const vec3& v)
+{
+	Tquaternion<T> qN = normalize(q);
+
+	float vMult = 2.0f * (qN.x*v[0] + qN.y*v[1] + qN.z*v[2]);
+	float crossMult = 2.0f * qN.w;
+	float pMult = crossMult*qN.w - 1.0f;
+
+	return vec3(pMult * v[0] + vMult * qN.x + crossMult * (qN.y*v[2] - qN.z*v[1]),
+		pMult * v[1] + vMult * qN.y + crossMult * (qN.z*v[0] - qN.x*v[2]),
+		pMult * v[2] + vMult * qN.z + crossMult * (qN.x*v[1] - qN.y*v[0]));
+}
+
 template <typename T, const int w, const int h>
 class matNM
 {
