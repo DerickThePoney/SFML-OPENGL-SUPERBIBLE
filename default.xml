@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cereal>
+	<value0>
+		<m_kFilename>default.xml</m_kFilename>
+		<uiNbChildren>1</uiNbChildren>
+		<GameObject>
+			<m_kName>Main Camera</m_kName>
+			<value0>
+				<localPosition.m_kPosition>
+					<value0>0</value0>
+					<value1>0</value1>
+					<value2>0</value2>
+				</localPosition.m_kPosition>
+				<localPosition.m_fScale>1</localPosition.m_fScale>
+				<localPosition.m_kOrientation>
+					<value0>1</value0>
+					<value1>0</value1>
+					<value2>0</value2>
+					<value3>0</value3>
+				</localPosition.m_kOrientation>
+			</value0>
+			<m_kComponent size="dynamic">
+				<value0>
+					<polymorphic_id>2147483649</polymorphic_id>
+					<polymorphic_name>CameraComponent</polymorphic_name>
+					<ptr_wrapper>
+						<id>2147483649</id>
+						<data>
+							<IsUSED>true</IsUSED>
+							<IsMAIN>true</IsMAIN>
+							<m_eType>1</m_eType>
+							<focal>60</focal>
+							<fNearPlane>0.10000000149011612</fNearPlane>
+							<fFarPlane>10</fFarPlane>
+							<m_top>0</m_top>
+							<m_bottom>-0</m_bottom>
+						</data>
+					</ptr_wrapper>
+				</value0>
+			</m_kComponent>
+			<uiNbChildren>0</uiNbChildren>
+		</GameObject>
+	</value0>
+</cereal>
+

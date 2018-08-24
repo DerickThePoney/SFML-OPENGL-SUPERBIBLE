@@ -21,6 +21,7 @@ void VulkanGraphicsPipeline::Initialise(VkExtent2D & swapChainExtent)
 void VulkanGraphicsPipeline::SetShaders(VulkanDevice & device, uint32_t shaderFileTypeCount, ShadersFileType * akShaders)
 {
 	m_kData.shaders = new VulkanShader[shaderFileTypeCount];
+	m_kData.shaderStages.clear();
 	for (uint32_t i = 0; i < shaderFileTypeCount; ++i)
 	{
 		m_kData.shaders[i].Initialise(device, akShaders[i].type, akShaders[i].filepath.c_str());
@@ -121,6 +122,34 @@ void VulkanGraphicsPipeline::SetMultisampling(bool bEnabled, VkSampleCountFlagBi
 
 }
 
+void VulkanGraphicsPipeline::SetBlendAttachementCount(uint32_t count)
+{
+	m_kData.colorBlending.attachmentCount = count;
+
+	m_kData.colorBlendAttachment.clear();
+	for (uint32_t i = 0; i < count; ++i)
+	{
+		VkPipelineColorBlendAttachmentState color = {};
+		color.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+		color.blendEnable = VK_FALSE;
+		color.srcColorBlendFactor = VK_BLEND_FACTOR_ONE; // Optional
+		color.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO; // Optional
+		color.colorBlendOp = VK_BLEND_OP_ADD; // Optional
+		color.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE; // Optional
+		color.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO; // Optional
+		color.alphaBlendOp = VK_BLEND_OP_ADD; // Optional
+		m_kData.colorBlendAttachment.push_back(color);
+	}
+
+	m_kData.colorBlending.pAttachments = m_kData.colorBlendAttachment.data();
+}
+
+void VulkanGraphicsPipeline::SetDynamicStates(const VkDynamicState * states, uint32_t dynamicStateCount)
+{
+	m_kData.dynamicState.dynamicStateCount = dynamicStateCount;
+	m_kData.dynamicState.pDynamicStates = states;
+}
+
 void VulkanGraphicsPipeline::CreatePipeline(VulkanDevice& device, VkDescriptorSetLayout* descriptorSetLayout, VkRenderPass renderPass)
 {
 	//create the meta struct for viewport and scissor
@@ -157,7 +186,7 @@ void VulkanGraphicsPipeline::CreatePipeline(VulkanDevice& device, VkDescriptorSe
 	pipelineInfo.pMultisampleState = &m_kData.multisampling;
 	pipelineInfo.pDepthStencilState = &m_kData.depthStencil;
 	pipelineInfo.pColorBlendState = &m_kData.colorBlending;
-	pipelineInfo.pDynamicState = nullptr;
+	pipelineInfo.pDynamicState = (m_kData.dynamicState.dynamicStateCount == 0) ? nullptr : &m_kData.dynamicState;
 
 	pipelineInfo.layout = m_kPipelineLayout;
 
@@ -182,14 +211,15 @@ void VulkanGraphicsPipeline::Destroy(VulkanDevice& device)
 	delete[] m_kData.shaders;
 
 	vkDestroyPipeline(device, m_kGraphicsPipeline, nullptr);
+	m_kGraphicsPipeline = VK_NULL_HANDLE;
 	vkDestroyPipelineLayout(device, m_kPipelineLayout, nullptr);
 }
 
 void VulkanGraphicsPipeline::InitialiseDefaultValues(VkExtent2D& swapChainExtent)
 {
 	//default vertexInput stage
-	m_kData.vertexBinding = Vertex::getBindingDescription(); 
-	m_kData.vertexAttributes = Vertex::GetAttributeDescriptions();
+	m_kData.vertexBinding = VertexData::getBindingDescription();
+	m_kData.vertexAttributes = VertexData::GetAttributeDescriptions();
 	m_kData.vertexInputInfo = {};
 	m_kData.vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 	m_kData.vertexInputInfo.vertexBindingDescriptionCount = 1;
@@ -239,22 +269,22 @@ void VulkanGraphicsPipeline::InitialiseDefaultValues(VkExtent2D& swapChainExtent
 	m_kData.multisampling.alphaToOneEnable = VK_FALSE; // Optional
 
 	//default color blending
-	m_kData.colorBlendAttachment = {};
-	m_kData.colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-	m_kData.colorBlendAttachment.blendEnable = VK_FALSE;
-	m_kData.colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE; // Optional
-	m_kData.colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO; // Optional
-	m_kData.colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD; // Optional
-	m_kData.colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE; // Optional
-	m_kData.colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO; // Optional
-	m_kData.colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD; // Optional
+	m_kData.colorBlendAttachment = { {} };
+	m_kData.colorBlendAttachment[0].colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+	m_kData.colorBlendAttachment[0].blendEnable = VK_FALSE;
+	m_kData.colorBlendAttachment[0].srcColorBlendFactor = VK_BLEND_FACTOR_ONE; // Optional
+	m_kData.colorBlendAttachment[0].dstColorBlendFactor = VK_BLEND_FACTOR_ZERO; // Optional
+	m_kData.colorBlendAttachment[0].colorBlendOp = VK_BLEND_OP_ADD; // Optional
+	m_kData.colorBlendAttachment[0].srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE; // Optional
+	m_kData.colorBlendAttachment[0].dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO; // Optional
+	m_kData.colorBlendAttachment[0].alphaBlendOp = VK_BLEND_OP_ADD; // Optional
 
 	m_kData.colorBlending = {};
 	m_kData.colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 	m_kData.colorBlending.logicOpEnable = VK_FALSE;
 	m_kData.colorBlending.logicOp = VK_LOGIC_OP_COPY; // Optional
-	m_kData.colorBlending.attachmentCount = 1;
-	m_kData.colorBlending.pAttachments = &m_kData.colorBlendAttachment;
+	m_kData.colorBlending.attachmentCount = m_kData.colorBlendAttachment.size();
+	m_kData.colorBlending.pAttachments = m_kData.colorBlendAttachment.data();
 	m_kData.colorBlending.blendConstants[0] = 0.0f; // Optional
 	m_kData.colorBlending.blendConstants[1] = 0.0f; // Optional
 	m_kData.colorBlending.blendConstants[2] = 0.0f; // Optional
@@ -267,7 +297,7 @@ void VulkanGraphicsPipeline::InitialiseDefaultValues(VkExtent2D& swapChainExtent
 	m_kData.depthStencil.depthWriteEnable = VK_TRUE;
 	m_kData.depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
 	m_kData.depthStencil.depthBoundsTestEnable = VK_FALSE;
-	m_kData.depthStencil.minDepthBounds = -1.0f;
+	m_kData.depthStencil.minDepthBounds = 0.0f;
 	m_kData.depthStencil.maxDepthBounds = 1.0f;
 
 	m_kData.depthStencil.stencilTestEnable = VK_FALSE;
@@ -275,4 +305,10 @@ void VulkanGraphicsPipeline::InitialiseDefaultValues(VkExtent2D& swapChainExtent
 	m_kData.depthStencil.back = {};
 
 	//should do dynamic stuff
+	m_kData.dynamicState = {};
+	m_kData.dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+	m_kData.dynamicState.pDynamicStates = nullptr;
+	m_kData.dynamicState.dynamicStateCount = 0;
+	m_kData.dynamicState.flags = 0;
+
 }

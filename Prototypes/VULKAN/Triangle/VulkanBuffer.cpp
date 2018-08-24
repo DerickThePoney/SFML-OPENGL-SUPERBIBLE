@@ -121,4 +121,6 @@ void VulkanBuffer::Free(const VkDevice& device)
 {
 	vkFreeMemory(device, m_kBufferMemory, nullptr);
 	vkDestroyBuffer(device, m_kBuffer, nullptr);
+	m_kBufferMemory = 0;
+	m_kBuffer = 0;
 }

@@ -16,6 +16,9 @@
     <Filter Include="VulkanObjects">
       <UniqueIdentifier>{06161e4e-247d-483e-b3e3-b24f3c021be1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SignedDistanceFieldsObjects">
+      <UniqueIdentifier>{082cc4a7-cf7c-455b-ac3d-e5305f222e2b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Triangle.cpp">
@@ -46,6 +49,30 @@
       <Filter>VulkanObjects</Filter>
     </ClCompile>
     <ClCompile Include="VulkanShader.cpp">
+      <Filter>VulkanObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanCommandBuffer.cpp">
+      <Filter>VulkanObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanMesh.cpp">
+      <Filter>VulkanObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectCreator.cpp">
+      <Filter>SignedDistanceFieldsObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="SignedDistanceField.cpp">
+      <Filter>SignedDistanceFieldsObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="ValueNoise2D.cpp">
+      <Filter>SignedDistanceFieldsObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="BezierCurve.cpp">
+      <Filter>SignedDistanceFieldsObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanRenderer.cpp">
+      <Filter>VulkanObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanImage.cpp">
       <Filter>VulkanObjects</Filter>
     </ClCompile>
   </ItemGroup>
@@ -81,6 +108,33 @@
       <Filter>VulkanObjects</Filter>
     </ClInclude>
     <ClInclude Include="VulkanGraphicsPipeline.h">
+      <Filter>VulkanObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanCommandBuffer.h">
+      <Filter>VulkanObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanMesh.h">
+      <Filter>VulkanObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectCreator.h">
+      <Filter>SignedDistanceFieldsObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="SignedDistanceField.h">
+      <Filter>SignedDistanceFieldsObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="ValueNoise2D.h">
+      <Filter>SignedDistanceFieldsObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="BezierCurve.h">
+      <Filter>SignedDistanceFieldsObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="BezierSpline.h">
+      <Filter>SignedDistanceFieldsObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanRenderer.h">
+      <Filter>VulkanObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanImage.h">
       <Filter>VulkanObjects</Filter>
     </ClInclude>
   </ItemGroup>

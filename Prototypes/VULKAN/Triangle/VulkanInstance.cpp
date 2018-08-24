@@ -4,6 +4,10 @@
 VulkanInstance::VulkanInstance()
 	: m_bEnableValidationLayers(false)
 {
+	callbacks.pfnAllocation = &Allocator::Allocate;
+	callbacks.pfnReallocation = &Allocator::Reallocate;
+	callbacks.pfnFree = &Allocator::Free;
+	callbacks.pUserData = nullptr;
 }
 
 VulkanInstance::~VulkanInstance()
@@ -52,7 +56,7 @@ void VulkanInstance::Init(const char* pApplicationName,
 		instInfo.enabledLayerCount = 0;
 	}
 
-	if (vkCreateInstance(&instInfo, nullptr, &m_kInstance) != VK_SUCCESS)
+	if (vkCreateInstance(&instInfo, &callbacks, &m_kInstance) != VK_SUCCESS)
 	{
 		throw std::runtime_error("Failed to create Instance!");
 	}
@@ -78,9 +82,9 @@ void VulkanInstance::Destroy()
 {
 	if (m_bEnableValidationLayers)
 	{
-		DestroyDebugReportCallbackEXT(m_kInstance, m_kDebugCallback, nullptr);
+		DestroyDebugReportCallbackEXT(m_kInstance, m_kDebugCallback, &callbacks);
 	}
-	vkDestroyInstance(m_kInstance, nullptr);
+	vkDestroyInstance(m_kInstance, &callbacks);
 }
 
 void VulkanInstance::SetupDebugCallback()
@@ -91,7 +95,7 @@ void VulkanInstance::SetupDebugCallback()
 	createInfo.flags = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT;
 	createInfo.pfnCallback = debugCallback;
 
-	if (CreateDebugReportCallbackEXT(m_kInstance, &createInfo, nullptr, &m_kDebugCallback) != VK_SUCCESS) {
+	if (CreateDebugReportCallbackEXT(m_kInstance, &createInfo, &callbacks, &m_kDebugCallback) != VK_SUCCESS) {
 		throw std::runtime_error("failed to set up debug callback!");
 	}
 }
@@ -154,4 +158,56 @@ void VulkanInstance::DestroyDebugReportCallbackEXT(VkInstance instance, VkDebugR
 	if (func != nullptr) {
 		func(instance, callback, pAllocator);
 	}
+}
+
+void * Allocator::Allocate(void * pUserData, size_t size, size_t alignment, VkSystemAllocationScope allocationScope)
+{
+	void* res = _aligned_malloc(size, alignment);
+	std::cout << "Allocating " << size << " bytes with alignement " << alignment << " into " << res << " with scope ";
+
+	switch (allocationScope)
+	{
+	case VK_SYSTEM_ALLOCATION_SCOPE_COMMAND:
+		std::cout << "VK_SYSTEM_ALLOCATION_SCOPE_COMMAND";
+		break;
+	case VK_SYSTEM_ALLOCATION_SCOPE_OBJECT:
+		std::cout << "VK_SYSTEM_ALLOCATION_SCOPE_OBJECT";
+		break;
+	case VK_SYSTEM_ALLOCATION_SCOPE_CACHE:
+		std::cout << "VK_SYSTEM_ALLOCATION_SCOPE_CACHE";
+		break;
+	case VK_SYSTEM_ALLOCATION_SCOPE_DEVICE:
+		std::cout << "VK_SYSTEM_ALLOCATION_SCOPE_DEVICE";
+		break;
+	case VK_SYSTEM_ALLOCATION_SCOPE_INSTANCE:
+		std::cout << "VK_SYSTEM_ALLOCATION_SCOPE_INSTANCE";
+		break;
+	}
+
+	std::cout << std::endl;
+	return res;
+}
+
+void * Allocator::Reallocate(void * pUserData, void * pOriginal, size_t size, size_t alignment, VkSystemAllocationScope allocationScope)
+{
+	std::cout << "Reacclocating " << pOriginal << " to size " << size << " bytes with alignement " << alignment << std::endl;
+	if (pOriginal == NULL) return Allocate(pUserData, size, alignment, allocationScope);
+	if (size == 0)
+	{
+		Free(pUserData, pOriginal);
+		return NULL;
+	}
+
+	size_t originalSize = _aligned_msize(pOriginal, alignment, 0);
+	void* newPtr = Allocate(pUserData, size, alignment, allocationScope);
+	memcpy(newPtr, pOriginal, std::min(originalSize, size));
+	Free(pUserData, pOriginal);
+
+	return newPtr;
+}
+
+void Allocator::Free(void * pUserData, void * pMemory)
+{
+	std::cout << "Free " << pMemory << std::endl;
+	_aligned_free(pMemory);
 }

@@ -1,17 +1,20 @@
 #pragma once
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
-
 #include "VulkanInstance.h"
 #include "VulkanSurface.h"
 #include "VulkanPhysicalDevice.h"
 #include "VulkanDevice.h"
 #include "VulkanShader.h"
 #include "VulkanGraphicsPipeline.h"
-
+#include "VulkanMesh.h"
 #include "VulkanBuffer.h"
+#include "VulkanCommandBuffer.h"
+#include "VulkanImage.h"
 
-const int MAX_FRAMES_IN_FLIGHT = 2;
+#include "ObjectCreator.h"
+
+using namespace PolyVox;
+
+const int MAX_FRAMES_IN_FLIGHT = 3;
 
 class HelloTriangleApplication
 {
@@ -24,8 +27,16 @@ public:
 	void UpdateUniformBufferData();
 	void Cleanup();
 
+	static HelloTriangleApplication& getInstance() // Singleton is accessed via getInstance()
+	{
+		static HelloTriangleApplication instance; // lazy singleton, instantiated on first use
+		return instance;
+	}
+	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 private:
+	
+
 	//VULKAN METHODS
 	void CreateInstance();
 	void PickPhysicalDevice();
@@ -51,6 +62,13 @@ private:
 	void CreateDescriptorSetLayout();
 	void CreateDescriptorPool();
 	void CreateDescriptorSet();
+
+	void SetupSubpassBuffer();
+
+	void CreateOffscreenRenderPass();
+	void PrepareOffscreenPass();
+	void CreateOffscreenCommandBuffers();
+	void CleanUpOffscreenPass();
 	
 
 	///HELPERS
@@ -64,13 +82,13 @@ private:
 	VkShaderModule CreateShaderModule(const std::vector<char>& code);
 	void CreateCommandPool(int queueFamily, VkCommandPool* commandPool, VkCommandPoolCreateFlags flags);
 	void TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
-	void CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
+	void CopyBufferToImage(VulkanBuffer& buffer, VkImage image, uint32_t width, uint32_t height);
 	void CreateImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling imageTiling, VkImageUsageFlags usage, VkMemoryPropertyFlags memoryFlags, VkImage& image, VkDeviceMemory& imageMemory);
 	VkImageView CreateImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectMask);
-	VkCommandBuffer BeginSingleTimeCommands(VkCommandPool& pool);
-	void EndSingleTimeCommands(VkCommandBuffer commandBuffer, VkQueue& queue, VkCommandPool& pool);
+	VulkanCommandBuffer BeginSingleTimeCommands(VkCommandPool& pool);
+	void EndSingleTimeCommands(VulkanCommandBuffer& commandBuffer, VkQueue& queue, VkCommandPool& pool);
 
-
+	//void createSphereInVolume(SimpleVolume<float>& volData, Vector3DFloat v3dVolCenter, float fRadius, float cellSize);
 private:
 	//window stuff
 	int WIDTH = 800;
@@ -113,32 +131,54 @@ private:
 	VkRenderPass renderPass;
 	VkDescriptorSetLayout descriptorSetLayout;
 	VulkanGraphicsPipeline m_kPipeline;
+	VulkanGraphicsPipeline m_kOffscreenPipeline;
 	std::vector<VkFramebuffer> swapchainFrameBuffers;
 
-	VulkanBuffer vertexBuffer;
+	VulkanMesh m_kMesh;
+	VulkanMesh m_kMeshPlane;
 
 	VulkanBuffer uniformBuffer;
+	VulkanBuffer uniformBufferOffscreen;
 
 	VkCommandPool commandPool;
-	std::vector<VkCommandBuffer> commandBuffers;
+	std::vector<VulkanCommandBuffer> commandBuffers;
+	std::vector<VulkanCommandBuffer> commandBuffersSubpass;
+	std::vector<VulkanCommandBuffer> commandBuffersOffscreen;
 
 	VkCommandPool commandPoolTransfer;
 
 	std::vector<VkSemaphore> imageAvailableSemaphores;
+	std::vector<VkSemaphore> offscreenRenderSemaphores;
 	std::vector<VkSemaphore> renderFinishedSemaphores;
 	std::vector<VkFence> inFlightFences;
 	size_t currentFrame = 0;
 
 	VkDescriptorPool descriptorPool;
 	VkDescriptorSet descriptorSet;
+	VkDescriptorSet descriptorSetOffscreen;
 
-	VkImage textureImage;
-	VkDeviceMemory textureImageMemory;
+	VulkanImage textureImage;
 	VkImageView textureImageView;
 	VkSampler textureSampler;
 
-	VkImage depthImage;
-	VkDeviceMemory depthImageMemory;
+	VulkanImage depthImage;
 	VkImageView depthImageView;
 
+	// Framebuffer for offscreen rendering
+	struct FrameBufferAttachment {
+		VkImage image;
+		VkDeviceMemory mem;
+		VkImageView view;
+	};
+	struct OffscreenPass {
+		uint32_t width = 2048, height = 2048;
+		VkFramebuffer frameBuffer;
+		FrameBufferAttachment depth;
+		VkRenderPass renderPass;
+		VkSampler depthSampler;
+		VkDescriptorImageInfo descriptor;
+		//VkCommandBuffer commandBuffer = VK_NULL_HANDLE;
+		// Semaphore used to synchronize between offscreen and final scene render pass
+		//VkSemaphore semaphore = VK_NULL_HANDLE;
+	} offscreenPass;
 };

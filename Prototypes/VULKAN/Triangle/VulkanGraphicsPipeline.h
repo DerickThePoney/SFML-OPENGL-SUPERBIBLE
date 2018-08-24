@@ -38,6 +38,11 @@ public:
 	// multisampling
 	void SetMultisampling(bool bEnabled = false, VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT, float minSampleShading = 1.0f, const VkSampleMask* mask = nullptr, bool bAlphaToCoverage = false, bool alphaToOne = false);
 	
+	//blending
+	void SetBlendAttachementCount(uint32_t count);
+
+	//dynamic state
+	void SetDynamicStates(const VkDynamicState* states, uint32_t dynamicStateCount);
 
 	void CreatePipeline(VulkanDevice& device, VkDescriptorSetLayout* descriptorSetLayout, VkRenderPass renderPass);
 	void Destroy(VulkanDevice& device);
@@ -69,9 +74,10 @@ private:
 		//no need for VkPipelineViewportStateCreateInfo -->create at runtime
 		VkPipelineRasterizationStateCreateInfo rasterizer;
 		VkPipelineMultisampleStateCreateInfo multisampling;
-		VkPipelineColorBlendAttachmentState colorBlendAttachment;
+		std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachment;
 		VkPipelineColorBlendStateCreateInfo colorBlending;
 		VkPipelineDepthStencilStateCreateInfo depthStencil;
+		VkPipelineDynamicStateCreateInfo dynamicState;
 	};
 
 	DataCache m_kData;

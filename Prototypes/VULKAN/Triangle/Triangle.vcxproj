@@ -19,6 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BezierCurve.cpp" />
+    <ClCompile Include="ObjectCreator.cpp" />
+    <ClCompile Include="SignedDistanceField.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -26,12 +29,17 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Triangle.cpp" />
+    <ClCompile Include="ValueNoise2D.cpp" />
     <ClCompile Include="VulkanBuffer.cpp" />
+    <ClCompile Include="VulkanCommandBuffer.cpp" />
     <ClCompile Include="VulkanDevice.cpp" />
     <ClCompile Include="VulkanGraphicsPipeline.cpp" />
     <ClCompile Include="VulkanHelpers.cpp" />
+    <ClCompile Include="VulkanImage.cpp" />
     <ClCompile Include="VulkanInstance.cpp" />
+    <ClCompile Include="VulkanMesh.cpp" />
     <ClCompile Include="VulkanPhysicalDevice.cpp" />
+    <ClCompile Include="VulkanRenderer.cpp" />
     <ClCompile Include="VulkanShader.cpp" />
     <ClCompile Include="VulkanSurface.cpp" />
   </ItemGroup>
@@ -39,14 +47,23 @@
     <None Include="Triangle.vert" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BezierCurve.h" />
+    <ClInclude Include="BezierSpline.h" />
+    <ClInclude Include="ObjectCreator.h" />
+    <ClInclude Include="SignedDistanceField.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Triangle.h" />
+    <ClInclude Include="ValueNoise2D.h" />
     <ClInclude Include="VulkanBuffer.h" />
+    <ClInclude Include="VulkanCommandBuffer.h" />
     <ClInclude Include="VulkanDevice.h" />
     <ClInclude Include="VulkanGraphicsPipeline.h" />
     <ClInclude Include="VulkanHelpers.h" />
+    <ClInclude Include="VulkanImage.h" />
     <ClInclude Include="VulkanInstance.h" />
+    <ClInclude Include="VulkanMesh.h" />
     <ClInclude Include="VulkanPhysicalDevice.h" />
+    <ClInclude Include="VulkanRenderer.h" />
     <ClInclude Include="VulkanShader.h" />
     <ClInclude Include="VulkanSurface.h" />
   </ItemGroup>
@@ -54,7 +71,7 @@
     <ProjectGuid>{d067753e-9ca6-4ca4-8f83-2830f2d46402}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Triangle</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -119,7 +136,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\3RDPartyLibs\VulkanMemoryAllocator-master\src;..\..\..\stb;%VULKAN_SDK%\Include;..\..\..\3RdPartyLibs\glm;..\..\..\3RDPartyLibs\glfw-3.2.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\PolyVoxGIT\include;..\..\..\3RDPartyLibs\VulkanMemoryAllocator-master\src;..\..\..\stb;%VULKAN_SDK%\Include;..\..\..\3RdPartyLibs\glm;..\..\..\3RDPartyLibs\glfw-3.2.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -153,7 +170,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\3RDPartyLibs\VulkanMemoryAllocator-master\src;..\..\..\stb;%VULKAN_SDK%\Include;..\..\..\3RdPartyLibs\glm;..\..\..\3RDPartyLibs\glfw-3.2.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\PolyVoxGIT\include;..\..\..\3RDPartyLibs\VulkanMemoryAllocator-master\src;..\..\..\stb;%VULKAN_SDK%\Include;..\..\..\3RdPartyLibs\glm;..\..\..\3RDPartyLibs\glfw-3.2.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -162,6 +179,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>%VULKAN_SDK%\Lib32;..\..\..\3RDPartyLibs\glfw-3.2.1\src\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>vulkan-1.lib;glfw3.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <Profile>true</Profile>
     </Link>
     <PreBuildEvent>
       <Command>shaders/Compile.bat</Command>
@@ -183,6 +201,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>%VULKAN_SDK%\Lib32;..\..\..\3RDPartyLibs\glfw-3.2.1\src\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <Profile>true</Profile>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

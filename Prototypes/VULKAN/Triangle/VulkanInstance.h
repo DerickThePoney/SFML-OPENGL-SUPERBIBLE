@@ -1,6 +1,31 @@
 #pragma once
 
 
+class Allocator
+{
+public:
+	static void* VKAPI_PTR Allocate(
+		void*                                       pUserData,
+		size_t                                      size,
+		size_t                                      alignment,
+		VkSystemAllocationScope                     allocationScope
+	);
+
+	static void* VKAPI_PTR Reallocate(
+		void*                                       pUserData,
+		void*                                       pOriginal,
+		size_t                                      size,
+		size_t                                      alignment,
+		VkSystemAllocationScope                     allocationScope
+	);
+
+	static void VKAPI_PTR Free(
+		void*                                       pUserData,
+		void*                                       pMemory
+	);
+};
+
+
 class VulkanInstance
 {
 	NONCOPYABLE(VulkanInstance);
@@ -54,4 +79,5 @@ private:
 	VkInstance m_kInstance;
 	VkDebugReportCallbackEXT m_kDebugCallback;
 	bool m_bEnableValidationLayers;
+	VkAllocationCallbacks callbacks;
 };

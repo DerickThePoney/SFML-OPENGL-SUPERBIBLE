@@ -39,6 +39,14 @@ void Scene::Initialise(UI32 width, UI32 height)
 	
 	delete[] data;*/
 
+	if (CameraManager::main == nullptr)
+	{
+		GameObject* camera = GameObjectManager::Instance()->Instantiate();
+		camera->SetName("Main Camera");
+		camera->AddComponent<CameraComponent>();
+		m_akRootObjects.push_back(camera);
+	}
+
 	m_kTexture.InitialiseFromRessource("media/textures/Test4Component.png");
 
 
