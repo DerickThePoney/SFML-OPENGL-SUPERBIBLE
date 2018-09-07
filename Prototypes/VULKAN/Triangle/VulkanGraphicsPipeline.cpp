@@ -2,6 +2,7 @@
 #include "VulkanGraphicsPipeline.h"
 #include "VulkanDevice.h"
 #include "VulkanShader.h"
+#include "VulkanRenderPass.h"
 
 
 VulkanGraphicsPipeline::VulkanGraphicsPipeline()
@@ -150,7 +151,7 @@ void VulkanGraphicsPipeline::SetDynamicStates(const VkDynamicState * states, uin
 	m_kData.dynamicState.pDynamicStates = states;
 }
 
-void VulkanGraphicsPipeline::CreatePipeline(VulkanDevice& device, VkDescriptorSetLayout* descriptorSetLayout, VkRenderPass renderPass)
+void VulkanGraphicsPipeline::CreatePipeline(VulkanDevice& device, VkDescriptorSetLayout* descriptorSetLayout, VulkanRenderPass& renderPass)
 {
 	//create the meta struct for viewport and scissor
 	VkPipelineViewportStateCreateInfo viewportState = {};

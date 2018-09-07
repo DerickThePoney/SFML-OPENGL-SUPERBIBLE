@@ -3,6 +3,7 @@ class VulkanDevice;
 class VulkanBuffer;
 class VulkanGraphicsPipeline;
 class VulkanMesh;
+class VulkanRenderPass;
 class VulkanCommandBuffer
 {
 public:
@@ -24,7 +25,7 @@ public:
 
 	//render pass stuff
 	void BeginRenderPass(
-		VkRenderPass& pass,
+		VulkanRenderPass& pass,
 		VkFramebuffer& frameBuffer,
 		VkOffset2D& renderAreaOffset,
 		VkExtent2D& renderAreaExtent,

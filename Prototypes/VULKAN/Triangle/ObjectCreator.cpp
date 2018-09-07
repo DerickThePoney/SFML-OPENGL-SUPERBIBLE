@@ -12,30 +12,92 @@ MeshData ObjectCreator::Execute(glm::vec3 minPos, glm::vec3 maxPos, float cellSi
 		PolyVox::Vector3DInt32((int32_t)ceil(size.x / cellSize), (int32_t)ceil(size.y / cellSize), (int32_t)ceil(size.z / cellSize)))
 	);
 	//PolyVox::RawVolume<float> volData(PolyVox::Region(PolyVox::Vector3DInt32(minPos.x, minPos.y, minPos.z), PolyVox::Vector3DInt32(maxPos.x, maxPos.y, maxPos.z)));
+	auto start = std::chrono::high_resolution_clock::now();
 	BuildSDFObject();
+	auto end1 = std::chrono::high_resolution_clock::now();
+
 	SDF(volData, minPos, maxPos, 5.0f, cellSize);
+	auto end2 = std::chrono::high_resolution_clock::now();
 
 	//PolyVox::Mesh<PolyVox::Vertex<float>> mesh;
 	PolyVox::DefaultMarchingCubesController<float> ct;
 	ct.setThreshold(0);
 	PolyVox::Mesh<PolyVox::MarchingCubesVertex<float> > mesh = PolyVox::extractMarchingCubesMesh(&volData, volData.getEnclosingRegion(), ct); // Mesh< SimpleVolume<float> > surfaceExtractor(&volData, volData.getEnclosingRegion(), &mesh, DefaultMarchingCubesController<float>(0));
-
+	auto end3 = std::chrono::high_resolution_clock::now();
 	//surfaceExtractor.execute();
 
 
 	//Convienient access to the vertices and indices
 	MeshData ret;
 	ret.indices = std::vector<uint32_t>(mesh.getNoOfIndices());
+	const uint32_t* indices = mesh.getRawIndexData();
 	for (size_t i = 0; i < mesh.getNoOfIndices(); ++i)
 	{
-		ret.indices[i] = mesh.getRawIndexData()[i];
+		ret.indices[i] = indices[i];
 	}
 
-	for (uint32_t i = 0; i < mesh.getNoOfVertices(); ++i)
+	/*std::vector<glm::vec4> vert(mesh.getNoOfVertices(), glm::vec4(0,0,0,0));
+
+	for (size_t i = 0; i < ret.indices.size(); i+=3)
+	{
+		glm::vec4 v1(0, 0, 0, 3);// v2(0, 0, 0, 1), v3(0, 0, 0, 1);
+		PolyVox::Vertex<float> vmc1 = PolyVox::decodeVertex(mesh.getVertex(ret.indices[i]));
+		PolyVox::Vertex<float> vmc2 = PolyVox::decodeVertex(mesh.getVertex(ret.indices[i+1]));
+		PolyVox::Vertex<float> vmc3 = PolyVox::decodeVertex(mesh.getVertex(ret.indices[i+2]));
+		v1.x = vmc1.position.getX() * cellSize + vmc2.position.getX() * cellSize + vmc3.position.getX() * cellSize;// +minPos.x;
+		v1.y = vmc1.position.getX() * cellSize + vmc2.position.getY() * cellSize + vmc3.position.getY() * cellSize;// + minPos.y;
+		v1.z = vmc1.position.getX() * cellSize + vmc2.position.getZ() * cellSize + vmc3.position.getZ() * cellSize;// +minPos.z;
+		//v1 += minPos;
+		vert[ret.indices[i]] += v1;
+		vert[ret.indices[i+1]] += v1;
+		vert[ret.indices[i+2]] += v1;
+	}*/
+
+	auto end4 = std::chrono::high_resolution_clock::now();
+
+	ret.vertices.resize(mesh.getNoOfVertices());
+	for (uint32_t i = 0; i < ret.vertices.size(); ++i)
+	{
+		PolyVox::Vertex<float> vmc1 = PolyVox::decodeVertex(mesh.getVertex(i));
+		glm::vec3 v(vmc1.position.getX()* cellSize, vmc1.position.getY()* cellSize, vmc1.position.getZ()* cellSize);
+		//glm::vec4 t = vert[i] / vert[i].w;
+		//float ti = 0.0f;
+		ret.vertices[i].pos = v;// (1 - ti) * v + ti * (glm::vec3(t.x, t.y, t.z));
+	}
+
+	auto end5 = std::chrono::high_resolution_clock::now();
+	
+	for (size_t i = 0; i < ret.indices.size(); i += 3)
+	{
+		glm::vec3 v1, v2;
+		v1 = ret.vertices[ret.indices[i + 1]].pos - ret.vertices[ret.indices[i]].pos;
+		v2 = ret.vertices[ret.indices[i + 2]].pos - ret.vertices[ret.indices[i]].pos;
+		glm::vec3 n = glm::normalize(
+			glm::cross(
+				glm::normalize(v1),
+				glm::normalize(v2)
+			)
+		);
+		ret.vertices[ret.indices[i]].normal += n;
+		ret.vertices[ret.indices[i+1]].normal += n;
+		ret.vertices[ret.indices[i+2]].normal += n;
+	}
+	auto end6 = std::chrono::high_resolution_clock::now();
+
+	for (uint32_t i = 0; i < ret.vertices.size(); ++i)
+	{
+		ret.vertices[i].pos += minPos;
+		ret.vertices[i].normal = glm::normalize(ret.vertices[i].normal);
+		ret.vertices[i].color = (ret.vertices[i].pos.y < halfheight) ? glm::vec3(1.0f, 0.0f, 0.0f) : ((ret.vertices[i].pos.y > 2 * halfheight) ? glm::vec3(0.0f, 1.0f, 0.0f) : ((ret.vertices[i].pos.y > (2 * halfheight + this->size)) ? glm::vec3(0.0f, 0.0f, 1.0f) : glm::vec3(1.0f, 1.0f, 1.0f)));
+	}
+
+	auto end7 = std::chrono::high_resolution_clock::now();
+	/*for (uint32_t i = 0; i < mesh.getNoOfVertices(); ++i)
 	{
 		PolyVox::Vertex<float> vmc = PolyVox::decodeVertex(mesh.getVertex(i));
 		VertexData v;
-		v.pos.x = vmc.position.getX() * cellSize;
+		v.pos = vert[i];
+		/*v.pos.x = vmc.position.getX() * cellSize;
 		v.pos.y = vmc.position.getY()* cellSize;
 		v.pos.z = vmc.position.getZ()* cellSize;
 		v.pos += minPos;
@@ -49,7 +111,17 @@ MeshData ObjectCreator::Execute(glm::vec3 minPos, glm::vec3 maxPos, float cellSi
 		//v.normal *= -1;
 
 		ret.vertices.push_back(v);
-	}
+	}*/
+
+	std::cout << "Computing marching cube mesh : \n";
+	std::cout << "\tCreating the sdf : " << (float)(end1 - start).count() / 1000000.0f << "ms\n";
+	std::cout << "\tComputing the sdf : " << (float)(end2 - end1).count() / 1000000.0f << "ms\n";
+	std::cout << "\tComputing marching cube : " << (float)(end3 - end1).count() / 1000000.0f << "ms\n";
+	std::cout << "\tExtracting mesh data (LaplacianSmooth) \n";
+	std::cout << "\t\tAveraging vertex: " << (float)(end4 - end3).count() / 1000000.0f << "ms\n";
+	std::cout << "\t\tSmoothing vertex: " << (float)(end5 - end4).count() / 1000000.0f << "ms\n";
+	std::cout << "\t\tReconstructing normals: " << (float)(end6 - end5).count() / 1000000.0f << "ms\n";
+	std::cout << "\t\tFinal data: " << (float)(end7 - end6).count() / 1000000.0f << "ms\n";
 
 	return ret;
 }

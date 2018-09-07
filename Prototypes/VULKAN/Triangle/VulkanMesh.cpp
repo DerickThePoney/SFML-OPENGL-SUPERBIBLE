@@ -28,9 +28,9 @@ void VulkanMesh::Initialise(VulkanPhysicalDevice& physicalDevice, VulkanDevice &
 
 
 	//mem map
-	stagingBuffer.CopyDataToBuffer(device, 0, 0, sizeof(data.vertices[0]) * data.vertices.size(), data.vertices.data());
+	stagingBuffer.CopyDataToBuffer(physicalDevice, device, commandPool, queue, 0, 0, sizeof(data.vertices[0]) * data.vertices.size(), data.vertices.data());
 
-	stagingBuffer.CopyDataToBuffer(device, IndexPositions, 0, sizeof(data.indices[0]) * data.indices.size(), data.indices.data());
+	stagingBuffer.CopyDataToBuffer(physicalDevice, device, commandPool, queue, IndexPositions, 0, sizeof(data.indices[0]) * data.indices.size(), data.indices.data());
 
 	//actual buffer creation
 	m_kData.Init(physicalDevice, device, size, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);

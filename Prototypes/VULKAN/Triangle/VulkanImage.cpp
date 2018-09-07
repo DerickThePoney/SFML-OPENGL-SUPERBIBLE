@@ -4,6 +4,7 @@
 #include "VulkanDevice.h"
 #include "VulkanCommandBuffer.h"
 #include "VulkanBuffer.h"
+#include "VulkanImageView.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -23,7 +24,7 @@ VulkanImage::~VulkanImage()
 {
 }
 
-void VulkanImage::Init(VulkanPhysicalDevice & physicalDevice, VulkanDevice & device, VkCommandPool & pool, VkQueue & graphicsQueue, VkQueue & transferQueue, const std::string & filename)
+void VulkanImage::Init(VulkanPhysicalDevice & physicalDevice, VulkanDevice & device, VkCommandPool & pool, VkQueue & graphicsQueue, VkQueue & transferQueue, const std::string & filename, VkFormat format, VkImageTiling imageTiling, VkImageUsageFlags usage, VkMemoryPropertyFlags memoryFlags)
 {
 	int texWidth, texHeight, texChannels;
 	stbi_uc* pixels = stbi_load("textures/texture.jpg", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
@@ -38,12 +39,12 @@ void VulkanImage::Init(VulkanPhysicalDevice & physicalDevice, VulkanDevice & dev
 	VulkanBuffer stagingBuffer;
 	stagingBuffer.Init(physicalDevice, device, imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-	stagingBuffer.CopyDataToBuffer(device, 0, 0, imageSize, pixels);
+	stagingBuffer.CopyDataToBuffer(physicalDevice, device, pool, transferQueue, 0, 0, imageSize, pixels);
 
 	stbi_image_free(pixels);
 
 	//create the image
-	Init(physicalDevice, device, texWidth, texHeight, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+	Init(physicalDevice, device, texWidth, texHeight, format, imageTiling, usage, memoryFlags);
 
 	TransitionImageLayout(device, pool, graphicsQueue, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 	CopyBufferToImage(device, pool, transferQueue, stagingBuffer);
@@ -252,23 +253,10 @@ void VulkanImage::TransitionImageLayout(VulkanDevice& device, VkCommandPool& poo
 	VulkanCommandBuffer::Free(commandBuffer, device, pool);
 }
 
-VkImageView VulkanImage::CreateImageView(VulkanDevice & device, VkFormat format, VkImageAspectFlags aspectMask)
+VulkanImageView VulkanImage::CreateImageView(VulkanDevice & device, VkFormat format, VkImageAspectFlags aspectMask)
 {
-	VkImageViewCreateInfo viewInfo = {};
-	viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-	viewInfo.image = m_kImage;
-	viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-	viewInfo.format = format;
-	viewInfo.subresourceRange.aspectMask = aspectMask;
-	viewInfo.subresourceRange.baseMipLevel = 0;
-	viewInfo.subresourceRange.levelCount = 1;
-	viewInfo.subresourceRange.baseArrayLayer = 0;
-	viewInfo.subresourceRange.layerCount = 1;
+	VulkanImageView view;
+	view.Init(device, *this, format, aspectMask);
 
-	VkImageView imageView;
-	if (vkCreateImageView(device, &viewInfo, nullptr, &imageView) != VK_SUCCESS) {
-		throw std::runtime_error("failed to create texture image view!");
-	}
-
-	return imageView;
+	return view;
 }

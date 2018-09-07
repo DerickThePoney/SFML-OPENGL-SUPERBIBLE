@@ -4,6 +4,7 @@
 #include "VulkanGraphicsPipeline.h"
 #include "VulkanBuffer.h"
 #include "VulkanMesh.h"
+#include "VulkanRenderPass.h"
 
 
 VulkanCommandBuffer VulkanCommandBuffer::CreateCommandBuffer(VulkanDevice& device, VkCommandPool & pool, VkCommandBufferLevel level)
@@ -101,7 +102,7 @@ VkResult VulkanCommandBuffer::Reset(VkCommandBufferResetFlagBits flags)
 	return vkResetCommandBuffer(m_kBufferObject, flags);
 }
 
-void VulkanCommandBuffer::BeginRenderPass(VkRenderPass & pass, VkFramebuffer & frameBuffer, VkOffset2D & renderAreaOffset, VkExtent2D & renderAreaExtent, std::vector<VkClearValue>& clearValues, VkSubpassContents subpassContent)
+void VulkanCommandBuffer::BeginRenderPass(VulkanRenderPass & pass, VkFramebuffer & frameBuffer, VkOffset2D & renderAreaOffset, VkExtent2D & renderAreaExtent, std::vector<VkClearValue>& clearValues, VkSubpassContents subpassContent)
 {
 	VkRenderPassBeginInfo renderPassInfo = {};
 	renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;

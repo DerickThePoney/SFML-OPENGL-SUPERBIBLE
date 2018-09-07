@@ -55,11 +55,23 @@ void VulkanBuffer::Init(VulkanPhysicalDevice& physicalDevice, const VkDevice& de
 
 	vkBindBufferMemory(device, m_kBuffer, m_kBufferMemory, 0);
 	m_uiSize = size;
+	m_eUsage = usage;
+	m_eMemoryProperties = memoryProperties;
 }
 
-void VulkanBuffer::MapBuffer(const VkDevice & device, VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, void ** ppData)
+VkResult VulkanBuffer::MapBuffer(const VkDevice & device, VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, void ** ppData)
 {
-	vkMapMemory(device, m_kBufferMemory, offset, size, flags, ppData);
+	return vkMapMemory(device, m_kBufferMemory, offset, size, flags, ppData);
+}
+
+VkResult VulkanBuffer::FlushMappedMemory(const VkDevice & device)
+{
+	VkMappedMemoryRange range = {};
+	range.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
+	range.memory = m_kBufferMemory;
+	range.size = m_uiSize;
+	range.offset = 0;
+	return vkFlushMappedMemoryRanges(device, 1, &range);
 }
 
 void VulkanBuffer::UnMapBuffer(const VkDevice & device)
@@ -67,12 +79,33 @@ void VulkanBuffer::UnMapBuffer(const VkDevice & device)
 	vkUnmapMemory(device, m_kBufferMemory);
 }
 
-void VulkanBuffer::CopyDataToBuffer(const VkDevice & device, VkDeviceSize offset, VkMemoryMapFlags flags, VkDeviceSize iDataSize, const void * pData)
+void VulkanBuffer::CopyDataToBuffer(VulkanPhysicalDevice& physicalDevice, const VkDevice & device, const VkCommandPool& transferPool, const VkQueue& queue, VkDeviceSize offset, VkMemoryMapFlags flags, VkDeviceSize iDataSize, const void * pData)
 {
-	void* data;
-	MapBuffer(device, offset, iDataSize, flags, &data);
-	memcpy(data, pData, (size_t)iDataSize);
-	UnMapBuffer(device);
+	if (IsMappable())
+	{
+		void* data;
+		MapBuffer(device, offset, iDataSize, flags, &data);
+		memcpy(data, pData, (size_t)iDataSize);
+		if (ShouldFlush()) FlushMappedMemory(device);
+		UnMapBuffer(device);
+	}
+	else if(IsTransferDst())
+	{
+		VulkanBuffer staging;
+		staging.Init(physicalDevice, device, iDataSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+		void* data;
+		staging.MapBuffer(device, 0, iDataSize, 0, &data);
+		memcpy(data, pData, (size_t)iDataSize);
+		if (ShouldFlush()) FlushMappedMemory(device);
+		staging.UnMapBuffer(device);
+
+		staging.CopyBufferTo(*this, device, transferPool, queue);
+	}
+	else
+	{
+		//TODO: ERRORS
+	}
+	
 }
 
 void VulkanBuffer::CopyBufferTo(const VulkanBuffer & other, const VkDevice & device, const VkCommandPool & transferPool, const VkQueue& queue)
@@ -123,4 +156,24 @@ void VulkanBuffer::Free(const VkDevice& device)
 	vkDestroyBuffer(device, m_kBuffer, nullptr);
 	m_kBufferMemory = 0;
 	m_kBuffer = 0;
+}
+
+bool VulkanBuffer::IsMappable()
+{
+	return m_eMemoryProperties & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+}
+
+bool VulkanBuffer::ShouldFlush()
+{
+	return !(m_eMemoryProperties & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+}
+
+bool VulkanBuffer::IsTransferSrc()
+{
+	return m_eUsage & VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+}
+
+bool VulkanBuffer::IsTransferDst()
+{
+	return m_eUsage & VK_BUFFER_USAGE_TRANSFER_DST_BIT;
 }

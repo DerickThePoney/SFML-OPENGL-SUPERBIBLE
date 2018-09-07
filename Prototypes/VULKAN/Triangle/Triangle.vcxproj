@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BezierCurve.cpp" />
+    <ClCompile Include="BlockAllocator.cpp" />
     <ClCompile Include="ObjectCreator.cpp" />
     <ClCompile Include="SignedDistanceField.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -33,13 +34,16 @@
     <ClCompile Include="VulkanBuffer.cpp" />
     <ClCompile Include="VulkanCommandBuffer.cpp" />
     <ClCompile Include="VulkanDevice.cpp" />
+    <ClCompile Include="VulkanFramebuffer.cpp" />
     <ClCompile Include="VulkanGraphicsPipeline.cpp" />
     <ClCompile Include="VulkanHelpers.cpp" />
     <ClCompile Include="VulkanImage.cpp" />
+    <ClCompile Include="VulkanImageView.cpp" />
     <ClCompile Include="VulkanInstance.cpp" />
     <ClCompile Include="VulkanMesh.cpp" />
     <ClCompile Include="VulkanPhysicalDevice.cpp" />
     <ClCompile Include="VulkanRenderer.cpp" />
+    <ClCompile Include="VulkanRenderPass.cpp" />
     <ClCompile Include="VulkanShader.cpp" />
     <ClCompile Include="VulkanSurface.cpp" />
   </ItemGroup>
@@ -49,6 +53,7 @@
   <ItemGroup>
     <ClInclude Include="BezierCurve.h" />
     <ClInclude Include="BezierSpline.h" />
+    <ClInclude Include="BlockAllocator.h" />
     <ClInclude Include="ObjectCreator.h" />
     <ClInclude Include="SignedDistanceField.h" />
     <ClInclude Include="stdafx.h" />
@@ -57,13 +62,16 @@
     <ClInclude Include="VulkanBuffer.h" />
     <ClInclude Include="VulkanCommandBuffer.h" />
     <ClInclude Include="VulkanDevice.h" />
+    <ClInclude Include="VulkanFramebuffer.h" />
     <ClInclude Include="VulkanGraphicsPipeline.h" />
     <ClInclude Include="VulkanHelpers.h" />
     <ClInclude Include="VulkanImage.h" />
+    <ClInclude Include="VulkanImageView.h" />
     <ClInclude Include="VulkanInstance.h" />
     <ClInclude Include="VulkanMesh.h" />
     <ClInclude Include="VulkanPhysicalDevice.h" />
     <ClInclude Include="VulkanRenderer.h" />
+    <ClInclude Include="VulkanRenderPass.h" />
     <ClInclude Include="VulkanShader.h" />
     <ClInclude Include="VulkanSurface.h" />
   </ItemGroup>

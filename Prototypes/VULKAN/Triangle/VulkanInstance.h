@@ -1,5 +1,5 @@
 #pragma once
-
+#include "BlockAllocator.h"
 
 class Allocator
 {
@@ -23,6 +23,40 @@ public:
 		void*                                       pUserData,
 		void*                                       pMemory
 	);
+
+	static void DisplayAlignmentsAndSizes();
+
+private:
+	static Allocator instance;
+
+	void* InstanceAllocate(
+		void*                                       pUserData,
+		size_t                                      size,
+		size_t                                      alignment,
+		VkSystemAllocationScope                     allocationScope
+	);
+
+	void* InstanceReallocate(
+		void*                                       pUserData,
+		void*                                       pOriginal,
+		size_t                                      size,
+		size_t                                      alignment,
+		VkSystemAllocationScope                     allocationScope
+	);
+
+	void InstanceFree(
+		void*                                       pUserData,
+		void*                                       pMemory
+	);
+
+	void InstanceDisplayAlignmentsAndSizes();
+
+private:
+	std::set<uint32_t> alignements;
+	std::map<uint32_t, uint32_t> sizes;
+	std::map<VkSystemAllocationScope, uint32_t> allocsPerType;
+
+	uint32_t totalSize;
 };
 
 

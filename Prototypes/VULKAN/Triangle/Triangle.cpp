@@ -25,10 +25,12 @@ static std::vector<char> readFile(const std::string& filename) {
 
 void HelloTriangleApplication::Run()
 {
+	TestBlockAlocator();
 	InitWindow();
 	InitVulkan();
 	MainLoop();
 	Cleanup();
+	Allocator::DisplayAlignmentsAndSizes();
 }
 
 void HelloTriangleApplication::InitWindow()
@@ -100,6 +102,38 @@ void HelloTriangleApplication::MainLoop()
 	vkDeviceWaitIdle(m_kDevice);
 }
 
+void HelloTriangleApplication::TestBlockAlocator()
+{
+	BlockAllocator<8, 4, 16> alloc;
+
+	double* d1 = reinterpret_cast<double*>(alloc.Allocate());
+	double* d2 = reinterpret_cast<double*>(alloc.Allocate());
+	double* d3 = reinterpret_cast<double*>(alloc.Allocate());
+	double* d4 = reinterpret_cast<double*>(alloc.Allocate());
+	double* d5 = reinterpret_cast<double*>(alloc.Allocate());
+	double* d6 = reinterpret_cast<double*>(alloc.Allocate());
+
+	alloc.Free(d1);
+	alloc.Free(d2);
+	alloc.Free(d3);
+	d1 = reinterpret_cast<double*>(alloc.Allocate());
+	d2 = reinterpret_cast<double*>(alloc.Allocate());
+	d3 = reinterpret_cast<double*>(alloc.Allocate());
+	alloc.Free(d4);
+	alloc.Free(d5);
+	alloc.Free(d6);
+	d4 = reinterpret_cast<double*>(alloc.Allocate());
+	d5 = reinterpret_cast<double*>(alloc.Allocate());
+	d6 = reinterpret_cast<double*>(alloc.Allocate());
+
+	alloc.Free(d1);
+	alloc.Free(d2);
+	alloc.Free(d3);
+	alloc.Free(d4);
+	alloc.Free(d5);
+	alloc.Free(d6);
+}
+
 void HelloTriangleApplication::UpdateUniformBufferData()
 {
 	static auto startTime = std::chrono::high_resolution_clock::now();
@@ -168,7 +202,7 @@ void HelloTriangleApplication::Cleanup()
 	m_kMeshPlane.Destroy(m_kDevice);
 
 	vkDestroySampler(m_kDevice, textureSampler, nullptr);
-	vkDestroyImageView(m_kDevice, textureImageView, nullptr);
+	textureImageView.Destroy(m_kDevice);
 	textureImage.Free(m_kDevice);
 
 
@@ -301,8 +335,17 @@ void HelloTriangleApplication::CreateSwapChain()
 	}
 
 	vkGetSwapchainImagesKHR(m_kDevice, swapChain, &imageCount, nullptr);
+	m_akSwapChainImages.resize(imageCount);
+	std::vector<VkImage> swapChainImages(imageCount);
 	swapChainImages.resize(imageCount);
 	vkGetSwapchainImagesKHR(m_kDevice, swapChain, &imageCount, swapChainImages.data());
+
+	for (uint32_t i = 0; i < imageCount; ++i)
+	{
+		m_akSwapChainImages[i].Init(swapChainImages[i], extent.width, extent.height,
+			surfaceFormat.format, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT);
+	}
+
 
 	swapChainImageFormat = surfaceFormat.format;
 	swapChainExtent = extent;
@@ -310,11 +353,11 @@ void HelloTriangleApplication::CreateSwapChain()
 
 void HelloTriangleApplication::CreateImageViews()
 {
-	swapChainImageViews.resize(swapChainImages.size());
+	m_akSwapChainImageViews.resize(m_akSwapChainImages.size());
 
-	for (size_t i = 0; i < swapChainImages.size(); i++) 
+	for (size_t i = 0; i < m_akSwapChainImages.size(); i++)
 	{
-		swapChainImageViews[i] = CreateImageView(swapChainImages[i], swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT);
+		m_akSwapChainImageViews[i] = m_akSwapChainImages[i].CreateImageView(m_kDevice, swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT);
 	}
 
 }
@@ -346,7 +389,7 @@ void HelloTriangleApplication::CreateGraphicsPipeline()
 	//m_kPipeline.SetPolygonMode(VK_POLYGON_MODE_LINE, .2f);
 
 	//Create the pipline
-	m_kPipeline.CreatePipeline(m_kDevice, &descriptorSetLayout, renderPass);
+	m_kPipeline.CreatePipeline(m_kDevice, &descriptorSetLayout, m_kRenderPass);
 
 
 	//offscreen
@@ -366,98 +409,45 @@ void HelloTriangleApplication::CreateGraphicsPipeline()
 
 void HelloTriangleApplication::CreateRenderPass()
 {
-	VkAttachmentDescription colorAttachement = {};
-	colorAttachement.format = swapChainImageFormat;
-	colorAttachement.samples = VK_SAMPLE_COUNT_1_BIT;
-	colorAttachement.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-	colorAttachement.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+	m_kRenderPass.AddAttachment(
+		ATTACHMENT_COLOR, swapChainImageFormat, VK_SAMPLE_COUNT_1_BIT, VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_STORE,
+		VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+	);
 
-	colorAttachement.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-	colorAttachement.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+	m_kRenderPass.AddAttachment(
+		ATTACHMENT_DEPTH, FindDepthFormat(), VK_SAMPLE_COUNT_1_BIT, VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_DONT_CARE,
+		VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+		VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
+	);
 
-	colorAttachement.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-	colorAttachement.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+	m_kRenderPass.AddSubpass(VK_PIPELINE_BIND_POINT_GRAPHICS, { 0 }, { 0 }, {});
 
-	VkAttachmentDescription depthAttachement = {};
-	depthAttachement.format = FindDepthFormat();
-	depthAttachement.samples = VK_SAMPLE_COUNT_1_BIT;
-	depthAttachement.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-	depthAttachement.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+	m_kRenderPass.AddSubpassDependency(VK_SUBPASS_EXTERNAL, 0, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, VK_ACCESS_MEMORY_READ_BIT,
+		VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+		VK_DEPENDENCY_BY_REGION_BIT);
+	m_kRenderPass.AddSubpassDependency(0, VK_SUBPASS_EXTERNAL, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+		VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, VK_ACCESS_MEMORY_READ_BIT,
+		VK_DEPENDENCY_BY_REGION_BIT);
 
-	depthAttachement.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-	depthAttachement.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+	m_kRenderPass.Init(m_kDevice);
 
-	depthAttachement.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-	depthAttachement.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-
-
-
-	VkAttachmentReference colorAttachementRef = {};
-	colorAttachementRef.attachment = 0;
-	colorAttachementRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
-	VkAttachmentReference depthAttachementRef = {};
-	depthAttachementRef.attachment = 1;
-	depthAttachementRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-
-
-	//subpass
-	VkSubpassDescription subpass = {};
-	subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-	subpass.colorAttachmentCount = 1;
-	subpass.pColorAttachments = &colorAttachementRef;
-	subpass.pDepthStencilAttachment = &depthAttachementRef;
-
-	//SUBPASS DEPENDENCY
-	std::vector<VkSubpassDependency> dependency = { {},{} };
-	dependency[0].srcSubpass = VK_SUBPASS_EXTERNAL;
-	dependency[0].dstSubpass = 0;
-	dependency[0].srcStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
-	dependency[0].srcAccessMask = VK_ACCESS_MEMORY_READ_BIT;
-	dependency[0].dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-	dependency[0].dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-	dependency[0].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
-
-	dependency[1].srcSubpass = 0;
-	dependency[1].dstSubpass = VK_SUBPASS_EXTERNAL;
-	dependency[1].srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-	dependency[1].srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-	dependency[1].dstStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
-	dependency[1].dstAccessMask = VK_ACCESS_MEMORY_READ_BIT;
-	dependency[1].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
-
-
-	// render pass creation
-	std::array<VkAttachmentDescription, 2> attachments = { colorAttachement, depthAttachement };
-	VkRenderPassCreateInfo renderPassInfo = {};
-	renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-	renderPassInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
-	renderPassInfo.pAttachments = attachments.data();
-	renderPassInfo.subpassCount = 1;
-	renderPassInfo.pSubpasses = &subpass;
-	renderPassInfo.dependencyCount = dependency.size();
-	renderPassInfo.pDependencies = dependency.data();
-
-	if (vkCreateRenderPass(m_kDevice, &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS)
-	{
-		throw std::runtime_error("Unable to create the render pass!");
-	}
 }
 
 void HelloTriangleApplication::CreateFrameBuffers()
 {
-	swapchainFrameBuffers.resize(swapChainImageViews.size());
+	swapchainFrameBuffers.resize(m_akSwapChainImageViews.size());
 
-	for (size_t i = 0; i < swapChainImageViews.size(); ++i)
+	for (size_t i = 0; i < m_akSwapChainImageViews.size(); ++i)
 	{
 		std::array<VkImageView, 2> attachements = {
-			swapChainImageViews[i],
+			m_akSwapChainImageViews[i],
 			depthImageView
 		};
 
 		VkFramebufferCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-		createInfo.renderPass = renderPass;
+		createInfo.renderPass = m_kRenderPass;
 		createInfo.attachmentCount = static_cast<uint32_t>(attachements.size());
 		createInfo.pAttachments = attachements.data();
 		createInfo.width = swapChainExtent.width;
@@ -484,7 +474,7 @@ void HelloTriangleApplication::CreateCommandPool()
 void HelloTriangleApplication::CreateVertexBuffers()
 {	
 	ObjectCreator c;
-	MeshData data = c.Execute(glm::vec3(-4, -2, -4), glm::vec3(4, 4, 4), .05f);
+	MeshData data = c.Execute(glm::vec3(-4, -2, -4), glm::vec3(4, 4, 4), .2f);
 	m_kMesh.Initialise(m_kPhysicalDevice, m_kDevice, data, commandPoolTransfer, transferQueue);
 	const float extent = 10.0f;
 	MeshData Plane;
@@ -519,7 +509,7 @@ void HelloTriangleApplication::CreateUniformBuffer()
 
 void HelloTriangleApplication::CreateTextureImage()
 {
-	textureImage.Init(m_kPhysicalDevice, m_kDevice, commandPoolTransfer, graphicsQueue, transferQueue, "textures/texture.jpg");
+	textureImage.Init(m_kPhysicalDevice, m_kDevice, commandPoolTransfer, graphicsQueue, transferQueue, "textures/texture.jpg", VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 }
 
 
@@ -595,7 +585,7 @@ void HelloTriangleApplication::CreateCommandBuffers()
 		clearColor[1].depthStencil = { 1.0f, 0 };
 		commandBuffers[i].BeginRenderPass
 		(
-			renderPass,
+			m_kRenderPass,
 			swapchainFrameBuffers[i],
 			VkOffset2D({ 0, 0 }),
 			swapChainExtent,
@@ -743,7 +733,7 @@ void HelloTriangleApplication::DrawFrame()
 
 void HelloTriangleApplication::CleanUpSwapChain()
 {
-	vkDestroyImageView(m_kDevice, depthImageView, nullptr);
+	depthImageView.Destroy(m_kDevice);
 	depthImage.Free(m_kDevice);
 
 	for (size_t i = 0; i < swapchainFrameBuffers.size(); i++) {
@@ -753,10 +743,10 @@ void HelloTriangleApplication::CleanUpSwapChain()
 	VulkanCommandBuffer::Free(commandBuffers, m_kDevice, commandPool);
 
 	m_kPipeline.Destroy(m_kDevice);
-	vkDestroyRenderPass(m_kDevice, renderPass, nullptr);
+	m_kRenderPass.Destroy(m_kDevice);
 
-	for (size_t i = 0; i < swapChainImageViews.size(); i++) {
-		vkDestroyImageView(m_kDevice, swapChainImageViews[i], nullptr);
+	for (size_t i = 0; i < m_akSwapChainImageViews.size(); i++) {
+		m_akSwapChainImageViews[i].Destroy(m_kDevice);
 	}
 
 	vkDestroySwapchainKHR(m_kDevice, swapChain, nullptr);
@@ -898,7 +888,7 @@ void HelloTriangleApplication::SetupSubpassBuffer()
 	VkCommandBufferInheritanceInfo inheritanceInfo = {};
 	inheritanceInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
 	inheritanceInfo.framebuffer = swapchainFrameBuffers[currentFrame];
-	inheritanceInfo.renderPass = renderPass;
+	inheritanceInfo.renderPass = m_kRenderPass;
 
 	std::cout << currentFrame << std::endl;
 	if (commandBuffersSubpass[currentFrame].BeginCommandBuffer(VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT, &inheritanceInfo) != VK_SUCCESS) {
@@ -926,9 +916,10 @@ void HelloTriangleApplication::CreateOffscreenRenderPass()
 	VkFormat fbColorFormat = VK_FORMAT_R8G8B8A8_UNORM;
 
 	// For shadow mapping we only need a depth attachment
-	CreateImage(offscreenPass.width, offscreenPass.height, VK_FORMAT_D16_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, offscreenPass.depth.image, offscreenPass.depth.mem);
+	offscreenPass.depth.image.Init(m_kPhysicalDevice, m_kDevice, offscreenPass.width, offscreenPass.height, VK_FORMAT_D16_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+	//CreateImage(offscreenPass.width, offscreenPass.height, VK_FORMAT_D16_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, offscreenPass.depth.image, offscreenPass.depth.mem);
 	
-	offscreenPass.depth.view = CreateImageView(offscreenPass.depth.image, VK_FORMAT_D16_UNORM, VK_IMAGE_ASPECT_DEPTH_BIT);
+	offscreenPass.depth.view = offscreenPass.depth.image.CreateImageView(m_kDevice, VK_FORMAT_D16_UNORM, VK_IMAGE_ASPECT_DEPTH_BIT);
 
 
 	// Create sampler to sample from to depth attachment 
@@ -959,7 +950,8 @@ void HelloTriangleApplication::CreateOffscreenRenderPass()
 	fbufCreateInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
 	fbufCreateInfo.renderPass = offscreenPass.renderPass;
 	fbufCreateInfo.attachmentCount = 1;
-	fbufCreateInfo.pAttachments = &offscreenPass.depth.view;
+	VkImageView view = offscreenPass.depth.view;
+	fbufCreateInfo.pAttachments = &view;
 	fbufCreateInfo.width = offscreenPass.width;
 	fbufCreateInfo.height = offscreenPass.height;
 	fbufCreateInfo.layers = 1;
@@ -971,57 +963,18 @@ void HelloTriangleApplication::CreateOffscreenRenderPass()
 }
 void HelloTriangleApplication::PrepareOffscreenPass()
 {
-	VkAttachmentDescription attachmentDescription{};
-	attachmentDescription.format = VK_FORMAT_D16_UNORM;
-	attachmentDescription.samples = VK_SAMPLE_COUNT_1_BIT;
-	attachmentDescription.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;							// Clear depth at beginning of the render pass
-	attachmentDescription.storeOp = VK_ATTACHMENT_STORE_OP_STORE;						// We will read from depth, so it's important to store the depth attachment results
-	attachmentDescription.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-	attachmentDescription.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-	attachmentDescription.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;					// We don't care about initial layout of the attachment
-	attachmentDescription.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;// Attachment will be transitioned to shader read at render pass end
-
-	VkAttachmentReference depthReference = {};
-	depthReference.attachment = 0;
-	depthReference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;			// Attachment will be used as depth/stencil during render pass
-
-	VkSubpassDescription subpass = {};
-	subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-	subpass.colorAttachmentCount = 0;													// No color attachments
-	subpass.pDepthStencilAttachment = &depthReference;									// Reference to our depth attachment
-
-	// Use subpass dependencies for layout transitions
-	std::array<VkSubpassDependency, 2> dependencies;
-
-	dependencies[0].srcSubpass = VK_SUBPASS_EXTERNAL;
-	dependencies[0].dstSubpass = 0;
-	dependencies[0].srcStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
-	dependencies[0].dstStageMask = VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
-	dependencies[0].srcAccessMask = VK_ACCESS_SHADER_READ_BIT;
-	dependencies[0].dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
-	dependencies[0].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
-
-	dependencies[1].srcSubpass = 0;
-	dependencies[1].dstSubpass = VK_SUBPASS_EXTERNAL;
-	dependencies[1].srcStageMask = VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
-	dependencies[1].dstStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-	dependencies[1].srcAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
-	dependencies[1].dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-	dependencies[1].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
-
-	VkRenderPassCreateInfo renderPassCreateInfo = {};
-	renderPassCreateInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-	renderPassCreateInfo.attachmentCount = 1;
-	renderPassCreateInfo.pAttachments = &attachmentDescription;
-	renderPassCreateInfo.subpassCount = 1;
-	renderPassCreateInfo.pSubpasses = &subpass;
-	renderPassCreateInfo.dependencyCount = static_cast<uint32_t>(dependencies.size());
-	renderPassCreateInfo.pDependencies = dependencies.data();
-
-	if (vkCreateRenderPass(m_kDevice, &renderPassCreateInfo, nullptr, &offscreenPass.renderPass) != VK_SUCCESS)
-	{
-		throw std::runtime_error("Unable to create the render pass!");
-	}
+	offscreenPass.renderPass.AddAttachment(ATTACHMENT_DEPTH, VK_FORMAT_D16_UNORM, VK_SAMPLE_COUNT_1_BIT,
+		VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_STORE, VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE,
+		VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
+	);
+	offscreenPass.renderPass.AddSubpass(VK_PIPELINE_BIND_POINT_GRAPHICS, {}, { 0 }, {});
+	offscreenPass.renderPass.AddSubpassDependency(VK_SUBPASS_EXTERNAL, 0, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT,
+		VK_ACCESS_SHADER_READ_BIT, VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
+		VK_DEPENDENCY_BY_REGION_BIT);
+	offscreenPass.renderPass.AddSubpassDependency(0, VK_SUBPASS_EXTERNAL, VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+		VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT, VK_ACCESS_SHADER_READ_BIT,
+		VK_DEPENDENCY_BY_REGION_BIT);
+	offscreenPass.renderPass.Init(m_kDevice);
 }
 void HelloTriangleApplication::CreateOffscreenCommandBuffers()
 {
@@ -1078,13 +1031,12 @@ void HelloTriangleApplication::CreateOffscreenCommandBuffers()
 void HelloTriangleApplication::CleanUpOffscreenPass()
 {
 	VulkanCommandBuffer::Free(commandBuffersOffscreen, m_kDevice, commandPool);
-	vkDestroyImageView(m_kDevice, offscreenPass.depth.view, nullptr);
-	vkDestroyImage(m_kDevice, offscreenPass.depth.image, nullptr);
-	vkFreeMemory(m_kDevice, offscreenPass.depth.mem, nullptr);
+	offscreenPass.depth.view.Destroy(m_kDevice);
+	offscreenPass.depth.image.Free(m_kDevice);
 	vkDestroyFramebuffer(m_kDevice, offscreenPass.frameBuffer, nullptr);
 
 	m_kOffscreenPipeline.Destroy(m_kDevice);
-	vkDestroyRenderPass(m_kDevice, offscreenPass.renderPass, nullptr);
+	offscreenPass.renderPass.Destroy(m_kDevice);
 }
 /////HELPERS
 	

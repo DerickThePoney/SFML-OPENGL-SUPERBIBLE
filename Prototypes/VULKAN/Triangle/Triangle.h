@@ -9,6 +9,8 @@
 #include "VulkanBuffer.h"
 #include "VulkanCommandBuffer.h"
 #include "VulkanImage.h"
+#include "VulkanImageView.h"
+#include "VulkanRenderPass.h"
 
 #include "ObjectCreator.h"
 
@@ -23,6 +25,7 @@ public:
 	void InitWindow();
 	void InitVulkan();
 	void MainLoop();
+	void TestBlockAlocator();
 
 	void UpdateUniformBufferData();
 	void Cleanup();
@@ -124,11 +127,11 @@ private:
 	VkQueue transferQueue;
 
 	VkSwapchainKHR swapChain;
-	std::vector<VkImage> swapChainImages;
+	std::vector<VulkanImage> m_akSwapChainImages;
 	VkFormat swapChainImageFormat;
 	VkExtent2D swapChainExtent;
-	std::vector<VkImageView> swapChainImageViews;
-	VkRenderPass renderPass;
+	std::vector<VulkanImageView> m_akSwapChainImageViews;
+	VulkanRenderPass m_kRenderPass;
 	VkDescriptorSetLayout descriptorSetLayout;
 	VulkanGraphicsPipeline m_kPipeline;
 	VulkanGraphicsPipeline m_kOffscreenPipeline;
@@ -158,23 +161,23 @@ private:
 	VkDescriptorSet descriptorSetOffscreen;
 
 	VulkanImage textureImage;
-	VkImageView textureImageView;
+	VulkanImageView textureImageView;
 	VkSampler textureSampler;
 
 	VulkanImage depthImage;
-	VkImageView depthImageView;
+	VulkanImageView depthImageView;
 
 	// Framebuffer for offscreen rendering
 	struct FrameBufferAttachment {
-		VkImage image;
-		VkDeviceMemory mem;
-		VkImageView view;
+		VulkanImage image;
+		//VkDeviceMemory mem;
+		VulkanImageView view;
 	};
 	struct OffscreenPass {
 		uint32_t width = 2048, height = 2048;
 		VkFramebuffer frameBuffer;
 		FrameBufferAttachment depth;
-		VkRenderPass renderPass;
+		VulkanRenderPass renderPass;
 		VkSampler depthSampler;
 		VkDescriptorImageInfo descriptor;
 		//VkCommandBuffer commandBuffer = VK_NULL_HANDLE;

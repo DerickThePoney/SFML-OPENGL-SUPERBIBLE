@@ -160,37 +160,41 @@ void VulkanInstance::DestroyDebugReportCallbackEXT(VkInstance instance, VkDebugR
 	}
 }
 
+Allocator Allocator::instance = {};
+
 void * Allocator::Allocate(void * pUserData, size_t size, size_t alignment, VkSystemAllocationScope allocationScope)
 {
-	void* res = _aligned_malloc(size, alignment);
-	std::cout << "Allocating " << size << " bytes with alignement " << alignment << " into " << res << " with scope ";
-
-	switch (allocationScope)
-	{
-	case VK_SYSTEM_ALLOCATION_SCOPE_COMMAND:
-		std::cout << "VK_SYSTEM_ALLOCATION_SCOPE_COMMAND";
-		break;
-	case VK_SYSTEM_ALLOCATION_SCOPE_OBJECT:
-		std::cout << "VK_SYSTEM_ALLOCATION_SCOPE_OBJECT";
-		break;
-	case VK_SYSTEM_ALLOCATION_SCOPE_CACHE:
-		std::cout << "VK_SYSTEM_ALLOCATION_SCOPE_CACHE";
-		break;
-	case VK_SYSTEM_ALLOCATION_SCOPE_DEVICE:
-		std::cout << "VK_SYSTEM_ALLOCATION_SCOPE_DEVICE";
-		break;
-	case VK_SYSTEM_ALLOCATION_SCOPE_INSTANCE:
-		std::cout << "VK_SYSTEM_ALLOCATION_SCOPE_INSTANCE";
-		break;
-	}
-
-	std::cout << std::endl;
-	return res;
+	return instance.InstanceAllocate(pUserData, size, alignment, allocationScope);
 }
 
 void * Allocator::Reallocate(void * pUserData, void * pOriginal, size_t size, size_t alignment, VkSystemAllocationScope allocationScope)
 {
-	std::cout << "Reacclocating " << pOriginal << " to size " << size << " bytes with alignement " << alignment << std::endl;
+	return instance.InstanceReallocate(pUserData, pOriginal, size, alignment, allocationScope);
+}
+
+void Allocator::Free(void * pUserData, void * pMemory)
+{
+	instance.InstanceFree(pUserData, pMemory);
+}
+
+void Allocator::DisplayAlignmentsAndSizes()
+{
+	instance.InstanceDisplayAlignmentsAndSizes();
+}
+
+void * Allocator::InstanceAllocate(void * pUserData, size_t size, size_t alignment, VkSystemAllocationScope allocationScope)
+{
+	void* res = _aligned_malloc(size, alignment);
+	alignements.insert(alignment);
+	sizes[size] +=1;
+	totalSize += size;
+	allocsPerType[allocationScope] += 1;
+	return res;
+}
+
+void * Allocator::InstanceReallocate(void * pUserData, void * pOriginal, size_t size, size_t alignment, VkSystemAllocationScope allocationScope)
+{
+	//std::cout << "Reacclocating " << pOriginal << " to size " << size << " bytes with alignement " << alignment << std::endl;
 	if (pOriginal == NULL) return Allocate(pUserData, size, alignment, allocationScope);
 	if (size == 0)
 	{
@@ -199,15 +203,60 @@ void * Allocator::Reallocate(void * pUserData, void * pOriginal, size_t size, si
 	}
 
 	size_t originalSize = _aligned_msize(pOriginal, alignment, 0);
-	void* newPtr = Allocate(pUserData, size, alignment, allocationScope);
+	void* newPtr = InstanceAllocate(pUserData, size, alignment, allocationScope);
 	memcpy(newPtr, pOriginal, std::min(originalSize, size));
 	Free(pUserData, pOriginal);
 
+	//alignements.insert(alignment);
+	//sizes[size] += 1;
+	totalSize -= originalSize;
+	//allocsPerType[allocationScope] += 1;
 	return newPtr;
 }
 
-void Allocator::Free(void * pUserData, void * pMemory)
+void Allocator::InstanceFree(void * pUserData, void * pMemory)
 {
-	std::cout << "Free " << pMemory << std::endl;
+	//std::cout << "Free " << pMemory << std::endl;
 	_aligned_free(pMemory);
+}
+
+void Allocator::InstanceDisplayAlignmentsAndSizes()
+{
+	std::cout << "Alignements" << std::endl;
+	for (auto it = alignements.begin(); it != alignements.end(); ++it)
+	{
+		std::cout << "\t" << *it << std::endl;
+	}
+
+	std::cout << "Total allocated size: " << totalSize << std::endl;
+
+	std::cout << "Sizes" << std::endl;
+	for (auto it = sizes.begin(); it != sizes.end(); ++it)
+	{
+		std::cout << "\t" << it->first << ": " << it->second << std::endl;
+	}
+
+	for (auto it = allocsPerType.begin(); it != allocsPerType.end(); ++it)
+	{
+		switch (it->first)
+		{
+		case VK_SYSTEM_ALLOCATION_SCOPE_COMMAND:
+			std::cout << "VK_SYSTEM_ALLOCATION_SCOPE_COMMAND";
+			break;
+		case VK_SYSTEM_ALLOCATION_SCOPE_OBJECT:
+			std::cout << "VK_SYSTEM_ALLOCATION_SCOPE_OBJECT";
+			break;
+		case VK_SYSTEM_ALLOCATION_SCOPE_CACHE:
+			std::cout << "VK_SYSTEM_ALLOCATION_SCOPE_CACHE";
+			break;
+		case VK_SYSTEM_ALLOCATION_SCOPE_DEVICE:
+			std::cout << "VK_SYSTEM_ALLOCATION_SCOPE_DEVICE";
+			break;
+		case VK_SYSTEM_ALLOCATION_SCOPE_INSTANCE:
+			std::cout << "VK_SYSTEM_ALLOCATION_SCOPE_INSTANCE";
+			break;
+		}
+
+		std::cout << ": " << it->second << std::endl;
+	}
 }

@@ -2,6 +2,7 @@
 
 class VulkanShader;
 class VulkanDevice;
+class VulkanRenderPass;
 enum SHADER_TYPE;
 
 struct ShadersFileType
@@ -44,7 +45,7 @@ public:
 	//dynamic state
 	void SetDynamicStates(const VkDynamicState* states, uint32_t dynamicStateCount);
 
-	void CreatePipeline(VulkanDevice& device, VkDescriptorSetLayout* descriptorSetLayout, VkRenderPass renderPass);
+	void CreatePipeline(VulkanDevice& device, VkDescriptorSetLayout* descriptorSetLayout, VulkanRenderPass& renderPass);
 	void Destroy(VulkanDevice& device);
 
 	operator VkPipeline() { return m_kGraphicsPipeline; }

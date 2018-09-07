@@ -19,6 +19,9 @@
     <Filter Include="SignedDistanceFieldsObjects">
       <UniqueIdentifier>{082cc4a7-cf7c-455b-ac3d-e5305f222e2b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Memory">
+      <UniqueIdentifier>{fb691e2a-4ea4-40a5-9915-891f8fd98574}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Triangle.cpp">
@@ -73,6 +76,18 @@
       <Filter>VulkanObjects</Filter>
     </ClCompile>
     <ClCompile Include="VulkanImage.cpp">
+      <Filter>VulkanObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanImageView.cpp">
+      <Filter>VulkanObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="BlockAllocator.cpp">
+      <Filter>Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanFramebuffer.cpp">
+      <Filter>VulkanObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanRenderPass.cpp">
       <Filter>VulkanObjects</Filter>
     </ClCompile>
   </ItemGroup>
@@ -135,6 +150,18 @@
       <Filter>VulkanObjects</Filter>
     </ClInclude>
     <ClInclude Include="VulkanImage.h">
+      <Filter>VulkanObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanImageView.h">
+      <Filter>VulkanObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="BlockAllocator.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanFramebuffer.h">
+      <Filter>VulkanObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanRenderPass.h">
       <Filter>VulkanObjects</Filter>
     </ClInclude>
   </ItemGroup>

@@ -19,6 +19,7 @@ struct SwapChainSupportDetails {
 
 struct VertexData
 {
+	VertexData() : pos(glm::vec3(0)), normal(glm::vec3(0)), color(glm::vec3(1)), texCoord(glm::vec2(0)){}
 	glm::vec3 pos;
 	glm::vec3 normal;
 	glm::vec3 color;
