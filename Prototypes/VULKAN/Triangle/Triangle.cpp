@@ -186,7 +186,7 @@ void HelloTriangleApplication::Cleanup()
 	vkDestroyDescriptorSetLayout(m_kDevice, descriptorSetLayout, nullptr);
 
 
-	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
+	for (size_t i = 0; i < renderFinishedSemaphores.size(); i++)
 	{
 		vkDestroySemaphore(m_kDevice, renderFinishedSemaphores[i], nullptr);
 		vkDestroySemaphore(m_kDevice, imageAvailableSemaphores[i], nullptr);
@@ -436,28 +436,14 @@ void HelloTriangleApplication::CreateRenderPass()
 
 void HelloTriangleApplication::CreateFrameBuffers()
 {
-	swapchainFrameBuffers.resize(m_akSwapChainImageViews.size());
+	m_akSwapchainFrameBuffers.resize(m_akSwapChainImageViews.size());
 
 	for (size_t i = 0; i < m_akSwapChainImageViews.size(); ++i)
 	{
-		std::array<VkImageView, 2> attachements = {
-			m_akSwapChainImageViews[i],
-			depthImageView
-		};
+		m_akSwapchainFrameBuffers[i].AddAttachement(m_akSwapChainImageViews[i]);
+		m_akSwapchainFrameBuffers[i].AddAttachement(depthImageView);
 
-		VkFramebufferCreateInfo createInfo = {};
-		createInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-		createInfo.renderPass = m_kRenderPass;
-		createInfo.attachmentCount = static_cast<uint32_t>(attachements.size());
-		createInfo.pAttachments = attachements.data();
-		createInfo.width = swapChainExtent.width;
-		createInfo.height = swapChainExtent.height;
-		createInfo.layers = 1;
-
-		if (vkCreateFramebuffer(m_kDevice, &createInfo, nullptr, &swapchainFrameBuffers[i]) != VK_SUCCESS)
-		{
-			throw std::runtime_error("Unable to build frame buffers");
-		}
+		m_akSwapchainFrameBuffers[i].Init(m_kDevice, m_kRenderPass, swapChainExtent.width, swapChainExtent.height, 1);
 	}
 }
 
@@ -545,7 +531,7 @@ void HelloTriangleApplication::CreateTextureSampler()
 	}
 }
 	
-void HelloTriangleApplication::CreateDepthResources()
+/**/void HelloTriangleApplication::CreateDepthResources()
 {
 	VkFormat depthFormat = FindDepthFormat();
 	depthImage.Init(m_kPhysicalDevice, m_kDevice, swapChainExtent.width, swapChainExtent.height, depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
@@ -558,7 +544,7 @@ void HelloTriangleApplication::CreateDepthResources()
 
 void HelloTriangleApplication::CreateCommandBuffers()
 {
-	commandBuffers = VulkanCommandBuffer::CreateCommandBuffers(m_kDevice, commandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, swapchainFrameBuffers.size());
+	commandBuffers = VulkanCommandBuffer::CreateCommandBuffers(m_kDevice, commandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, m_akSwapchainFrameBuffers.size());
 	//commandBuffersSubpass = VulkanCommandBuffer::CreateCommandBuffers(m_kDevice, commandPool, VK_COMMAND_BUFFER_LEVEL_SECONDARY, swapchainFrameBuffers.size());
 
 	for (size_t i = 0; i < commandBuffers.size(); i++)
@@ -586,7 +572,7 @@ void HelloTriangleApplication::CreateCommandBuffers()
 		commandBuffers[i].BeginRenderPass
 		(
 			m_kRenderPass,
-			swapchainFrameBuffers[i],
+			m_akSwapchainFrameBuffers[i],
 			VkOffset2D({ 0, 0 }),
 			swapChainExtent,
 			clearColor,
@@ -617,10 +603,10 @@ void HelloTriangleApplication::CreateCommandBuffers()
 }
 
 void HelloTriangleApplication::CreateSyncObjects() {
-	imageAvailableSemaphores.resize(swapchainFrameBuffers.size());
-	renderFinishedSemaphores.resize(swapchainFrameBuffers.size());
-	offscreenRenderSemaphores.resize(swapchainFrameBuffers.size());
-	inFlightFences.resize(swapchainFrameBuffers.size());
+	imageAvailableSemaphores.resize(m_akSwapchainFrameBuffers.size());
+	renderFinishedSemaphores.resize(m_akSwapchainFrameBuffers.size());
+	offscreenRenderSemaphores.resize(m_akSwapchainFrameBuffers.size());
+	inFlightFences.resize(m_akSwapchainFrameBuffers.size());
 
 	VkSemaphoreCreateInfo semaphoreInfo = {};
 	semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -629,7 +615,7 @@ void HelloTriangleApplication::CreateSyncObjects() {
 	fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 	fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-	for (size_t i = 0; i < swapchainFrameBuffers.size(); i++) {
+	for (size_t i = 0; i < m_akSwapchainFrameBuffers.size(); i++) {
 		if (vkCreateSemaphore(m_kDevice, &semaphoreInfo, nullptr, &imageAvailableSemaphores[i]) != VK_SUCCESS ||
 			vkCreateSemaphore(m_kDevice, &semaphoreInfo, nullptr, &renderFinishedSemaphores[i]) != VK_SUCCESS ||
 			vkCreateSemaphore(m_kDevice, &semaphoreInfo, nullptr, &offscreenRenderSemaphores[i]) != VK_SUCCESS ||
@@ -733,23 +719,23 @@ void HelloTriangleApplication::DrawFrame()
 
 void HelloTriangleApplication::CleanUpSwapChain()
 {
-	depthImageView.Destroy(m_kDevice);
+	/*depthImageView.Destroy(m_kDevice);
 	depthImage.Free(m_kDevice);
 
-	for (size_t i = 0; i < swapchainFrameBuffers.size(); i++) {
-		vkDestroyFramebuffer(m_kDevice, swapchainFrameBuffers[i], nullptr);
-	}
+	for (size_t i = 0; i < m_akSwapchainFrameBuffers.size(); i++) {
+		m_akSwapchainFrameBuffers[i].Destroy(m_kDevice);
+	}*/
 
 	VulkanCommandBuffer::Free(commandBuffers, m_kDevice, commandPool);
 
 	m_kPipeline.Destroy(m_kDevice);
-	m_kRenderPass.Destroy(m_kDevice);
+	/*m_kRenderPass.Destroy(m_kDevice);
 
 	for (size_t i = 0; i < m_akSwapChainImageViews.size(); i++) {
 		m_akSwapChainImageViews[i].Destroy(m_kDevice);
 	}
 
-	vkDestroySwapchainKHR(m_kDevice, swapChain, nullptr);
+	vkDestroySwapchainKHR(m_kDevice, swapChain, nullptr);*/
 }
 
 void HelloTriangleApplication::RecreateSwapChain()
@@ -887,7 +873,7 @@ void HelloTriangleApplication::SetupSubpassBuffer()
 {
 	VkCommandBufferInheritanceInfo inheritanceInfo = {};
 	inheritanceInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
-	inheritanceInfo.framebuffer = swapchainFrameBuffers[currentFrame];
+	inheritanceInfo.framebuffer = m_akSwapchainFrameBuffers[currentFrame];
 	inheritanceInfo.renderPass = m_kRenderPass;
 
 	std::cout << currentFrame << std::endl;
@@ -910,9 +896,9 @@ void HelloTriangleApplication::SetupSubpassBuffer()
 
 void HelloTriangleApplication::CreateOffscreenRenderPass()
 {
-	offscreenPass.width = 2048;
+	/*offscreenPass.width = 2048;
 	offscreenPass.height = 2048;
-
+*/
 	VkFormat fbColorFormat = VK_FORMAT_R8G8B8A8_UNORM;
 
 	// For shadow mapping we only need a depth attachment
@@ -946,20 +932,8 @@ void HelloTriangleApplication::CreateOffscreenRenderPass()
 	PrepareOffscreenPass();
 
 	// Create frame buffer
-	VkFramebufferCreateInfo fbufCreateInfo = {};
-	fbufCreateInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-	fbufCreateInfo.renderPass = offscreenPass.renderPass;
-	fbufCreateInfo.attachmentCount = 1;
-	VkImageView view = offscreenPass.depth.view;
-	fbufCreateInfo.pAttachments = &view;
-	fbufCreateInfo.width = offscreenPass.width;
-	fbufCreateInfo.height = offscreenPass.height;
-	fbufCreateInfo.layers = 1;
-
-	if (vkCreateFramebuffer(m_kDevice, &fbufCreateInfo, nullptr, &offscreenPass.frameBuffer) != VK_SUCCESS)
-	{
-		throw std::runtime_error("Unable to createframe buffer!");
-	}
+	offscreenPass.frameBuffer.AddAttachement(offscreenPass.depth.view);
+	offscreenPass.frameBuffer.Init(m_kDevice, m_kRenderPass, offscreenPass.width, offscreenPass.height, 1);
 }
 void HelloTriangleApplication::PrepareOffscreenPass()
 {
@@ -978,7 +952,7 @@ void HelloTriangleApplication::PrepareOffscreenPass()
 }
 void HelloTriangleApplication::CreateOffscreenCommandBuffers()
 {
-	commandBuffersOffscreen = VulkanCommandBuffer::CreateCommandBuffers(m_kDevice, commandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, swapchainFrameBuffers.size());
+	commandBuffersOffscreen = VulkanCommandBuffer::CreateCommandBuffers(m_kDevice, commandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, m_akSwapchainFrameBuffers.size());
 
 	for (size_t i = 0; i < commandBuffersOffscreen.size(); ++i)
 	{
@@ -1033,7 +1007,7 @@ void HelloTriangleApplication::CleanUpOffscreenPass()
 	VulkanCommandBuffer::Free(commandBuffersOffscreen, m_kDevice, commandPool);
 	offscreenPass.depth.view.Destroy(m_kDevice);
 	offscreenPass.depth.image.Free(m_kDevice);
-	vkDestroyFramebuffer(m_kDevice, offscreenPass.frameBuffer, nullptr);
+	offscreenPass.frameBuffer.Destroy(m_kDevice);
 
 	m_kOffscreenPipeline.Destroy(m_kDevice);
 	offscreenPass.renderPass.Destroy(m_kDevice);

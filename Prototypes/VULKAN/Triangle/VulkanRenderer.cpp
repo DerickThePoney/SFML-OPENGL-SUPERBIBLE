@@ -2,6 +2,8 @@
 #include "VulkanRenderer.h"
 
 
+VulkanRenderer VulkanRenderer::instance = {};
+
 VulkanRenderer::VulkanRenderer()
 {
 }
@@ -11,7 +13,18 @@ VulkanRenderer::~VulkanRenderer()
 {
 }
 
-void VulkanRenderer::Init(GLFWwindow* window)
+void VulkanRenderer::Init(GLFWwindow * window)
+{
+	instance.InstanceInit(window);
+}
+
+void VulkanRenderer::Cleanup()
+{
+	instance.InstanceCleanup();
+}
+
+
+void VulkanRenderer::InstanceInit(GLFWwindow* window)
 {
 	glfwGetWindowSize(window, &width, &height);
 	CreateInstance();
@@ -19,13 +32,16 @@ void VulkanRenderer::Init(GLFWwindow* window)
 	PickPhysicalDevice();
 	CreateLogicalDevice();
 	CreateSwapChain();
-	CreateImageViews();
-	//CreateRenderPass();
-	//CreateDescriptorSetLayout();
+
+
+	CreateFinalRenderPass();
+	CreateDescriptorPool();
+	CreateDescriptorSetLayout();
 	//CreateGraphicsPipeline();
 	CreateCommandPool();
-	//CreateDepthResources();
+	CreateDepthAttachment();
 	CreateFrameBuffers();
+	CreateSyncObjects();
 
 
 	/*CreateTextureImage();
@@ -39,9 +55,46 @@ void VulkanRenderer::Init(GLFWwindow* window)
 	CreateSyncObjects();*/
 }
 
-void VulkanRenderer::Cleanup()
+void VulkanRenderer::InstanceCleanup()
 {
+	CleanupSwapChain();
+	vkDestroyDescriptorPool(m_kDevice, descriptorPool, nullptr);
+	vkDestroyDescriptorSetLayout(m_kDevice, descriptorSetLayout, nullptr);
+
+	for (size_t i = 0; i < renderFinishedSemaphores.size(); i++)
+	{
+		vkDestroySemaphore(m_kDevice, renderFinishedSemaphores[i], nullptr);
+		vkDestroySemaphore(m_kDevice, imageAvailableSemaphores[i], nullptr);
+		//vkDestroySemaphore(m_kDevice, offscreenRenderSemaphores[i], nullptr);
+		vkDestroyFence(m_kDevice, inFlightFences[i], nullptr);
+	}
+
+	vkDestroyCommandPool(m_kDevice, commandPoolTransfer, nullptr);
+	vkDestroyCommandPool(m_kDevice, commandPoolGraphics, nullptr);
+	m_kDevice.Destroy();
+	m_kSurface.Destroy(m_kInstance);
 	m_kInstance.Destroy();
+}
+
+void VulkanRenderer::CleanupSwapChain()
+{
+	depthAttachement.view.Destroy(m_kDevice);
+	depthAttachement.image.Free(m_kDevice);
+
+	for (size_t i = 0; i < m_akSwapchainFrameBuffers.size(); i++) {
+		m_akSwapchainFrameBuffers[i].Destroy(m_kDevice);
+	}
+
+	//VulkanCommandBuffer::Free(commandBuffers, m_kDevice, commandPoolGraphics);
+
+	//m_kPipeline.Destroy(m_kDevice);
+	m_kFinalRenderPass.Destroy(m_kDevice);
+
+	for (size_t i = 0; i < m_kSwapwhain.swapchainAttachments.size(); i++) {
+		m_kSwapwhain.swapchainAttachments[i].view.Destroy(m_kDevice);
+	}
+
+	vkDestroySwapchainKHR(m_kDevice, m_kSwapwhain.swapChain, nullptr);
 }
 
 void VulkanRenderer::CreateInstance()
@@ -127,45 +180,84 @@ void VulkanRenderer::CreateSwapChain()
 
 	createInfo.oldSwapchain = VK_NULL_HANDLE;
 
-	if (vkCreateSwapchainKHR(m_kDevice, &createInfo, nullptr, &swapChain) != VK_SUCCESS)
+	if (vkCreateSwapchainKHR(m_kDevice, &createInfo, nullptr, &m_kSwapwhain.swapChain) != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to create swap chain!");
 	}
 
-	vkGetSwapchainImagesKHR(m_kDevice, swapChain, &imageCount, nullptr);
+	vkGetSwapchainImagesKHR(m_kDevice, m_kSwapwhain.swapChain, &imageCount, nullptr);
+	std::vector<VkImage> swapChainImages(imageCount);
 	swapChainImages.resize(imageCount);
-	vkGetSwapchainImagesKHR(m_kDevice, swapChain, &imageCount, swapChainImages.data());
+	m_kSwapwhain.swapchainAttachments.resize(imageCount);
+	vkGetSwapchainImagesKHR(m_kDevice, m_kSwapwhain.swapChain, &imageCount, swapChainImages.data());
 
-	swapChainImageFormat = surfaceFormat.format;
-	swapChainExtent = extent;
+	for (uint32_t i = 0; i < imageCount; ++i)
+	{
+		m_kSwapwhain.swapchainAttachments[i].image.Init(swapChainImages[i], extent.width, extent.height,
+			surfaceFormat.format, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT);
+	}
+
+
+	m_kSwapwhain.swapChainImageFormat = surfaceFormat.format;
+	m_kSwapwhain.swapChainExtent = extent;
+	CreateImageViews();
 }
 
 void VulkanRenderer::CreateImageViews()
 {
-	swapChainImageViews.resize(swapChainImages.size());
-
-	for (size_t i = 0; i < swapChainImages.size(); i++)
+	for (size_t i = 0; i < m_kSwapwhain.swapchainAttachments.size(); i++)
 	{
-		VkImageViewCreateInfo viewInfo = {};
-		viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-		viewInfo.image = swapChainImages[i];
-		viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-		viewInfo.format = swapChainImageFormat;
-		viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		viewInfo.subresourceRange.baseMipLevel = 0;
-		viewInfo.subresourceRange.levelCount = 1;
-		viewInfo.subresourceRange.baseArrayLayer = 0;
-		viewInfo.subresourceRange.layerCount = 1;
-
-		if (vkCreateImageView(m_kDevice, &viewInfo, nullptr, &swapChainImageViews[i]) != VK_SUCCESS)
-		{
-			throw std::runtime_error("failed to create texture image view!");
-		}
+		m_kSwapwhain.swapchainAttachments[i].view = m_kSwapwhain.swapchainAttachments[i].image.CreateImageView(m_kDevice, m_kSwapwhain.swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT);
 	}
+}
+
+void VulkanRenderer::CreateDepthAttachment()
+{
+	VkFormat depthFormat = FindDepthFormat();
+	depthAttachement.image.Init(m_kPhysicalDevice, m_kDevice, m_kSwapwhain.swapChainExtent.width, m_kSwapwhain.swapChainExtent.height, depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+	depthAttachement.view = depthAttachement.image.CreateImageView(m_kDevice, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
+
+	depthAttachement.image.TransitionImageLayout(m_kDevice, commandPoolGraphics, graphicsQueue, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+
 }
 
 void VulkanRenderer::CreateFrameBuffers()
 {
+	m_akSwapchainFrameBuffers.resize(m_kSwapwhain.swapchainAttachments.size());
+
+	for (size_t i = 0; i < m_kSwapwhain.swapchainAttachments.size(); ++i)
+	{
+		m_akSwapchainFrameBuffers[i].AddAttachement(m_kSwapwhain.swapchainAttachments[i].view);
+		m_akSwapchainFrameBuffers[i].AddAttachement(depthAttachement.view);
+
+		m_akSwapchainFrameBuffers[i].Init(m_kDevice, m_kFinalRenderPass, m_kSwapwhain.swapChainExtent.width, m_kSwapwhain.swapChainExtent.height, 1);
+	}
+}
+
+void VulkanRenderer::CreateSyncObjects()
+{
+	imageAvailableSemaphores.resize(m_akSwapchainFrameBuffers.size());
+	renderFinishedSemaphores.resize(m_akSwapchainFrameBuffers.size());
+	//offscreenRenderSemaphores.resize(m_akSwapchainFrameBuffers.size());
+	inFlightFences.resize(m_akSwapchainFrameBuffers.size());
+
+	VkSemaphoreCreateInfo semaphoreInfo = {};
+	semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+
+	VkFenceCreateInfo fenceInfo = {};
+	fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+	fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+
+	for (size_t i = 0; i < m_akSwapchainFrameBuffers.size(); i++) {
+		if (vkCreateSemaphore(m_kDevice, &semaphoreInfo, nullptr, &imageAvailableSemaphores[i]) != VK_SUCCESS ||
+			vkCreateSemaphore(m_kDevice, &semaphoreInfo, nullptr, &renderFinishedSemaphores[i]) != VK_SUCCESS ||
+			//vkCreateSemaphore(m_kDevice, &semaphoreInfo, nullptr, &offscreenRenderSemaphores[i]) != VK_SUCCESS ||
+			vkCreateFence(m_kDevice, &fenceInfo, nullptr, &inFlightFences[i]) != VK_SUCCESS) {
+
+			throw std::runtime_error("failed to create synchronization objects for a frame!");
+		}
+	}
 }
 
 void VulkanRenderer::CreateCommandPool()
@@ -176,7 +268,7 @@ void VulkanRenderer::CreateCommandPool()
 	poolInfo.queueFamilyIndex = indices.graphicsFamily;
 	poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 
-	if (vkCreateCommandPool(m_kDevice, &poolInfo, nullptr, &commandPool) != VK_SUCCESS)
+	if (vkCreateCommandPool(m_kDevice, &poolInfo, nullptr, &commandPoolGraphics) != VK_SUCCESS)
 	{
 		throw std::runtime_error("Unable to create graphics command pool");
 	}
@@ -188,6 +280,78 @@ void VulkanRenderer::CreateCommandPool()
 	{
 		throw std::runtime_error("Unable to create graphics command pool");
 	}
+}
+
+void VulkanRenderer::CreateDescriptorPool()
+{
+	std::array<VkDescriptorPoolSize, 2> poolSizes = {};
+	poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	poolSizes[0].descriptorCount = 2;
+	poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	poolSizes[1].descriptorCount = 1;
+
+	VkDescriptorPoolCreateInfo poolInfo = {};
+	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+	poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
+	poolInfo.pPoolSizes = poolSizes.data();
+	poolInfo.maxSets = 4;
+
+	if (vkCreateDescriptorPool(m_kDevice, &poolInfo, nullptr, &descriptorPool) != VK_SUCCESS) {
+		throw std::runtime_error("failed to create descriptor pool!");
+	}
+}
+
+void VulkanRenderer::CreateDescriptorSetLayout()
+{
+	VkDescriptorSetLayoutBinding uboLayoutBinding = {};
+	uboLayoutBinding.binding = 0;
+	uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	uboLayoutBinding.descriptorCount = 1;
+	uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+	uboLayoutBinding.pImmutableSamplers = nullptr;
+
+	VkDescriptorSetLayoutBinding samplerLayoutBinding = {};
+	samplerLayoutBinding.binding = 1;
+	samplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	samplerLayoutBinding.descriptorCount = 1;
+	samplerLayoutBinding.pImmutableSamplers = nullptr;
+	samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+
+	std::array<VkDescriptorSetLayoutBinding, 2> bindings = { uboLayoutBinding, samplerLayoutBinding };
+	VkDescriptorSetLayoutCreateInfo layoutInfo = {};
+	layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+	layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
+	layoutInfo.pBindings = bindings.data();
+
+	if (vkCreateDescriptorSetLayout(m_kDevice, &layoutInfo, nullptr, &descriptorSetLayout) != VK_SUCCESS) {
+		throw std::runtime_error("failed to create descriptor set layout!");
+	}
+}
+
+void VulkanRenderer::CreateFinalRenderPass()
+{
+	m_kFinalRenderPass.AddAttachment(
+		ATTACHMENT_COLOR, m_kSwapwhain.swapChainImageFormat, VK_SAMPLE_COUNT_1_BIT, VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_STORE,
+		VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+	);
+
+	m_kFinalRenderPass.AddAttachment(
+		ATTACHMENT_DEPTH, FindDepthFormat(), VK_SAMPLE_COUNT_1_BIT, VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_DONT_CARE,
+		VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+		VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
+	);
+
+	m_kFinalRenderPass.AddSubpass(VK_PIPELINE_BIND_POINT_GRAPHICS, { 0 }, { 0 }, {});
+
+	m_kFinalRenderPass.AddSubpassDependency(VK_SUBPASS_EXTERNAL, 0, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, VK_ACCESS_MEMORY_READ_BIT,
+		VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+		VK_DEPENDENCY_BY_REGION_BIT);
+	m_kFinalRenderPass.AddSubpassDependency(0, VK_SUBPASS_EXTERNAL, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+		VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, VK_ACCESS_MEMORY_READ_BIT,
+		VK_DEPENDENCY_BY_REGION_BIT);
+
+	m_kFinalRenderPass.Init(m_kDevice);
 }
 
 VkSurfaceFormatKHR VulkanRenderer::ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats)
@@ -238,3 +402,11 @@ VkExtent2D VulkanRenderer::ChooseSwapExtent(const VkSurfaceCapabilitiesKHR & cap
 		return actualExtent;
 	}
 }
+
+VkFormat VulkanRenderer::FindDepthFormat()
+{
+	return m_kPhysicalDevice.FindSupportedFormats({ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT, VK_FORMAT_D16_UNORM, VK_FORMAT_D16_UNORM_S8_UINT },
+		VK_IMAGE_TILING_OPTIMAL,
+		VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
+}
+

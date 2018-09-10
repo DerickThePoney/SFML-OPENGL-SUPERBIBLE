@@ -4,6 +4,7 @@ class VulkanBuffer;
 class VulkanGraphicsPipeline;
 class VulkanMesh;
 class VulkanRenderPass;
+class VulkanFramebuffer;
 class VulkanCommandBuffer
 {
 public:
@@ -26,7 +27,7 @@ public:
 	//render pass stuff
 	void BeginRenderPass(
 		VulkanRenderPass& pass,
-		VkFramebuffer& frameBuffer,
+		VulkanFramebuffer& frameBuffer,
 		VkOffset2D& renderAreaOffset,
 		VkExtent2D& renderAreaExtent,
 		std::vector<VkClearValue>& clearValues,

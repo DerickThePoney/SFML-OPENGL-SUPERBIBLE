@@ -11,6 +11,7 @@
 #include "VulkanImage.h"
 #include "VulkanImageView.h"
 #include "VulkanRenderPass.h"
+#include "VulkanFramebuffer.h"
 
 #include "ObjectCreator.h"
 
@@ -135,7 +136,7 @@ private:
 	VkDescriptorSetLayout descriptorSetLayout;
 	VulkanGraphicsPipeline m_kPipeline;
 	VulkanGraphicsPipeline m_kOffscreenPipeline;
-	std::vector<VkFramebuffer> swapchainFrameBuffers;
+	std::vector<VulkanFramebuffer> m_akSwapchainFrameBuffers;
 
 	VulkanMesh m_kMesh;
 	VulkanMesh m_kMeshPlane;
@@ -174,8 +175,8 @@ private:
 		VulkanImageView view;
 	};
 	struct OffscreenPass {
-		uint32_t width = 2048, height = 2048;
-		VkFramebuffer frameBuffer;
+		const uint32_t width = 4096, height = 4096;
+		VulkanFramebuffer frameBuffer;
 		FrameBufferAttachment depth;
 		VulkanRenderPass renderPass;
 		VkSampler depthSampler;

@@ -13,14 +13,17 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="VulkanObjects">
-      <UniqueIdentifier>{06161e4e-247d-483e-b3e3-b24f3c021be1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="SignedDistanceFieldsObjects">
       <UniqueIdentifier>{082cc4a7-cf7c-455b-ac3d-e5305f222e2b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Memory">
       <UniqueIdentifier>{fb691e2a-4ea4-40a5-9915-891f8fd98574}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="VulkanRendering">
+      <UniqueIdentifier>{1af6f45c-76b2-4039-ac44-f042b099feb0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="VulkanRendering\VulkanObjects">
+      <UniqueIdentifier>{06161e4e-247d-483e-b3e3-b24f3c021be1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -31,34 +34,34 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="VulkanHelpers.cpp">
-      <Filter>VulkanObjects</Filter>
+      <Filter>VulkanRendering\VulkanObjects</Filter>
     </ClCompile>
     <ClCompile Include="VulkanInstance.cpp">
-      <Filter>VulkanObjects</Filter>
+      <Filter>VulkanRendering\VulkanObjects</Filter>
     </ClCompile>
     <ClCompile Include="VulkanBuffer.cpp">
-      <Filter>VulkanObjects</Filter>
+      <Filter>VulkanRendering\VulkanObjects</Filter>
     </ClCompile>
     <ClCompile Include="VulkanSurface.cpp">
-      <Filter>VulkanObjects</Filter>
+      <Filter>VulkanRendering\VulkanObjects</Filter>
     </ClCompile>
     <ClCompile Include="VulkanPhysicalDevice.cpp">
-      <Filter>VulkanObjects</Filter>
+      <Filter>VulkanRendering\VulkanObjects</Filter>
     </ClCompile>
     <ClCompile Include="VulkanDevice.cpp">
-      <Filter>VulkanObjects</Filter>
+      <Filter>VulkanRendering\VulkanObjects</Filter>
     </ClCompile>
     <ClCompile Include="VulkanGraphicsPipeline.cpp">
-      <Filter>VulkanObjects</Filter>
+      <Filter>VulkanRendering\VulkanObjects</Filter>
     </ClCompile>
     <ClCompile Include="VulkanShader.cpp">
-      <Filter>VulkanObjects</Filter>
+      <Filter>VulkanRendering\VulkanObjects</Filter>
     </ClCompile>
     <ClCompile Include="VulkanCommandBuffer.cpp">
-      <Filter>VulkanObjects</Filter>
+      <Filter>VulkanRendering\VulkanObjects</Filter>
     </ClCompile>
     <ClCompile Include="VulkanMesh.cpp">
-      <Filter>VulkanObjects</Filter>
+      <Filter>VulkanRendering\VulkanObjects</Filter>
     </ClCompile>
     <ClCompile Include="ObjectCreator.cpp">
       <Filter>SignedDistanceFieldsObjects</Filter>
@@ -72,23 +75,23 @@
     <ClCompile Include="BezierCurve.cpp">
       <Filter>SignedDistanceFieldsObjects</Filter>
     </ClCompile>
-    <ClCompile Include="VulkanRenderer.cpp">
-      <Filter>VulkanObjects</Filter>
-    </ClCompile>
     <ClCompile Include="VulkanImage.cpp">
-      <Filter>VulkanObjects</Filter>
+      <Filter>VulkanRendering\VulkanObjects</Filter>
     </ClCompile>
     <ClCompile Include="VulkanImageView.cpp">
-      <Filter>VulkanObjects</Filter>
+      <Filter>VulkanRendering\VulkanObjects</Filter>
     </ClCompile>
     <ClCompile Include="BlockAllocator.cpp">
       <Filter>Memory</Filter>
     </ClCompile>
     <ClCompile Include="VulkanFramebuffer.cpp">
-      <Filter>VulkanObjects</Filter>
+      <Filter>VulkanRendering\VulkanObjects</Filter>
     </ClCompile>
     <ClCompile Include="VulkanRenderPass.cpp">
-      <Filter>VulkanObjects</Filter>
+      <Filter>VulkanRendering\VulkanObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanRenderer.cpp">
+      <Filter>VulkanRendering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -99,37 +102,37 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="VulkanHelpers.h">
-      <Filter>VulkanObjects</Filter>
+      <Filter>VulkanRendering\VulkanObjects</Filter>
     </ClInclude>
     <ClInclude Include="VulkanInstance.h">
-      <Filter>VulkanObjects</Filter>
+      <Filter>VulkanRendering\VulkanObjects</Filter>
     </ClInclude>
     <ClInclude Include="VulkanBuffer.h">
-      <Filter>VulkanObjects</Filter>
+      <Filter>VulkanRendering\VulkanObjects</Filter>
     </ClInclude>
     <ClInclude Include="VulkanSurface.h">
-      <Filter>VulkanObjects</Filter>
+      <Filter>VulkanRendering\VulkanObjects</Filter>
     </ClInclude>
     <ClInclude Include="VulkanPhysicalDevice.h">
-      <Filter>VulkanObjects</Filter>
+      <Filter>VulkanRendering\VulkanObjects</Filter>
     </ClInclude>
     <ClInclude Include="Triangle.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="VulkanDevice.h">
-      <Filter>VulkanObjects</Filter>
+      <Filter>VulkanRendering\VulkanObjects</Filter>
     </ClInclude>
     <ClInclude Include="VulkanShader.h">
-      <Filter>VulkanObjects</Filter>
+      <Filter>VulkanRendering\VulkanObjects</Filter>
     </ClInclude>
     <ClInclude Include="VulkanGraphicsPipeline.h">
-      <Filter>VulkanObjects</Filter>
+      <Filter>VulkanRendering\VulkanObjects</Filter>
     </ClInclude>
     <ClInclude Include="VulkanCommandBuffer.h">
-      <Filter>VulkanObjects</Filter>
+      <Filter>VulkanRendering\VulkanObjects</Filter>
     </ClInclude>
     <ClInclude Include="VulkanMesh.h">
-      <Filter>VulkanObjects</Filter>
+      <Filter>VulkanRendering\VulkanObjects</Filter>
     </ClInclude>
     <ClInclude Include="ObjectCreator.h">
       <Filter>SignedDistanceFieldsObjects</Filter>
@@ -146,23 +149,23 @@
     <ClInclude Include="BezierSpline.h">
       <Filter>SignedDistanceFieldsObjects</Filter>
     </ClInclude>
-    <ClInclude Include="VulkanRenderer.h">
-      <Filter>VulkanObjects</Filter>
-    </ClInclude>
     <ClInclude Include="VulkanImage.h">
-      <Filter>VulkanObjects</Filter>
+      <Filter>VulkanRendering\VulkanObjects</Filter>
     </ClInclude>
     <ClInclude Include="VulkanImageView.h">
-      <Filter>VulkanObjects</Filter>
+      <Filter>VulkanRendering\VulkanObjects</Filter>
     </ClInclude>
     <ClInclude Include="BlockAllocator.h">
       <Filter>Memory</Filter>
     </ClInclude>
     <ClInclude Include="VulkanFramebuffer.h">
-      <Filter>VulkanObjects</Filter>
+      <Filter>VulkanRendering\VulkanObjects</Filter>
     </ClInclude>
     <ClInclude Include="VulkanRenderPass.h">
-      <Filter>VulkanObjects</Filter>
+      <Filter>VulkanRendering\VulkanObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanRenderer.h">
+      <Filter>VulkanRendering</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
