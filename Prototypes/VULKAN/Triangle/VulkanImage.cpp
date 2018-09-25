@@ -5,6 +5,7 @@
 #include "VulkanCommandBuffer.h"
 #include "VulkanBuffer.h"
 #include "VulkanImageView.h"
+#include "VulkanRenderer.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -27,7 +28,7 @@ VulkanImage::~VulkanImage()
 void VulkanImage::Init(VulkanPhysicalDevice & physicalDevice, VulkanDevice & device, VkCommandPool & pool, VkQueue & graphicsQueue, VkQueue & transferQueue, const std::string & filename, VkFormat format, VkImageTiling imageTiling, VkImageUsageFlags usage, VkMemoryPropertyFlags memoryFlags)
 {
 	int texWidth, texHeight, texChannels;
-	stbi_uc* pixels = stbi_load("textures/texture.jpg", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+	stbi_uc* pixels = stbi_load(filename.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
 
 	VkDeviceSize imageSize = texWidth * texHeight * 4;
 	if (!pixels)
@@ -46,9 +47,9 @@ void VulkanImage::Init(VulkanPhysicalDevice & physicalDevice, VulkanDevice & dev
 	//create the image
 	Init(physicalDevice, device, texWidth, texHeight, format, imageTiling, usage, memoryFlags);
 
-	TransitionImageLayout(device, pool, graphicsQueue, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-	CopyBufferToImage(device, pool, transferQueue, stagingBuffer);
-	TransitionImageLayout(device, pool, graphicsQueue, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+	TransitionImageLayout(device, VulkanRenderer::GetGraphicsPool(), VulkanRenderer::GetGraphicsQueue(), VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+	CopyBufferToImage(device, VulkanRenderer::GetTranferPool(), VulkanRenderer::GetTransferQueue(), stagingBuffer);
+	TransitionImageLayout(device, VulkanRenderer::GetGraphicsPool(), VulkanRenderer::GetGraphicsQueue(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
 	stagingBuffer.Free(device);
 }

@@ -9,12 +9,7 @@
 
 #include "SignedDistanceField.h"
 
-struct MeshData
-{
-	std::vector<VertexData> vertices;
-	std::vector<uint32_t> indices;
-};
-
+struct MeshData;
 //class VulkanBuffer;
 class ObjectCreator
 {

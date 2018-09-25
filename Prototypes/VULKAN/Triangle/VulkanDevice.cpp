@@ -56,13 +56,17 @@ void VulkanDevice::Initialise(VulkanPhysicalDevice& physicalDevice,
 	float queuePriority = 1.0f;
 	std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
 
+	std::vector<float> prio = {};
+
 	for (auto it = nbQueues.begin(); it != nbQueues.end(); ++it)
 	{
+		if(prio.size() < it->second)
+			for (int i = prio.size(); i < it->second; ++i) prio.push_back(1.0f);
 		VkDeviceQueueCreateInfo queueCreateInfo = {};
 		queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
 		queueCreateInfo.queueFamilyIndex = it->first;
 		queueCreateInfo.queueCount = it->second;
-		queueCreateInfo.pQueuePriorities = &queuePriority;
+		queueCreateInfo.pQueuePriorities = prio.data();
 		queueCreateInfos.push_back(queueCreateInfo);
 	}
 

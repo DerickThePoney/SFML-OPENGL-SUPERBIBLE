@@ -4,6 +4,8 @@
 
 VulkanRenderer VulkanRenderer::instance = {};
 
+
+
 VulkanRenderer::VulkanRenderer()
 {
 }
@@ -21,6 +23,42 @@ void VulkanRenderer::Init(GLFWwindow * window)
 void VulkanRenderer::Cleanup()
 {
 	instance.InstanceCleanup();
+}
+
+void VulkanRenderer::AddRenderPass(VulkanRenderPass & renderPass, std::vector<VulkanFramebuffer>& framebuffers, bool bCreateSemaphore)
+{
+	RenderPassData data;
+	data.renderPass = renderPass;
+	data.framebuffers = framebuffers;
+
+	if (bCreateSemaphore)
+	{
+		data.vulkanSemaphore.resize(framebuffers.size());
+		VkSemaphoreCreateInfo info = {};
+		info.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+		for (size_t i = 0; i < data.vulkanSemaphore.size(); ++i)
+		{
+			if (vkCreateSemaphore(instance.m_kDevice, &info, nullptr, &data.vulkanSemaphore[i]) != VK_SUCCESS)
+			{
+
+				throw std::runtime_error("failed to create synchronization objects for a frame!");
+			}
+		}
+	}
+
+
+	instance.m_akAdditionalRenderPasses.push_back(data);
+}
+
+void VulkanRenderer::SetFinalRenderPassAndFramebuffers(VulkanRenderPass & renderPass, std::vector<VulkanFramebuffer>& framebuffers)
+{
+	instance.m_kFinalRenderPass = renderPass;
+	instance.m_akSwapchainFrameBuffers = framebuffers;
+}
+
+void VulkanRenderer::RecreateSwapChain(GLFWwindow * window)
+{
+	instance.InstanceRecreateSwapChain(window);
 }
 
 
@@ -57,7 +95,9 @@ void VulkanRenderer::InstanceInit(GLFWwindow* window)
 
 void VulkanRenderer::InstanceCleanup()
 {
+	CleanupAdditionalRenderPasses();
 	CleanupSwapChain();
+	
 	vkDestroyDescriptorPool(m_kDevice, descriptorPool, nullptr);
 	vkDestroyDescriptorSetLayout(m_kDevice, descriptorSetLayout, nullptr);
 
@@ -95,6 +135,42 @@ void VulkanRenderer::CleanupSwapChain()
 	}
 
 	vkDestroySwapchainKHR(m_kDevice, m_kSwapwhain.swapChain, nullptr);
+}
+
+void VulkanRenderer::CleanupAdditionalRenderPasses()
+{
+	for (size_t i = 0; i < m_akAdditionalRenderPasses.size(); ++i)
+	{
+		m_akAdditionalRenderPasses[i].renderPass.Destroy(m_kDevice);
+		
+		for (size_t j = 0; j < m_akAdditionalRenderPasses[i].framebuffers.size(); ++j)
+		{
+			m_akAdditionalRenderPasses[i].framebuffers[j].Destroy(m_kDevice);
+		}
+
+		for (size_t j = 0; j < m_akAdditionalRenderPasses[i].vulkanSemaphore.size(); ++j)
+		{
+			vkDestroySemaphore(m_kDevice, m_akAdditionalRenderPasses[i].vulkanSemaphore[j], nullptr);
+		}
+	}
+}
+
+void VulkanRenderer::InstanceRecreateSwapChain(GLFWwindow* window)
+{
+	int width, height;
+	glfwGetWindowSize(window, &width, &height);
+	if (width == 0 || height == 0) return;
+
+	vkDeviceWaitIdle(m_kDevice);
+
+	CleanupSwapChain();
+	m_kPhysicalDevice.ResetSwapchainSupportDetails(m_kSurface);
+
+	CreateSwapChain();
+	CreateImageViews();
+	CreateFinalRenderPass();
+	CreateDepthAttachment();
+	CreateFrameBuffers();
 }
 
 void VulkanRenderer::CreateInstance()
@@ -273,7 +349,7 @@ void VulkanRenderer::CreateCommandPool()
 		throw std::runtime_error("Unable to create graphics command pool");
 	}
 
-	poolInfo.queueFamilyIndex = indices.graphicsFamily;
+	poolInfo.queueFamilyIndex = indices.transferFamily;
 	poolInfo.flags = VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
 
 	if (vkCreateCommandPool(m_kDevice, &poolInfo, nullptr, &commandPoolTransfer) != VK_SUCCESS)

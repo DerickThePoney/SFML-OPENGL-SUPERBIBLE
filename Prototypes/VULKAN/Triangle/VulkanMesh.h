@@ -3,7 +3,14 @@
 #include "VulkanBuffer.h"
 class VulkanPhysicalDevice;
 class VulkanDevice;
-struct MeshData;
+
+struct MeshData
+{
+	std::vector<VertexData> vertices;
+	std::vector<uint32_t> indices;
+};
+
+
 class VulkanMesh
 {
 public:

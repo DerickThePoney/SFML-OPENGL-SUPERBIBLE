@@ -15,31 +15,47 @@
 #include "VulkanImageView.h"
 
 // Framebuffer for offscreen rendering
-struct FrameBufferAttachment
+struct FramebufferAttachment
 {
 	VulkanImage image;
 	VulkanImageView view;
 };
 
-class RenderPassData 
+struct FramebufferData
+{
+	VulkanFramebuffer frameBuffer;
+	std::vector<FramebufferAttachment> attachements;
+};
+
+/*class RenderPassData 
 {
 	void Init();
 	void Cleanup();
 
 	void SetSize(uint32_t width, uint32_t height);
-	void SetFrameBufferAttachement();
+	void SetFramebufferAttachements(const std::vector<FramebufferData>& framebuffersData);
+	void SetFramebufferNumber(uint32_t framebuffersNumber);
+
+	VkSemaphore& GetSemaphore(uint32_t index);
+	VulkanFramebuffer& GetFramebuffer(uint32_t index);
+	VulkanRenderPass& GetRenderPass();
+	uint32_t GetFramebuferNumber();
 
 private:
 	uint32_t width = 4096, height = 4096;
-	VulkanFramebuffer frameBuffer;
-	std::vector<FrameBufferAttachment> attachements;
+	std::vector<FramebufferData> framebuffers;
 	VulkanRenderPass renderPass;
-	VkSampler depthSampler;
-	VkDescriptorImageInfo descriptor;
 	VulkanCommandBuffer commandBuffer;
 	
 	// Semaphore used to synchronize between offscreen and final scene render pass
-	VkSemaphore semaphore = VK_NULL_HANDLE;
+	std::vector<VkSemaphore> semaphore;
+};*/
+
+struct RenderPassData
+{
+	VulkanRenderPass renderPass;
+	std::vector<VulkanFramebuffer> framebuffers;
+	std::vector<VkSemaphore> vulkanSemaphore;
 };
 
 struct Swapchain
@@ -47,12 +63,12 @@ struct Swapchain
 	VkSwapchainKHR swapChain;
 	VkFormat swapChainImageFormat;
 	VkExtent2D swapChainExtent;
-	std::vector<FrameBufferAttachment> swapchainAttachments;
+	std::vector<FramebufferAttachment> swapchainAttachments;
 };
 
 class VulkanRenderer
 {
-	friend class RenderPassData;
+	//friend class RenderPassData;
 
 private:
 	static VulkanRenderer instance;
@@ -60,18 +76,28 @@ private:
 public:
 	static void Init(GLFWwindow* window);
 	static void Cleanup();
+	static void RecreateSwapChain(GLFWwindow* window);
 	
 	static VulkanInstance& GetInstance() { return instance.m_kInstance; }
 	static VulkanDevice& GetDevice() { return instance.m_kDevice; }
 	static VulkanPhysicalDevice& GetPhysicalDevice() { return instance.m_kPhysicalDevice; }
+	static VkSwapchainKHR& GetSwapChain() { return instance.m_kSwapwhain.swapChain; }
 	static VkFormat& GetSurfaceFormat() { return instance.m_kSwapwhain.swapChainImageFormat; }
 	static VkExtent2D& GetSurfaceExtent() { return instance.m_kSwapwhain.swapChainExtent; }
+	static VkQueue& GetGraphicsQueue() { return instance.graphicsQueue; }
+	static VkQueue& GetTransferQueue() { return instance.transferQueue; }
+	static VkQueue& GetPresentQueue() { return instance.presentQueue; }
 	static VkCommandPool& GetGraphicsPool() { return instance.commandPoolGraphics; }
 	static VkCommandPool& GetTranferPool() { return instance.commandPoolTransfer; }
 	static VulkanRenderPass& GetRenderPass(uint32_t index) { return instance.m_kFinalRenderPass; }
 	static VkDescriptorPool& GetDescriptorPool() { return instance.descriptorPool; }
 	static VkDescriptorSetLayout& GetDescriptorSetLayout() { return instance.descriptorSetLayout; }
-
+	static VkFence& GetFence(uint32_t index) { return instance.inFlightFences[index]; }
+	static VkSemaphore& GetImageAvailableSemaphore(uint32_t index) { return instance.imageAvailableSemaphores[index]; }
+	static VkSemaphore& GetRenderFinishedSemaphores(uint32_t index) { return instance.renderFinishedSemaphores[index]; }
+	static std::vector<VulkanFramebuffer>& GetSwapchainBuffers() { return instance.m_akSwapchainFrameBuffers; }
+	static void AddRenderPass(VulkanRenderPass& renderPass, std::vector<VulkanFramebuffer>& framebuffers, bool bCreateSemaphore);
+	static void SetFinalRenderPassAndFramebuffers(VulkanRenderPass& renderPass, std::vector<VulkanFramebuffer>& framebuffers);
 private:
 	VulkanRenderer();
 	~VulkanRenderer();
@@ -80,6 +106,8 @@ private:
 
 	void InstanceCleanup();
 	void CleanupSwapChain();
+	void CleanupAdditionalRenderPasses();
+	void InstanceRecreateSwapChain(GLFWwindow* window);
 
 
 
@@ -118,7 +146,7 @@ private:
 	VkQueue transferQueue;
 
 	Swapchain m_kSwapwhain;
-	FrameBufferAttachment depthAttachement;
+	FramebufferAttachment depthAttachement;
 	std::vector<VulkanFramebuffer> m_akSwapchainFrameBuffers;
 
 	VkCommandPool commandPoolGraphics;
@@ -127,6 +155,7 @@ private:
 	VkDescriptorPool descriptorPool;
 	VkDescriptorSetLayout descriptorSetLayout;
 
+	std::vector<RenderPassData> m_akAdditionalRenderPasses;
 	VulkanRenderPass m_kFinalRenderPass;
 
 	//Synchronisation primitives

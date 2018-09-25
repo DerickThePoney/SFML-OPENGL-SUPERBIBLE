@@ -25,6 +25,12 @@
     <Filter Include="VulkanRendering\VulkanObjects">
       <UniqueIdentifier>{06161e4e-247d-483e-b3e3-b24f3c021be1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{9708e576-3e13-4d27-b0c3-6c05106c5830}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{74a384a5-5d05-454e-8d30-bf3e93578cde}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Triangle.cpp">
@@ -93,9 +99,27 @@
     <ClCompile Include="VulkanRenderer.cpp">
       <Filter>VulkanRendering</Filter>
     </ClCompile>
+    <ClCompile Include="VulkanRenderLoop.cpp">
+      <Filter>VulkanRendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Triangle.vert" />
+    <None Include="data\shaders\Triangle.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="data\shaders\shadowmappingdirectional.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="data\shaders\shadowmappingdirectional.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="data\shaders\Triangle.frag">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -166,6 +190,12 @@
     </ClInclude>
     <ClInclude Include="VulkanRenderer.h">
       <Filter>VulkanRendering</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanRenderLoop.h">
+      <Filter>VulkanRendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Scene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
