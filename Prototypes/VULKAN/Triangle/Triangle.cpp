@@ -54,10 +54,11 @@ void HelloTriangleApplication::InitVulkan()
 	CreateTextureImage();
 	CreateTextureImageView();
 	CreateTextureSampler();
-	CreateVertexBuffers();
 	CreateUniformBuffer();
 	CreateDescriptorSet();
+	CreateVertexBuffers();
 	CreateCommandBuffers();
+
 	CreateOffscreenCommandBuffers();
 }
 
@@ -379,13 +380,13 @@ void HelloTriangleApplication::CreateCommandBuffers()
 		commandBuffers[i].BindPipeline(VK_PIPELINE_BIND_POINT_GRAPHICS, m_kPipeline);
 
 		//Bind Objects		
-		commandBuffers[i].BindDescriptorSets(VK_PIPELINE_BIND_POINT_GRAPHICS, m_kPipeline.GetLayout(), 0, 1, &descriptorSet, 0, nullptr);
+		//commandBuffers[i].BindDescriptorSets(VK_PIPELINE_BIND_POINT_GRAPHICS, m_kPipeline.GetLayout(), 0, 1, &descriptorSet, 0, nullptr);
 
 		//Draw
 		//commandBuffers[i].DrawMesh(m_kMeshPlane);
 		//Draw
 		//commandBuffers[i].DrawMesh(m_kMesh);
-		m_kScene.Draw(commandBuffers[i]);
+		m_kScene.Draw(commandBuffers[i], m_kPipeline);
 
 		//End render pass and command buffer
 		commandBuffers[i].EndRenderPass();
@@ -432,13 +433,13 @@ void HelloTriangleApplication::DrawFrame()
 	submitInfoOffscreen.signalSemaphoreCount = 1;
 	submitInfoOffscreen.pSignalSemaphores = signalSemaphoresOff;
 
-	if (vkQueueSubmit(VulkanRenderer::GetGraphicsQueue(), 1, &submitInfoOffscreen, VK_NULL_HANDLE) != VK_SUCCESS) {
-		throw std::runtime_error("failed to submit draw command buffer!");
-	}
+	//if (vkQueueSubmit(VulkanRenderer::GetGraphicsQueue(), 1, &submitInfoOffscreen, VK_NULL_HANDLE) != VK_SUCCESS) {
+		//throw std::runtime_error("failed to submit draw command buffer!");
+	//}
 
 	VkSubmitInfo submitInfo = {};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-	VkSemaphore waitSemaphores[] = { offscreenPass.semaphore };
+	VkSemaphore waitSemaphores[] = { VulkanRenderer::GetImageAvailableSemaphore(currentFrame) };
 	VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 	submitInfo.waitSemaphoreCount = 1;
 	submitInfo.pWaitSemaphores = waitSemaphores;
@@ -450,8 +451,8 @@ void HelloTriangleApplication::DrawFrame()
 	VkSemaphore signalSemaphores[] = { VulkanRenderer::GetRenderFinishedSemaphores(currentFrame) };
 	submitInfo.signalSemaphoreCount = 1;
 	submitInfo.pSignalSemaphores = signalSemaphores;
-
-	if (vkQueueSubmit(VulkanRenderer::GetGraphicsQueue(), 1, &submitInfo, VulkanRenderer::GetFence(currentFrame)) != VK_SUCCESS) {
+	VkResult res = vkQueueSubmit(VulkanRenderer::GetGraphicsQueue(), 1, &submitInfo, VulkanRenderer::GetFence(currentFrame));
+	if (res != VK_SUCCESS) {
 		throw std::runtime_error("failed to submit draw command buffer!");
 	}
 
@@ -507,21 +508,26 @@ void HelloTriangleApplication::CreateDescriptorSet()
 	allocInfo.descriptorSetCount = 1;
 	allocInfo.pSetLayouts = layouts;
 
-	if (vkAllocateDescriptorSets(VulkanRenderer::GetDevice(), &allocInfo, &descriptorSet) != VK_SUCCESS) {
+	/*if (vkAllocateDescriptorSets(VulkanRenderer::GetDevice(), &allocInfo, &descriptorSet) != VK_SUCCESS) {
 		throw std::runtime_error("failed to allocate descriptor set!");
-	}
+	}*/
 
-	VkDescriptorBufferInfo bufferInfo = {};
+	bufferInfo = {};
 	bufferInfo.buffer = uniformBuffer;
 	bufferInfo.offset = 0;
 	bufferInfo.range = sizeof(UniformBufferObject);
 
-	VkDescriptorImageInfo imageInfo = {};
+	imageInfo = {};
 	imageInfo.imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
 	imageInfo.imageView = offscreenPass.depth.view;
 	imageInfo.sampler = offscreenPass.depthSampler;
 
-	std::array<VkWriteDescriptorSet,2> descriptorWrites = {};
+	imageInfo2 = {};
+	imageInfo2.imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
+	imageInfo2.imageView = offscreenPass.depth.view;
+	imageInfo2.sampler = offscreenPass.depthSampler;
+
+	descriptorWrites = {};
 	descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 	descriptorWrites[0].dstSet = descriptorSet;
 	descriptorWrites[0].dstBinding = 0;
@@ -538,8 +544,16 @@ void HelloTriangleApplication::CreateDescriptorSet()
 	descriptorWrites[1].descriptorCount = 1;
 	descriptorWrites[1].pImageInfo = &imageInfo;
 
-	vkUpdateDescriptorSets(VulkanRenderer::GetDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+	descriptorWrites[2].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	descriptorWrites[2].dstSet = descriptorSet;
+	descriptorWrites[2].dstBinding = 2;
+	descriptorWrites[2].dstArrayElement = 0;
+	descriptorWrites[2].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	descriptorWrites[2].descriptorCount = 1;
+	descriptorWrites[2].pImageInfo = &imageInfo;
 
+	/*vkUpdateDescriptorSets(VulkanRenderer::GetDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+	*/
 	if (vkAllocateDescriptorSets(VulkanRenderer::GetDevice(), &allocInfo, &descriptorSetOffscreen) != VK_SUCCESS) {
 		throw std::runtime_error("failed to allocate descriptor set!");
 	}
@@ -661,13 +675,13 @@ void HelloTriangleApplication::CreateOffscreenCommandBuffers()
 
 		commandBuffersOffscreen[i].BindPipeline(VK_PIPELINE_BIND_POINT_GRAPHICS, m_kOffscreenPipeline);
 
-		commandBuffersOffscreen[i].BindDescriptorSets(VK_PIPELINE_BIND_POINT_GRAPHICS, m_kOffscreenPipeline.GetLayout(), 0, 1, &descriptorSetOffscreen, 0, nullptr);
+		//commandBuffersOffscreen[i].BindDescriptorSets(VK_PIPELINE_BIND_POINT_GRAPHICS, m_kOffscreenPipeline.GetLayout(), 0, 1, &descriptorSetOffscreen, 0, nullptr);
 
 		/*//Draw
 		commandBuffersOffscreen[i].DrawMesh(m_kMeshPlane);
 		//Draw
 		commandBuffersOffscreen[i].DrawMesh(m_kMesh);*/
-		m_kScene.Draw(commandBuffersOffscreen[i]);
+		m_kScene.Draw(commandBuffersOffscreen[i], m_kOffscreenPipeline);
 		
 
 		commandBuffersOffscreen[i].EndRenderPass();

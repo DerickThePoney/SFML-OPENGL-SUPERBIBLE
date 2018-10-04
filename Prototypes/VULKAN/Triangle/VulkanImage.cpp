@@ -33,7 +33,7 @@ void VulkanImage::Init(VulkanPhysicalDevice & physicalDevice, VulkanDevice & dev
 	VkDeviceSize imageSize = texWidth * texHeight * 4;
 	if (!pixels)
 	{
-		throw std::runtime_error("Failed to load image texture !");
+		throw std::runtime_error("Failed to load image texture !" + filename);
 	}
 
 	//put it all into a staging buffer

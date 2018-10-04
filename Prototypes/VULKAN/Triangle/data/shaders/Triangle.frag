@@ -8,6 +8,7 @@ layout(location = 2) in vec3 fragNormal;
 layout (location = 3) in vec4 fragShadowCoord;
 
 layout(binding = 1) uniform sampler2D shadowMap;
+layout(binding = 2) uniform sampler2D diffuseMap;
 #define ambient 0.1
 float textureProj(vec4 P, vec2 off)
 {

@@ -27,6 +27,7 @@ public:
 	}
 	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
+	static std::array<VkWriteDescriptorSet, 3> GetDescriptorWrites() { return getInstance().descriptorWrites; }
 private:
 	
 
@@ -97,6 +98,10 @@ private:
 
 	VkDescriptorSet descriptorSet;
 	VkDescriptorSet descriptorSetOffscreen;
+	VkDescriptorBufferInfo bufferInfo;
+	VkDescriptorImageInfo imageInfo;
+	VkDescriptorImageInfo imageInfo2;
+	std::array<VkWriteDescriptorSet, 3> descriptorWrites;
 
 	VulkanImage textureImage;
 	VulkanImageView textureImageView;
