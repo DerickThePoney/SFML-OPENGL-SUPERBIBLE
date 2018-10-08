@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "ObjectCreator.h"
 //#include "VulkanBuffer.h"
+#include "MeshData.h"
 #include "VulkanMesh.h"
 
 MeshData ObjectCreator::Execute(glm::vec3 minPos, glm::vec3 maxPos, float cellSize)

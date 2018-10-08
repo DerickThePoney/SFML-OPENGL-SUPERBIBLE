@@ -25,7 +25,27 @@ VulkanImage::~VulkanImage()
 {
 }
 
-void VulkanImage::Init(VulkanPhysicalDevice & physicalDevice, VulkanDevice & device, VkCommandPool & pool, VkQueue & graphicsQueue, VkQueue & transferQueue, const std::string & filename, VkFormat format, VkImageTiling imageTiling, VkImageUsageFlags usage, VkMemoryPropertyFlags memoryFlags)
+void VulkanImage::Init(uint32_t width, uint32_t height, void * pData, VkDeviceSize size, VkFormat format, VkImageTiling imageTiling, VkImageUsageFlags usage, VkMemoryPropertyFlags memoryFlags)
+{
+	//put it all into a staging buffer
+	VulkanBuffer stagingBuffer;
+	stagingBuffer.Init(VulkanRenderer::GetPhysicalDevice(), VulkanRenderer::GetDevice(), size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+
+	stagingBuffer.CopyDataToBuffer(VulkanRenderer::GetPhysicalDevice(), VulkanRenderer::GetDevice(), VulkanRenderer::GetTranferPool(), VulkanRenderer::GetTransferQueue(), 0, 0, size, pData);
+
+	
+
+	//create the image
+	Init(width, height, format, imageTiling, usage, memoryFlags);
+
+	TransitionImageLayout(VulkanRenderer::GetGraphicsPool(), VulkanRenderer::GetGraphicsQueue(), VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+	CopyBufferToImage(VulkanRenderer::GetTranferPool(), VulkanRenderer::GetTransferQueue(), stagingBuffer);
+	TransitionImageLayout(VulkanRenderer::GetGraphicsPool(), VulkanRenderer::GetGraphicsQueue(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+	stagingBuffer.Free(VulkanRenderer::GetDevice());
+}
+
+void VulkanImage::Init(const std::string & filename, VkFormat format, VkImageTiling imageTiling, VkImageUsageFlags usage, VkMemoryPropertyFlags memoryFlags)
 {
 	int texWidth, texHeight, texChannels;
 	stbi_uc* pixels = stbi_load(filename.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
@@ -36,25 +56,12 @@ void VulkanImage::Init(VulkanPhysicalDevice & physicalDevice, VulkanDevice & dev
 		throw std::runtime_error("Failed to load image texture !" + filename);
 	}
 
-	//put it all into a staging buffer
-	VulkanBuffer stagingBuffer;
-	stagingBuffer.Init(physicalDevice, device, imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-
-	stagingBuffer.CopyDataToBuffer(physicalDevice, device, pool, transferQueue, 0, 0, imageSize, pixels);
+	Init(texWidth, texHeight, pixels, imageSize, format, imageTiling, usage, memoryFlags);
 
 	stbi_image_free(pixels);
-
-	//create the image
-	Init(physicalDevice, device, texWidth, texHeight, format, imageTiling, usage, memoryFlags);
-
-	TransitionImageLayout(device, VulkanRenderer::GetGraphicsPool(), VulkanRenderer::GetGraphicsQueue(), VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-	CopyBufferToImage(device, VulkanRenderer::GetTranferPool(), VulkanRenderer::GetTransferQueue(), stagingBuffer);
-	TransitionImageLayout(device, VulkanRenderer::GetGraphicsPool(), VulkanRenderer::GetGraphicsQueue(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-
-	stagingBuffer.Free(device);
 }
 
-void VulkanImage::Init(VulkanPhysicalDevice & physicalDevice, VulkanDevice & device, uint32_t width, uint32_t height, VkFormat format, VkImageTiling imageTiling, VkImageUsageFlags usage, VkMemoryPropertyFlags memoryFlags)
+void VulkanImage::Init(uint32_t width, uint32_t height, VkFormat format, VkImageTiling imageTiling, VkImageUsageFlags usage, VkMemoryPropertyFlags memoryFlags)
 {
 	size = VkExtent3D{ width, height, 1 };
 	imageFormat = format;
@@ -74,7 +81,7 @@ void VulkanImage::Init(VulkanPhysicalDevice & physicalDevice, VulkanDevice & dev
 	imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 	imageInfo.usage = usageFlags;
 
-	const QueueFamilyIndices& indices = physicalDevice.GetQueueFamilyIndices();
+	const QueueFamilyIndices& indices = VulkanRenderer::GetPhysicalDevice().GetQueueFamilyIndices();
 	uint32_t queueFamilyIndices[] = { (uint32_t)indices.graphicsFamily, (uint32_t)indices.transferFamily };
 	if (indices.graphicsFamily != indices.transferFamily)
 	{
@@ -91,25 +98,25 @@ void VulkanImage::Init(VulkanPhysicalDevice & physicalDevice, VulkanDevice & dev
 	imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
 	imageInfo.flags = 0;
 
-	if (vkCreateImage(device, &imageInfo, nullptr, &m_kImage) != VK_SUCCESS)
+	if (vkCreateImage(VulkanRenderer::GetDevice(), &imageInfo, nullptr, &m_kImage) != VK_SUCCESS)
 	{
 		throw std::runtime_error("Unable to create image object!");
 	}
 
 	VkMemoryRequirements memRequirements;
-	vkGetImageMemoryRequirements(device, m_kImage, &memRequirements);
+	vkGetImageMemoryRequirements(VulkanRenderer::GetDevice(), m_kImage, &memRequirements);
 
 	VkMemoryAllocateInfo allocInfo = {};
 	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 	allocInfo.allocationSize = memRequirements.size;
-	allocInfo.memoryTypeIndex = physicalDevice.FindMemoryType(memRequirements.memoryTypeBits, memoryFlags);
+	allocInfo.memoryTypeIndex = VulkanRenderer::GetPhysicalDevice().FindMemoryType(memRequirements.memoryTypeBits, memoryFlags);
 
-	if (vkAllocateMemory(device, &allocInfo, nullptr, &m_kImageMemory) != VK_SUCCESS)
+	if (vkAllocateMemory(VulkanRenderer::GetDevice(), &allocInfo, nullptr, &m_kImageMemory) != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to allocate image memory!");
 	}
 
-	vkBindImageMemory(device, m_kImage, m_kImageMemory, 0);
+	vkBindImageMemory(VulkanRenderer::GetDevice(), m_kImage, m_kImageMemory, 0);
 }
 
 void VulkanImage::Init(VkImage & imageHandle, uint32_t width, uint32_t height, VkFormat format, VkImageTiling imageTiling, VkImageUsageFlags usage)
@@ -122,21 +129,21 @@ void VulkanImage::Init(VkImage & imageHandle, uint32_t width, uint32_t height, V
 	m_kImage = imageHandle;
 }
 
-void VulkanImage::Free(VulkanDevice& device)
+void VulkanImage::Free()
 {
 	if (m_kImageMemory != VK_NULL_HANDLE)
 	{
-		vkDestroyImage(device, m_kImage, nullptr);
-		vkFreeMemory(device, m_kImageMemory, nullptr);
+		vkDestroyImage(VulkanRenderer::GetDevice(), m_kImage, nullptr);
+		vkFreeMemory(VulkanRenderer::GetDevice(), m_kImageMemory, nullptr);
 	}
 	
 	m_kImage = VK_NULL_HANDLE;
 	m_kImageMemory = VK_NULL_HANDLE;
 }
 
-void VulkanImage::CopyBufferToImage(VulkanDevice& device, VkCommandPool& pool, VkQueue& queue, VulkanBuffer & buffer)
+void VulkanImage::CopyBufferToImage(VkCommandPool& pool, VkQueue& queue, VulkanBuffer & buffer)
 {
-	VulkanCommandBuffer commandBuffer = VulkanCommandBuffer::CreateCommandBuffer(device, pool, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+	VulkanCommandBuffer commandBuffer = VulkanCommandBuffer::CreateCommandBuffer(VulkanRenderer::GetDevice(), pool, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 	commandBuffer.BeginCommandBuffer(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT, nullptr);
 
 	VkBufferImageCopy region = {};
@@ -170,12 +177,12 @@ void VulkanImage::CopyBufferToImage(VulkanDevice& device, VkCommandPool& pool, V
 	vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE);
 	vkQueueWaitIdle(queue);
 
-	VulkanCommandBuffer::Free(commandBuffer, device, pool);
+	VulkanCommandBuffer::Free(commandBuffer, VulkanRenderer::GetDevice(), pool);
 }
 
-void VulkanImage::TransitionImageLayout(VulkanDevice& device, VkCommandPool& pool, VkQueue& queue, VkImageLayout oldLayout, VkImageLayout newLayout)
+void VulkanImage::TransitionImageLayout(VkCommandPool& pool, VkQueue& queue, VkImageLayout oldLayout, VkImageLayout newLayout)
 {
-	VulkanCommandBuffer commandBuffer = VulkanCommandBuffer::CreateCommandBuffer(device, pool, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+	VulkanCommandBuffer commandBuffer = VulkanCommandBuffer::CreateCommandBuffer(VulkanRenderer::GetDevice(), pool, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 	commandBuffer.BeginCommandBuffer(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT, nullptr);
 
 	VkImageMemoryBarrier barrier = {};
@@ -251,13 +258,13 @@ void VulkanImage::TransitionImageLayout(VulkanDevice& device, VkCommandPool& poo
 	vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE);
 	vkQueueWaitIdle(queue);
 
-	VulkanCommandBuffer::Free(commandBuffer, device, pool);
+	VulkanCommandBuffer::Free(commandBuffer, VulkanRenderer::GetDevice(), pool);
 }
 
-VulkanImageView VulkanImage::CreateImageView(VulkanDevice & device, VkFormat format, VkImageAspectFlags aspectMask)
+VulkanImageView VulkanImage::CreateImageView(VkFormat format, VkImageAspectFlags aspectMask)
 {
 	VulkanImageView view;
-	view.Init(device, *this, format, aspectMask);
+	view.Init(VulkanRenderer::GetDevice(), *this, format, aspectMask);
 
 	return view;
 }

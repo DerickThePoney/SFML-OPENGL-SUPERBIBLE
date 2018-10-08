@@ -19,8 +19,15 @@ public:
 	VulkanGraphicsPipeline();
 	~VulkanGraphicsPipeline();
 
-	void Initialise(VkExtent2D& swapChainExtent);
-	void SetShaders(VulkanDevice& device, uint32_t shaderFileTypeCount, ShadersFileType* akShaders);
+	VulkanGraphicsPipeline(const VulkanGraphicsPipeline& other);
+
+	void Initialise(VkExtent2D& extent);
+
+	//Shaders stuff
+	void SetShaders(uint32_t shaderFileTypeCount, ShadersFileType* akShaders);
+	void SetSpecialisationForShader(uint32_t idx, VkSpecializationInfo info);
+	void ResetSpecialisations();
+
 	void SetViewport(VkViewport& v);
 	void SetScissors(VkRect2D& v);
 
@@ -41,12 +48,19 @@ public:
 	
 	//blending
 	void SetBlendAttachementCount(uint32_t count);
+	void SetBlendingForAttachement(uint32_t idx, VkColorComponentFlags colorMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT, bool bBlendEnable = false,
+		VkBlendFactor srcColorBlendFactor = VK_BLEND_FACTOR_ONE, VkBlendFactor dstColorBlendFactor = VK_BLEND_FACTOR_ZERO, VkBlendOp colorBlendOp = VK_BLEND_OP_ADD,
+		VkBlendFactor srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE, VkBlendFactor dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO, VkBlendOp alphaBlendOp = VK_BLEND_OP_ADD
+	);
+
+	//Depth test
+	void SetDepthTest(bool bEnabledTest, bool bEnabledWrite);
 
 	//dynamic state
 	void SetDynamicStates(const VkDynamicState* states, uint32_t dynamicStateCount);
 
-	void CreatePipeline(VulkanDevice& device, VkDescriptorSetLayout* descriptorSetLayout, VulkanRenderPass& renderPass);
-	void Destroy(VulkanDevice& device);
+	void CreatePipeline(VkDescriptorSetLayout* descriptorSetLayout, VulkanRenderPass& renderPass);
+	void Destroy();
 
 	operator VkPipeline() { return m_kGraphicsPipeline; }
 
@@ -67,6 +81,7 @@ private:
 		std::vector<VkVertexInputAttributeDescription> vertexAttributes;
 		VkViewport viewport;
 		VkRect2D scissor;
+		std::vector<VkSpecializationInfo> specialisationInfos;
 
 		//pipeline info
 		std::vector<VkPipelineShaderStageCreateInfo> shaderStages;

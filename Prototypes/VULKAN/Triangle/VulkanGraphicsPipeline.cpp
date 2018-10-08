@@ -3,6 +3,7 @@
 #include "VulkanDevice.h"
 #include "VulkanShader.h"
 #include "VulkanRenderPass.h"
+#include "VulkanRenderer.h"
 
 
 VulkanGraphicsPipeline::VulkanGraphicsPipeline()
@@ -14,18 +15,24 @@ VulkanGraphicsPipeline::~VulkanGraphicsPipeline()
 {
 }
 
-void VulkanGraphicsPipeline::Initialise(VkExtent2D & swapChainExtent)
+VulkanGraphicsPipeline::VulkanGraphicsPipeline(const VulkanGraphicsPipeline & other)
 {
-	InitialiseDefaultValues(swapChainExtent);
+	m_kData = other.m_kData;
+	m_kData.shaders = nullptr;
 }
 
-void VulkanGraphicsPipeline::SetShaders(VulkanDevice & device, uint32_t shaderFileTypeCount, ShadersFileType * akShaders)
+void VulkanGraphicsPipeline::Initialise(VkExtent2D& extent)
+{
+	InitialiseDefaultValues(extent);
+}
+
+void VulkanGraphicsPipeline::SetShaders(uint32_t shaderFileTypeCount, ShadersFileType * akShaders)
 {
 	m_kData.shaders = new VulkanShader[shaderFileTypeCount];
 	m_kData.shaderStages.clear();
 	for (uint32_t i = 0; i < shaderFileTypeCount; ++i)
 	{
-		m_kData.shaders[i].Initialise(device, akShaders[i].type, akShaders[i].filepath.c_str());
+		m_kData.shaders[i].Initialise(VulkanRenderer::GetDevice(), akShaders[i].type, akShaders[i].filepath.c_str());
 		
 
 		VkPipelineShaderStageCreateInfo shagerStageInfo = {};
@@ -55,6 +62,26 @@ void VulkanGraphicsPipeline::SetShaders(VulkanDevice & device, uint32_t shaderFi
 		shagerStageInfo.pName = "main";
 
 		m_kData.shaderStages.push_back(shagerStageInfo);
+	}
+}
+
+void VulkanGraphicsPipeline::SetSpecialisationForShader(uint32_t idx, VkSpecializationInfo info)
+{
+	if (idx >= m_kData.shaderStages.size())
+	{
+		throw std::runtime_error("Trying to specialisation for unspecified shader stage");
+	}
+
+	m_kData.specialisationInfos.push_back(info);
+	m_kData.shaderStages[idx].pSpecializationInfo = &m_kData.specialisationInfos[m_kData.specialisationInfos.size() - 1];
+}
+
+void VulkanGraphicsPipeline::ResetSpecialisations()
+{
+	m_kData.specialisationInfos.clear();
+	for (size_t i = 0; i < m_kData.shaderStages.size(); ++i)
+	{
+		m_kData.shaderStages[i].pSpecializationInfo = nullptr;
 	}
 }
 
@@ -145,13 +172,39 @@ void VulkanGraphicsPipeline::SetBlendAttachementCount(uint32_t count)
 	m_kData.colorBlending.pAttachments = m_kData.colorBlendAttachment.data();
 }
 
+void VulkanGraphicsPipeline::SetBlendingForAttachement(uint32_t idx, VkColorComponentFlags colorMask, bool bBlendEnable, 
+	VkBlendFactor srcColorBlendFactor, VkBlendFactor dstColorBlendFactor, VkBlendOp colorBlendOp,
+	VkBlendFactor srcAlphaBlendFactor, VkBlendFactor dstAlphaBlendFactor, VkBlendOp alphaBlendOp)
+{
+	if (idx >= m_kData.colorBlending.attachmentCount)
+	{
+		throw std::runtime_error("Trying to set blending for an unknown or unintialised color blend state object");
+	}
+
+	VkPipelineColorBlendAttachmentState& state = m_kData.colorBlendAttachment[idx];
+	state.colorWriteMask = colorMask;
+	state.blendEnable = (bBlendEnable)? VK_TRUE : VK_FALSE;
+	state.srcColorBlendFactor = srcColorBlendFactor; // Optional
+	state.dstColorBlendFactor = dstColorBlendFactor; // Optional
+	state.colorBlendOp = colorBlendOp; // Optional
+	state.srcAlphaBlendFactor = srcAlphaBlendFactor; // Optional
+	state.dstAlphaBlendFactor = dstAlphaBlendFactor; // Optional
+	state.alphaBlendOp = alphaBlendOp; // Optional
+}
+
+void VulkanGraphicsPipeline::SetDepthTest(bool bEnabledTest, bool bEnabledWrite)
+{
+	m_kData.depthStencil.depthTestEnable = bEnabledTest;
+	m_kData.depthStencil.depthWriteEnable = bEnabledWrite;
+}
+
 void VulkanGraphicsPipeline::SetDynamicStates(const VkDynamicState * states, uint32_t dynamicStateCount)
 {
 	m_kData.dynamicState.dynamicStateCount = dynamicStateCount;
 	m_kData.dynamicState.pDynamicStates = states;
 }
 
-void VulkanGraphicsPipeline::CreatePipeline(VulkanDevice& device, VkDescriptorSetLayout* descriptorSetLayout, VulkanRenderPass& renderPass)
+void VulkanGraphicsPipeline::CreatePipeline(VkDescriptorSetLayout* descriptorSetLayout, VulkanRenderPass& renderPass)
 {
 	//create the meta struct for viewport and scissor
 	VkPipelineViewportStateCreateInfo viewportState = {};
@@ -169,7 +222,7 @@ void VulkanGraphicsPipeline::CreatePipeline(VulkanDevice& device, VkDescriptorSe
 	pipelineLayoutInfo.pushConstantRangeCount = 0; // Optional
 	pipelineLayoutInfo.pPushConstantRanges = nullptr; // Optional
 
-	if (vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &m_kPipelineLayout) != VK_SUCCESS) {
+	if (vkCreatePipelineLayout(VulkanRenderer::GetDevice(), &pipelineLayoutInfo, nullptr, &m_kPipelineLayout) != VK_SUCCESS) {
 		throw std::runtime_error("failed to create pipeline layout!");
 	}
 
@@ -197,23 +250,23 @@ void VulkanGraphicsPipeline::CreatePipeline(VulkanDevice& device, VkDescriptorSe
 	pipelineInfo.basePipelineHandle = VK_NULL_HANDLE; // Optional
 	pipelineInfo.basePipelineIndex = -1; // Optional
 
-	if (vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_kGraphicsPipeline) != VK_SUCCESS)
+	if (vkCreateGraphicsPipelines(VulkanRenderer::GetDevice(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_kGraphicsPipeline) != VK_SUCCESS)
 	{
 		throw std::runtime_error("Unable to build graphics pipeline!");
 	}
 }
 
-void VulkanGraphicsPipeline::Destroy(VulkanDevice& device)
+void VulkanGraphicsPipeline::Destroy()
 {
 	for (size_t i = 0; i < m_kData.shaderStages.size(); ++i)
 	{
-		m_kData.shaders[i].Destroy(device);
+		m_kData.shaders[i].Destroy(VulkanRenderer::GetDevice());
 	}
 	delete[] m_kData.shaders;
 
-	vkDestroyPipeline(device, m_kGraphicsPipeline, nullptr);
+	vkDestroyPipeline(VulkanRenderer::GetDevice(), m_kGraphicsPipeline, nullptr);
 	m_kGraphicsPipeline = VK_NULL_HANDLE;
-	vkDestroyPipelineLayout(device, m_kPipelineLayout, nullptr);
+	vkDestroyPipelineLayout(VulkanRenderer::GetDevice(), m_kPipelineLayout, nullptr);
 }
 
 void VulkanGraphicsPipeline::InitialiseDefaultValues(VkExtent2D& swapChainExtent)

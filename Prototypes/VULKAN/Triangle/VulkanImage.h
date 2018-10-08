@@ -12,16 +12,17 @@ public:
 	VulkanImage();
 	~VulkanImage();
 
-	void Init(VulkanPhysicalDevice& physicalDevice, VulkanDevice& device, VkCommandPool& pool, VkQueue & graphicsQueue, VkQueue & transferQueue, const std::string& filename, VkFormat format, VkImageTiling imageTiling, VkImageUsageFlags usage, VkMemoryPropertyFlags memoryFlags);
-	void Init(VulkanPhysicalDevice& physicalDevice, VulkanDevice& device, uint32_t width, uint32_t height, VkFormat format, VkImageTiling imageTiling, VkImageUsageFlags usage, VkMemoryPropertyFlags memoryFlags);
+	void Init(uint32_t width, uint32_t height, void* pData, VkDeviceSize size, VkFormat format, VkImageTiling imageTiling, VkImageUsageFlags usage, VkMemoryPropertyFlags memoryFlags);
+	void Init(const std::string& filename, VkFormat format, VkImageTiling imageTiling, VkImageUsageFlags usage, VkMemoryPropertyFlags memoryFlags);
+	void Init(uint32_t width, uint32_t height, VkFormat format, VkImageTiling imageTiling, VkImageUsageFlags usage, VkMemoryPropertyFlags memoryFlags);
 	void Init(VkImage& imageHandle, uint32_t width, uint32_t height, VkFormat format, VkImageTiling imageTiling, VkImageUsageFlags usage);
 
-	void Free(VulkanDevice& device);
+	void Free();
 
-	void CopyBufferToImage(VulkanDevice& device, VkCommandPool& pool, VkQueue& queue, VulkanBuffer& buffer);
-	void TransitionImageLayout(VulkanDevice& device, VkCommandPool& pool, VkQueue& queue, VkImageLayout oldLayout, VkImageLayout newLayout);
+	void CopyBufferToImage(VkCommandPool& pool, VkQueue& queue, VulkanBuffer& buffer);
+	void TransitionImageLayout(VkCommandPool& pool, VkQueue& queue, VkImageLayout oldLayout, VkImageLayout newLayout);
 
-	VulkanImageView CreateImageView(VulkanDevice& device, VkFormat format, VkImageAspectFlags aspectMask);
+	VulkanImageView CreateImageView(VkFormat format, VkImageAspectFlags aspectMask);
 
 	operator VkImage() { return m_kImage; }
 private:

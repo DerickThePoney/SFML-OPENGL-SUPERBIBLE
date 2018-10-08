@@ -61,7 +61,7 @@ void VulkanDevice::Initialise(VulkanPhysicalDevice& physicalDevice,
 	for (auto it = nbQueues.begin(); it != nbQueues.end(); ++it)
 	{
 		if(prio.size() < it->second)
-			for (int i = prio.size(); i < it->second; ++i) prio.push_back(1.0f);
+			for (size_t i = prio.size(); i < it->second; ++i) prio.push_back(1.0f);
 		VkDeviceQueueCreateInfo queueCreateInfo = {};
 		queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
 		queueCreateInfo.queueFamilyIndex = it->first;

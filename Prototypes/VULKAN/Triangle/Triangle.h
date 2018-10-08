@@ -1,6 +1,7 @@
 #pragma once
 #include "VulkanRenderer.h"
 #include "Scene.h"
+#include "Frustum.h"
 
 #include "ObjectCreator.h"
 
@@ -27,7 +28,7 @@ public:
 	}
 	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
-	static std::array<VkWriteDescriptorSet, 3> GetDescriptorWrites() { return getInstance().descriptorWrites; }
+	static std::vector<VkWriteDescriptorSet> GetDescriptorWrites() { return getInstance().descriptorWrites; }
 private:
 	
 
@@ -99,13 +100,17 @@ private:
 	VkDescriptorSet descriptorSet;
 	VkDescriptorSet descriptorSetOffscreen;
 	VkDescriptorBufferInfo bufferInfo;
-	VkDescriptorImageInfo imageInfo;
-	VkDescriptorImageInfo imageInfo2;
-	std::array<VkWriteDescriptorSet, 3> descriptorWrites;
+	VkDescriptorImageInfo imageInfoDepthShadows;
+	VkDescriptorImageInfo imageInfoDiffuseColor;
+	VkDescriptorImageInfo imageInfoAmbientColor;
+	VkDescriptorImageInfo imageInfoOpacityMap;
+	std::vector<VkWriteDescriptorSet> descriptorWrites;
 
 	VulkanImage textureImage;
 	VulkanImageView textureImageView;
 	VkSampler textureSampler;
+
+	Frustum frustum;
 
 	// Framebuffer for offscreen rendering
 	struct OffscreenPass {

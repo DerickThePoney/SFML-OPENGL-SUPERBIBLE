@@ -19,10 +19,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AABB.cpp" />
     <ClCompile Include="BezierCurve.cpp" />
     <ClCompile Include="BlockAllocator.cpp" />
+    <ClCompile Include="BoundingSphere.cpp" />
+    <ClCompile Include="Frustum.cpp" />
+    <ClCompile Include="Intersections.cpp" />
+    <ClCompile Include="MeshData.cpp" />
     <ClCompile Include="ObjectCreator.cpp" />
+    <ClCompile Include="Plane.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="SceneObject.cpp" />
     <ClCompile Include="SignedDistanceField.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -52,16 +59,24 @@
   <ItemGroup>
     <None Include="data\shaders\shadowmappingdirectional.frag" />
     <None Include="data\shaders\shadowmappingdirectional.vert" />
-    <None Include="data\shaders\Triangle.frag" />
-    <None Include="data\shaders\Triangle.vert" />
+    <None Include="data\shaders\UberNoOpacity.frag" />
+    <None Include="data\shaders\UberNoOpacity.vert" />
+    <None Include="data\shaders\UberOpacity.frag" />
     <None Include="Triangle.vert" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AABB.h" />
     <ClInclude Include="BezierCurve.h" />
     <ClInclude Include="BezierSpline.h" />
     <ClInclude Include="BlockAllocator.h" />
+    <ClInclude Include="BoundingSphere.h" />
+    <ClInclude Include="Frustum.h" />
+    <ClInclude Include="Intersections.h" />
+    <ClInclude Include="MeshData.h" />
     <ClInclude Include="ObjectCreator.h" />
+    <ClInclude Include="Plane.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="SceneObject.h" />
     <ClInclude Include="SignedDistanceField.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Triangle.h" />

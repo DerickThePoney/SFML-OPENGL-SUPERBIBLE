@@ -1,7 +1,8 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
 
-layout(binding = 0) uniform UniformBufferObject {
+layout(binding = 0) uniform UniformBufferObject 
+{
     mat4 model;
     mat4 view;
     mat4 proj;
@@ -23,6 +24,8 @@ layout(location = 0) out vec3 fragColor;
 layout(location = 1) out vec2 fragTexCoord;
 layout(location = 2) out vec3 fragNormal;
 layout (location = 3) out vec4 fragShadowCoord;
+
+
 const mat4 biasMat = mat4( 
 	0.5, 0.0, 0.0, 0.0,
 	0.0, 0.5, 0.0, 0.0,

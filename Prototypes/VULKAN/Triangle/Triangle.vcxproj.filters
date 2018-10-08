@@ -31,6 +31,9 @@
     <Filter Include="Scene">
       <UniqueIdentifier>{74a384a5-5d05-454e-8d30-bf3e93578cde}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Intersections">
+      <UniqueIdentifier>{ef56d9b9-6927-4439-9461-96601186d402}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Triangle.cpp">
@@ -105,19 +108,43 @@
     <ClCompile Include="Scene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+    <ClCompile Include="AABB.cpp">
+      <Filter>Intersections</Filter>
+    </ClCompile>
+    <ClCompile Include="Intersections.cpp">
+      <Filter>Intersections</Filter>
+    </ClCompile>
+    <ClCompile Include="Plane.cpp">
+      <Filter>Intersections</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshData.cpp">
+      <Filter>VulkanRendering</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneObject.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Frustum.cpp">
+      <Filter>Intersections</Filter>
+    </ClCompile>
+    <ClCompile Include="BoundingSphere.cpp">
+      <Filter>Intersections</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Triangle.vert" />
-    <None Include="data\shaders\Triangle.vert">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="data\shaders\shadowmappingdirectional.frag">
       <Filter>Shaders</Filter>
     </None>
     <None Include="data\shaders\shadowmappingdirectional.vert">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="data\shaders\Triangle.frag">
+    <None Include="data\shaders\UberNoOpacity.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="data\shaders\UberNoOpacity.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="data\shaders\UberOpacity.frag">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
@@ -196,6 +223,27 @@
     </ClInclude>
     <ClInclude Include="Scene.h">
       <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="AABB.h">
+      <Filter>Intersections</Filter>
+    </ClInclude>
+    <ClInclude Include="Intersections.h">
+      <Filter>Intersections</Filter>
+    </ClInclude>
+    <ClInclude Include="Plane.h">
+      <Filter>Intersections</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshData.h">
+      <Filter>VulkanRendering</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneObject.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Frustum.h">
+      <Filter>Intersections</Filter>
+    </ClInclude>
+    <ClInclude Include="BoundingSphere.h">
+      <Filter>Intersections</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

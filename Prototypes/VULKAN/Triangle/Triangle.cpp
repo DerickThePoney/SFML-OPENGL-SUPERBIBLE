@@ -67,10 +67,33 @@ void HelloTriangleApplication::MainLoop()
 	std::chrono::high_resolution_clock::time_point start, end;
 	start = std::chrono::high_resolution_clock::now();
 	end = std::chrono::high_resolution_clock::now();
+
+	const int aveSize = 1024;
+	static uint64_t durations[aveSize];
+	static int idx = 0;
+	static float avg = 0;
+	static int frm = 0;
+
 	while (!glfwWindowShouldClose(window)) 
 	{
 		auto elapsed = (end - start);
-		//std::cout << "time elapsed " << std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count() << std::endl;
+		//durations[idx] = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
+		if (frm < 128)
+		{
+			durations[idx] = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
+			float mult = (float)frm;
+			avg = (mult *avg + durations[idx]) / (float)(++frm);
+		}
+		else
+		{
+			avg = avg - (float)durations[idx] / (float)aveSize;
+			durations[idx] = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
+			avg = avg + (float)durations[idx] / (float)aveSize;
+		}
+
+		std::cout << "time elapsed " << durations[idx];
+		std::cout << "\ttime elapsed average " << avg << std::endl;
+		idx = (idx + 1) % aveSize;
 		start = std::chrono::high_resolution_clock::now();
 		glfwPollEvents();
 
@@ -132,7 +155,7 @@ void HelloTriangleApplication::UpdateUniformBufferData()
 
 	UniformBufferObject ubo = {};
 	ubo.model = glm::mat4();
-	ubo.view = glm::lookAt(glm::vec3(-50.0f, 10.0f, -1.0f), glm::vec3(10.0f, 5.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	ubo.view = glm::lookAt(glm::vec3(-50.0f, 20.0f, -1.0f), glm::vec3(10.0f, 5.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	ubo.proj = glm::perspective(glm::radians(75.0f), VulkanRenderer::GetSurfaceExtent().width / (float)VulkanRenderer::GetSurfaceExtent().height, 0.1f, 50000.0f);
 	ubo.proj[1][1] *= -1; // necessary Vulkan is Y down
 
@@ -140,7 +163,7 @@ void HelloTriangleApplication::UpdateUniformBufferData()
 
 	UniformBufferOffscreen uboOff = {};
 	glm::vec3 lightInvDir = glm::vec3(1, 1, 1);
-	glm::mat4 depthProjectionMatrix = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
+	glm::mat4 depthProjectionMatrix = glm::ortho<float>(-100, 1000, -100, 1000, -100, 2000);
 	depthProjectionMatrix[1][1] *= -1;
 	glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 	glm::mat4 depthModelMatrix = ubo.model;
@@ -180,7 +203,7 @@ void HelloTriangleApplication::Cleanup()
 
 	vkDestroySampler(VulkanRenderer::GetDevice(), textureSampler, nullptr);
 	textureImageView.Destroy(VulkanRenderer::GetDevice());
-	textureImage.Free(VulkanRenderer::GetDevice());
+	textureImage.Free();
 	VulkanRenderer::Cleanup();
 
 	glfwDestroyWindow(window);
@@ -233,15 +256,15 @@ void HelloTriangleApplication::CreateGraphicsPipeline()
 	};
 	
 	//Init the pipeline
-	m_kPipeline.Initialise(VulkanRenderer::GetSurfaceExtent());
+	//m_kPipeline.Initialise(VulkanRenderer::GetSurfaceExtent());
 
 	//Set the shaders
-	m_kPipeline.SetShaders(VulkanRenderer::GetDevice(), shaders.size(), shaders.data());
-	m_kPipeline.SetDynamicStates(dynamicStateEnables.data(), dynamicStateEnables.size());
+	//m_kPipeline.SetShaders(shaders.size(), shaders.data());
+	//m_kPipeline.SetDynamicStates(dynamicStateEnables.data(), dynamicStateEnables.size());
 	//m_kPipeline.SetPolygonMode(VK_POLYGON_MODE_LINE, .2f);
 
 	//Create the pipline
-	m_kPipeline.CreatePipeline(VulkanRenderer::GetDevice(), &VulkanRenderer::GetDescriptorSetLayout(), VulkanRenderer::GetRenderPass(0));
+	//m_kPipeline.CreatePipeline(&VulkanRenderer::GetDescriptorSetLayout(), VulkanRenderer::GetRenderPass(0));
 
 
 	//offscreen
@@ -251,12 +274,12 @@ void HelloTriangleApplication::CreateGraphicsPipeline()
 	//Init the pipeline
 	dynamicStateEnables.push_back(VK_DYNAMIC_STATE_DEPTH_BIAS);
 	m_kOffscreenPipeline.Initialise(VkExtent2D{ offscreenPass.width, offscreenPass.height });
-	m_kOffscreenPipeline.SetShaders(VulkanRenderer::GetDevice(), shaders.size(), shaders.data());
+	m_kOffscreenPipeline.SetShaders(shaders.size(), shaders.data());
 	m_kOffscreenPipeline.SetDynamicStates(dynamicStateEnables.data(), dynamicStateEnables.size());
 	m_kOffscreenPipeline.SetDepthBias(true);
 	m_kOffscreenPipeline.SetBlendAttachementCount(0);
 
-	m_kOffscreenPipeline.CreatePipeline(VulkanRenderer::GetDevice(), &VulkanRenderer::GetDescriptorSetLayout(), offscreenPass.renderPass);
+	m_kOffscreenPipeline.CreatePipeline(&VulkanRenderer::GetDescriptorSetLayout(), offscreenPass.renderPass);
 }
 
 
@@ -303,13 +326,13 @@ void HelloTriangleApplication::CreateUniformBuffer()
 
 void HelloTriangleApplication::CreateTextureImage()
 {
-	textureImage.Init(VulkanRenderer::GetPhysicalDevice(), VulkanRenderer::GetDevice(), VulkanRenderer::GetTranferPool(), VulkanRenderer::GetGraphicsQueue(), VulkanRenderer::GetTransferQueue(), "data/textures/texture.jpg", VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+	textureImage.Init("data/textures/texture.jpg", VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 }
 
 
 void HelloTriangleApplication::CreateTextureImageView()
 {
-	textureImageView = textureImage.CreateImageView(VulkanRenderer::GetDevice(), VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT);
+	textureImageView = textureImage.CreateImageView(VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT);
 }
 
 void HelloTriangleApplication::CreateTextureSampler()
@@ -341,6 +364,10 @@ void HelloTriangleApplication::CreateTextureSampler()
 	
 void HelloTriangleApplication::CreateCommandBuffers()
 {
+	glm::mat4 view = glm::lookAt(glm::vec3(-50.0f, 20.0f, -1.0f), glm::vec3(10.0f, 5.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::mat4 proj = glm::perspective(glm::radians(75.0f), VulkanRenderer::GetSurfaceExtent().width / (float)VulkanRenderer::GetSurfaceExtent().height, 0.1f, 50000.0f);
+	frustum.Set(proj * view);
+
 	commandBuffers = VulkanCommandBuffer::CreateCommandBuffers(VulkanRenderer::GetDevice(), VulkanRenderer::GetGraphicsPool(), VK_COMMAND_BUFFER_LEVEL_PRIMARY, VulkanRenderer::GetSwapchainBuffers().size());
 
 	for (size_t i = 0; i < commandBuffers.size(); i++)
@@ -377,7 +404,7 @@ void HelloTriangleApplication::CreateCommandBuffers()
 
 		//commandBuffers[i].ExecuteCommandBuffer(&commandBuffersSubpass[i], 1);
 		//Bind the pipeline
-		commandBuffers[i].BindPipeline(VK_PIPELINE_BIND_POINT_GRAPHICS, m_kPipeline);
+		//commandBuffers[i].BindPipeline(VK_PIPELINE_BIND_POINT_GRAPHICS, m_kPipeline);
 
 		//Bind Objects		
 		//commandBuffers[i].BindDescriptorSets(VK_PIPELINE_BIND_POINT_GRAPHICS, m_kPipeline.GetLayout(), 0, 1, &descriptorSet, 0, nullptr);
@@ -386,7 +413,10 @@ void HelloTriangleApplication::CreateCommandBuffers()
 		//commandBuffers[i].DrawMesh(m_kMeshPlane);
 		//Draw
 		//commandBuffers[i].DrawMesh(m_kMesh);
-		m_kScene.Draw(commandBuffers[i], m_kPipeline);
+
+		
+
+		m_kScene.Draw(commandBuffers[i], frustum);
 
 		//End render pass and command buffer
 		commandBuffers[i].EndRenderPass();
@@ -488,7 +518,7 @@ void HelloTriangleApplication::CleanUpSwapChain()
 
 	VulkanCommandBuffer::Free(commandBuffers, VulkanRenderer::GetDevice(), VulkanRenderer::GetGraphicsPool());
 
-	m_kPipeline.Destroy(VulkanRenderer::GetDevice());
+	//m_kPipeline.Destroy(VulkanRenderer::GetDevice());
 }
 
 void HelloTriangleApplication::RecreateSwapChain()
@@ -517,17 +547,29 @@ void HelloTriangleApplication::CreateDescriptorSet()
 	bufferInfo.offset = 0;
 	bufferInfo.range = sizeof(UniformBufferObject);
 
-	imageInfo = {};
-	imageInfo.imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
-	imageInfo.imageView = offscreenPass.depth.view;
-	imageInfo.sampler = offscreenPass.depthSampler;
+	imageInfoDepthShadows = {};
+	imageInfoDepthShadows.imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
+	imageInfoDepthShadows.imageView = offscreenPass.depth.view;
+	imageInfoDepthShadows.sampler = offscreenPass.depthSampler;
 
-	imageInfo2 = {};
-	imageInfo2.imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
-	imageInfo2.imageView = offscreenPass.depth.view;
-	imageInfo2.sampler = offscreenPass.depthSampler;
+	imageInfoDiffuseColor = {};
+	imageInfoDiffuseColor.imageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+	imageInfoDiffuseColor.imageView = offscreenPass.depth.view;
+	imageInfoDiffuseColor.sampler = textureSampler;
 
-	descriptorWrites = {};
+	imageInfoAmbientColor = {};
+	imageInfoAmbientColor.imageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+	imageInfoAmbientColor.imageView = offscreenPass.depth.view;
+	imageInfoAmbientColor.sampler = textureSampler;
+
+	imageInfoOpacityMap = {};
+	imageInfoOpacityMap.imageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+	imageInfoOpacityMap.imageView = offscreenPass.depth.view;
+	imageInfoOpacityMap.sampler = textureSampler;
+
+	descriptorWrites = std::vector<VkWriteDescriptorSet>({ {}, {}, {}, {}, {} });
+
+	//descriptorWrites = {};
 	descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 	descriptorWrites[0].dstSet = descriptorSet;
 	descriptorWrites[0].dstBinding = 0;
@@ -542,7 +584,7 @@ void HelloTriangleApplication::CreateDescriptorSet()
 	descriptorWrites[1].dstArrayElement = 0;
 	descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 	descriptorWrites[1].descriptorCount = 1;
-	descriptorWrites[1].pImageInfo = &imageInfo;
+	descriptorWrites[1].pImageInfo = &imageInfoDepthShadows;
 
 	descriptorWrites[2].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 	descriptorWrites[2].dstSet = descriptorSet;
@@ -550,7 +592,23 @@ void HelloTriangleApplication::CreateDescriptorSet()
 	descriptorWrites[2].dstArrayElement = 0;
 	descriptorWrites[2].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 	descriptorWrites[2].descriptorCount = 1;
-	descriptorWrites[2].pImageInfo = &imageInfo;
+	descriptorWrites[2].pImageInfo = &imageInfoDiffuseColor;
+
+	descriptorWrites[3].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	descriptorWrites[3].dstSet = descriptorSet;
+	descriptorWrites[3].dstBinding = 3;
+	descriptorWrites[3].dstArrayElement = 0;
+	descriptorWrites[3].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	descriptorWrites[3].descriptorCount = 1;
+	descriptorWrites[3].pImageInfo = &imageInfoAmbientColor;
+
+	descriptorWrites[4].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	descriptorWrites[4].dstSet = descriptorSet;
+	descriptorWrites[4].dstBinding = 4;
+	descriptorWrites[4].dstArrayElement = 0;
+	descriptorWrites[4].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	descriptorWrites[4].descriptorCount = 1;
+	descriptorWrites[4].pImageInfo = &imageInfoOpacityMap;
 
 	/*vkUpdateDescriptorSets(VulkanRenderer::GetDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 	*/
@@ -583,9 +641,9 @@ void HelloTriangleApplication::CreateOffscreenRenderPass()
 	VkFormat fbColorFormat = VK_FORMAT_R8G8B8A8_UNORM;
 
 	// For shadow mapping we only need a depth attachment
-	offscreenPass.depth.image.Init(VulkanRenderer::GetPhysicalDevice(), VulkanRenderer::GetDevice(), offscreenPass.width, offscreenPass.height, VK_FORMAT_D16_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+	offscreenPass.depth.image.Init(offscreenPass.width, offscreenPass.height, VK_FORMAT_D16_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 	
-	offscreenPass.depth.view = offscreenPass.depth.image.CreateImageView(VulkanRenderer::GetDevice(), VK_FORMAT_D16_UNORM, VK_IMAGE_ASPECT_DEPTH_BIT);
+	offscreenPass.depth.view = offscreenPass.depth.image.CreateImageView(VK_FORMAT_D16_UNORM, VK_IMAGE_ASPECT_DEPTH_BIT);
 
 
 	// Create sampler to sample from to depth attachment 
@@ -673,15 +731,15 @@ void HelloTriangleApplication::CreateOffscreenCommandBuffers()
 		clearValues[0].depthStencil.depth = 1.0f;
 		commandBuffersOffscreen[i].BeginRenderPass(offscreenPass.renderPass, offscreenPass.frameBuffer, VkOffset2D{ 0,0 }, VkExtent2D{ offscreenPass.width, offscreenPass.height }, clearValues, VK_SUBPASS_CONTENTS_INLINE);
 
-		commandBuffersOffscreen[i].BindPipeline(VK_PIPELINE_BIND_POINT_GRAPHICS, m_kOffscreenPipeline);
+		/*commandBuffersOffscreen[i].BindPipeline(VK_PIPELINE_BIND_POINT_GRAPHICS, m_kOffscreenPipeline);
 
 		//commandBuffersOffscreen[i].BindDescriptorSets(VK_PIPELINE_BIND_POINT_GRAPHICS, m_kOffscreenPipeline.GetLayout(), 0, 1, &descriptorSetOffscreen, 0, nullptr);
 
-		/*//Draw
-		commandBuffersOffscreen[i].DrawMesh(m_kMeshPlane);
+		//Draw
+		/*commandBuffersOffscreen[i].DrawMesh(m_kMeshPlane);
 		//Draw
 		commandBuffersOffscreen[i].DrawMesh(m_kMesh);*/
-		m_kScene.Draw(commandBuffersOffscreen[i], m_kOffscreenPipeline);
+		/*m_kScene.Draw(commandBuffersOffscreen[i], m_kOffscreenPipeline);*/
 		
 
 		commandBuffersOffscreen[i].EndRenderPass();
@@ -696,11 +754,11 @@ void HelloTriangleApplication::CleanUpOffscreenPass()
 {
 	VulkanCommandBuffer::Free(commandBuffersOffscreen, VulkanRenderer::GetDevice(), VulkanRenderer::GetGraphicsPool());
 	offscreenPass.depth.view.Destroy(VulkanRenderer::GetDevice());
-	offscreenPass.depth.image.Free(VulkanRenderer::GetDevice());
+	offscreenPass.depth.image.Free();
 	offscreenPass.frameBuffer.Destroy(VulkanRenderer::GetDevice());
 	vkDestroySemaphore(VulkanRenderer::GetDevice(), offscreenPass.semaphore, nullptr);
 
-	m_kOffscreenPipeline.Destroy(VulkanRenderer::GetDevice());
+	m_kOffscreenPipeline.Destroy();
 	offscreenPass.renderPass.Destroy(VulkanRenderer::GetDevice());
 }
 

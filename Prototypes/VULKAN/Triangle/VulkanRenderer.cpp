@@ -119,7 +119,7 @@ void VulkanRenderer::InstanceCleanup()
 void VulkanRenderer::CleanupSwapChain()
 {
 	depthAttachement.view.Destroy(m_kDevice);
-	depthAttachement.image.Free(m_kDevice);
+	depthAttachement.image.Free();
 
 	for (size_t i = 0; i < m_akSwapchainFrameBuffers.size(); i++) {
 		m_akSwapchainFrameBuffers[i].Destroy(m_kDevice);
@@ -283,18 +283,18 @@ void VulkanRenderer::CreateImageViews()
 {
 	for (size_t i = 0; i < m_kSwapwhain.swapchainAttachments.size(); i++)
 	{
-		m_kSwapwhain.swapchainAttachments[i].view = m_kSwapwhain.swapchainAttachments[i].image.CreateImageView(m_kDevice, m_kSwapwhain.swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT);
+		m_kSwapwhain.swapchainAttachments[i].view = m_kSwapwhain.swapchainAttachments[i].image.CreateImageView(m_kSwapwhain.swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT);
 	}
 }
 
 void VulkanRenderer::CreateDepthAttachment()
 {
 	VkFormat depthFormat = FindDepthFormat();
-	depthAttachement.image.Init(m_kPhysicalDevice, m_kDevice, m_kSwapwhain.swapChainExtent.width, m_kSwapwhain.swapChainExtent.height, depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+	depthAttachement.image.Init(m_kSwapwhain.swapChainExtent.width, m_kSwapwhain.swapChainExtent.height, depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
-	depthAttachement.view = depthAttachement.image.CreateImageView(m_kDevice, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
+	depthAttachement.view = depthAttachement.image.CreateImageView(depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
 
-	depthAttachement.image.TransitionImageLayout(m_kDevice, commandPoolGraphics, graphicsQueue, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+	depthAttachement.image.TransitionImageLayout(commandPoolGraphics, graphicsQueue, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 
 }
 
@@ -364,7 +364,7 @@ void VulkanRenderer::CreateDescriptorPool()
 	poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	poolSizes[0].descriptorCount = 2;
 	poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-	poolSizes[1].descriptorCount = 2;
+	poolSizes[1].descriptorCount = 3;
 
 	VkDescriptorPoolCreateInfo poolInfo = {};
 	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -400,7 +400,30 @@ void VulkanRenderer::CreateDescriptorSetLayout()
 	samplerLayoutBindingDiffuse.pImmutableSamplers = nullptr;
 	samplerLayoutBindingDiffuse.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 
-	std::array<VkDescriptorSetLayoutBinding, 3> bindings = { uboLayoutBinding, samplerLayoutBinding, samplerLayoutBindingDiffuse };
+
+	VkDescriptorSetLayoutBinding samplerLayoutBindingAmbient = {};
+	samplerLayoutBindingAmbient.binding = 3;
+	samplerLayoutBindingAmbient.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	samplerLayoutBindingAmbient.descriptorCount = 1;
+	samplerLayoutBindingAmbient.pImmutableSamplers = nullptr;
+	samplerLayoutBindingAmbient.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+
+
+	VkDescriptorSetLayoutBinding samplerLayoutBindingOpacity = {};
+	samplerLayoutBindingOpacity.binding = 4;
+	samplerLayoutBindingOpacity.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	samplerLayoutBindingOpacity.descriptorCount = 1;
+	samplerLayoutBindingOpacity.pImmutableSamplers = nullptr;
+	samplerLayoutBindingOpacity.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+
+	std::vector<VkDescriptorSetLayoutBinding> bindings = 
+	{ 
+		uboLayoutBinding, 
+		samplerLayoutBinding,
+		samplerLayoutBindingDiffuse,
+		samplerLayoutBindingAmbient,
+		samplerLayoutBindingOpacity 
+	};
 	VkDescriptorSetLayoutCreateInfo layoutInfo = {};
 	layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 	layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());

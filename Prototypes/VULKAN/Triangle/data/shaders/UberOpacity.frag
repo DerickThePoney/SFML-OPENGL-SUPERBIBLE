@@ -9,6 +9,10 @@ layout (location = 3) in vec4 fragShadowCoord;
 
 layout(binding = 1) uniform sampler2D shadowMap;
 layout(binding = 2) uniform sampler2D diffuseMap;
+layout(binding = 3) uniform sampler2D ambientMap;
+layout(binding = 4) uniform sampler2D opacityMap;
+
+
 #define ambient 0.1
 float textureProj(vec4 P, vec2 off)
 {
@@ -48,12 +52,13 @@ float filterPCF(vec4 sc)
 	return shadowFactor / count;
 }
 
-void main() {
-	float shadow = filterPCF(fragShadowCoord / fragShadowCoord.w);//, vec2(0.0));
-	//float shadow = 1.0;
-	//if ( texture( shadowMap, fragShadowCoord.xy ).r  <  fragShadowCoord.z){
-	//	shadow = 0.5;
-	//}
-    outColor = vec4(.1,.1,.1,1.0) * vec4(fragColor,1.0) + shadow * 1.0 * vec4(fragColor,1.0) * clamp(dot(normalize(fragNormal), normalize(vec3(-1,-1,-1))),0.0,1.0);//vec4(fragColor,1.0);//texture(texSampler, fragTexCoord*2);
-   //outColor = vec4(normalize(fragNormal),1.0);
+void main() 
+{
+	float shadow = 1.0;//filterPCF(fragShadowCoord / fragShadowCoord.w);
+
+	vec4 diffuseColor = texture ( diffuseMap, fragTexCoord);
+	vec4 ambientColor = texture ( ambientMap, fragTexCoord);
+	float opacity = texture ( opacityMap, fragTexCoord).r;
+    outColor = vec4(.1,.1,.1,1.0) * ambientColor + shadow * 1.0 * diffuseColor * clamp(dot(normalize(fragNormal), normalize(vec3(-1,-1,-1))),0.0,1.0);
+	outColor.a = opacity;
 }
