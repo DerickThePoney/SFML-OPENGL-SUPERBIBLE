@@ -61,6 +61,11 @@ void VulkanRenderer::RecreateSwapChain(GLFWwindow * window)
 	instance.InstanceRecreateSwapChain(window);
 }
 
+void VulkanRenderer::EnsureDeviceIdle()
+{
+	instance.InstanceEnsureDeviceIdle();
+}
+
 
 void VulkanRenderer::InstanceInit(GLFWwindow* window)
 {
@@ -171,6 +176,19 @@ void VulkanRenderer::InstanceRecreateSwapChain(GLFWwindow* window)
 	CreateFinalRenderPass();
 	CreateDepthAttachment();
 	CreateFrameBuffers();
+}
+
+void VulkanRenderer::InstanceEnsureDeviceIdle()
+{
+	for (size_t i = 0; i < inFlightFences.size(); ++i)
+	{
+		vkWaitForFences(m_kDevice, 1, &inFlightFences[i], VK_TRUE, std::numeric_limits<uint64_t>::max());
+	}
+
+	vkQueueWaitIdle(presentQueue);
+	vkQueueWaitIdle(transferQueue);
+	vkQueueWaitIdle(graphicsQueue);
+	vkDeviceWaitIdle(m_kDevice);
 }
 
 void VulkanRenderer::CreateInstance()
@@ -408,6 +426,12 @@ void VulkanRenderer::CreateDescriptorSetLayout()
 	samplerLayoutBindingAmbient.pImmutableSamplers = nullptr;
 	samplerLayoutBindingAmbient.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 
+	VkDescriptorSetLayoutBinding samplerNormalMap = {};
+	samplerNormalMap.binding = 5;
+	samplerNormalMap.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	samplerNormalMap.descriptorCount = 1;
+	samplerNormalMap.pImmutableSamplers = nullptr;
+	samplerNormalMap.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 
 	VkDescriptorSetLayoutBinding samplerLayoutBindingOpacity = {};
 	samplerLayoutBindingOpacity.binding = 4;
@@ -415,6 +439,8 @@ void VulkanRenderer::CreateDescriptorSetLayout()
 	samplerLayoutBindingOpacity.descriptorCount = 1;
 	samplerLayoutBindingOpacity.pImmutableSamplers = nullptr;
 	samplerLayoutBindingOpacity.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+	
+	
 
 	std::vector<VkDescriptorSetLayoutBinding> bindings = 
 	{ 
@@ -422,7 +448,8 @@ void VulkanRenderer::CreateDescriptorSetLayout()
 		samplerLayoutBinding,
 		samplerLayoutBindingDiffuse,
 		samplerLayoutBindingAmbient,
-		samplerLayoutBindingOpacity 
+		samplerLayoutBindingOpacity,
+		samplerNormalMap
 	};
 	VkDescriptorSetLayoutCreateInfo layoutInfo = {};
 	layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;

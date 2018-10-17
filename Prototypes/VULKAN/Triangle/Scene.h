@@ -1,4 +1,5 @@
 #pragma once
+#include "CameraProgram.h"
 
 class VulkanMesh;
 class VulkanCommandBuffer;
@@ -7,11 +8,16 @@ class VulkanImageView;
 struct aiScene;
 struct aiNode;
 struct aiMaterial;
+struct aiMesh;
+struct aiAnimation;
 class VulkanGraphicsPipeline;
 class AABB;
+class BoundingSphere;
 class Frustum;
 
 class SceneObject;
+
+class ObjectPositionAnimation;
 
 class Scene
 {
@@ -22,26 +28,43 @@ public:
 	void InitialiseFromFile(const std::string& filename);
 	void Destroy();
 
+	glm::mat4 GetCameraPosition(float dt);
+
 	void Draw(VulkanCommandBuffer& buffer, const Frustum& frustum);
 
 private:
 	void BuildPipelines();
-	void LoadMeshes(const aiScene* scene);
+	void LoadNodes(const aiScene* scene);
 	void LoadNode(const aiScene* scene, const aiNode* node);
 	void LoadMeshNode(const aiScene* scene, const aiNode* node);
 	void CreateDescriptorSets(int number);
-	void UpdateDescriptorSet(int idImage, int idOpacityMap, int idDescriptor);
+	void UpdateDescriptorSet(int idImage, int idOpacityMap, int idDescriptor, VkSampler sampler);
+	void LoadMeshes(const aiScene* scene);
+	void LoadMesh(const aiScene* scene, const aiMesh* mesh, int IDX);
 	void LoadMaterials(const aiScene* scene);
 	void LoadMaterial(const aiScene* scene, const aiMaterial* material,int idx);
+	void LoadAnimations(const aiScene* scene);
+	void LoadAnimation(const aiScene* scene, const aiAnimation* animation);
+	void DisplayMaterialProperties(const aiMaterial* material);
 
 	void GroupByPipeline();
 
 	std::vector<SceneObject> objects;
 
-	std::set<int> matIDSet;
+	std::vector<std::map<int, std::list<int>>> pipelineMeshIDs;
+
+	//mesh data
+	std::vector<VulkanMesh> meshes;
+	std::vector<BoundingSphere> boundingSpheres;
+	std::vector<AABB> boundingBoxes;
 	std::vector<VkDescriptorSet> descriptorSets;
+	std::set<int> matIDSet;
 	std::vector<int> pipelineID;
-	std::vector<std::map<int,std::list<int>>> pipelineMeshIDs;
+
+	/*
+	
+	
+	std::vector<std::map<int,std::list<int>>> pipelineMeshIDs;*/
 
 	std::vector<VulkanImage> diffuseImages;
 	std::vector<VulkanImageView> diffuseImageViews;
@@ -53,5 +76,8 @@ private:
 	std::vector<VulkanImageView> opacityMapViews;
 
 	std::vector<VulkanGraphicsPipeline> m_kPipelines;
+
+
+	ObjectPositionAnimation cameraAnimation;
 };
 

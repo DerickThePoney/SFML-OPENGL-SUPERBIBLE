@@ -1,0 +1,51 @@
+# Blender MTL File: 'BlenderScene.blend'
+# Material Count: 4
+
+newmtl Leaves
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 0.000000
+illum 1
+map_Kd Textures\\palm_leafs.png
+map_Ns Textures\\palm_leafs_spec.png
+map_d Textures\\palm_leafs.png
+
+newmtl Sand.001
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump Textures\\TexturesCom_DesertSand3_2x2_1024_normal.png
+map_Kd Textures\\TexturesCom_DesertSand3_2x2_512_albedo.png
+map_Ns Textures\\TexturesCom_DesertSand3_2x2_1024_roughness.png
+
+newmtl Trunk.001
+Ns 1000.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Bump textures\\palm_bark_norm.png
+map_Kd textures\\palm_bark.png
+
+newmtl Water.001
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 0.812950
+illum 2
+map_Kd Textures\WaterColor.png

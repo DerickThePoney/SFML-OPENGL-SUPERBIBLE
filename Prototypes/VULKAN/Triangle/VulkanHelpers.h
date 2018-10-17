@@ -19,7 +19,7 @@ struct SwapChainSupportDetails {
 
 struct VertexData
 {
-	VertexData() : pos(glm::vec3(0)), normal(glm::vec3(0)), color(glm::vec3(1)), texCoord(glm::vec2(0)){}
+	VertexData() : pos(glm::vec3(0)), normal(glm::vec3(0)), tangent(glm::vec3(0)), color(glm::vec3(1)), texCoord(glm::vec2(0)){}
 	glm::vec3 pos;
 	glm::vec3 normal;
 	glm::vec3 tangent;
@@ -38,7 +38,7 @@ struct VertexData
 
 
 	static std::vector<VkVertexInputAttributeDescription> GetAttributeDescriptions() {
-		std::vector<VkVertexInputAttributeDescription> attributeDescriptions = { {}, {}, {}, {}};
+		std::vector<VkVertexInputAttributeDescription> attributeDescriptions = { {}, {}, {}, {}, {} };
 		attributeDescriptions[0].binding = 0;
 		attributeDescriptions[0].location = 0;
 		attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
@@ -52,12 +52,17 @@ struct VertexData
 		attributeDescriptions[2].binding = 0;
 		attributeDescriptions[2].location = 2;
 		attributeDescriptions[2].format = VK_FORMAT_R32G32B32_SFLOAT;
-		attributeDescriptions[2].offset = offsetof(VertexData, color);
+		attributeDescriptions[2].offset = offsetof(VertexData, tangent);
 
 		attributeDescriptions[3].binding = 0;
 		attributeDescriptions[3].location = 3;
-		attributeDescriptions[3].format = VK_FORMAT_R32G32_SFLOAT;
-		attributeDescriptions[3].offset = offsetof(VertexData, texCoord);
+		attributeDescriptions[3].format = VK_FORMAT_R32G32B32_SFLOAT;
+		attributeDescriptions[3].offset = offsetof(VertexData, color);
+
+		attributeDescriptions[4].binding = 0;
+		attributeDescriptions[4].location = 4;
+		attributeDescriptions[4].format = VK_FORMAT_R32G32_SFLOAT;
+		attributeDescriptions[4].offset = offsetof(VertexData, texCoord);
 
 		
 
@@ -71,6 +76,7 @@ struct UniformBufferObject {
 	glm::mat4 view;
 	glm::mat4 proj;
 	glm::mat4 lightSpace;
+	float time;
 };
 
 struct UniformBufferOffscreen {

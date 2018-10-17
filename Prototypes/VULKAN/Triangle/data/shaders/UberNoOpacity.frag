@@ -6,11 +6,13 @@ layout(location = 0) in vec3 fragColor;
 layout(location = 1) in vec2 fragTexCoord;
 layout(location = 2) in vec3 fragNormal;
 layout (location = 3) in vec4 fragShadowCoord;
+layout (location = 4) in mat3 TBN;
 
 layout(binding = 1) uniform sampler2D shadowMap;
 layout(binding = 2) uniform sampler2D diffuseMap;
 layout(binding = 3) uniform sampler2D ambientMap;
 layout(binding = 4) uniform sampler2D opacityMap;
+layout(binding = 5) uniform sampler2D normalMap;
 
 
 #define ambient 0.1

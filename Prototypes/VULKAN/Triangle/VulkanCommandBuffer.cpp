@@ -6,6 +6,7 @@
 #include "VulkanMesh.h"
 #include "VulkanRenderPass.h"
 #include "VulkanFramebuffer.h"
+#include "VulkanImage.h"
 
 
 VulkanCommandBuffer VulkanCommandBuffer::CreateCommandBuffer(VulkanDevice& device, VkCommandPool & pool, VkCommandBufferLevel level)
@@ -72,6 +73,19 @@ void VulkanCommandBuffer::Free(std::vector<VulkanCommandBuffer>& buffers, Vulkan
 
 	vkFreeCommandBuffers(device, pool, static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
 	buffers.clear();
+}
+
+VkResult VulkanCommandBuffer::Reset(std::vector<VulkanCommandBuffer>& buffers, VkCommandBufferResetFlagBits flags)
+{
+	for (size_t i = 0; i < buffers.size(); ++i)
+	{
+		VkResult res = buffers[i].Reset(flags);
+		if (res != VK_SUCCESS)
+		{
+			std::cout << "resetting buffer did not work" << std::endl;
+		}
+	}
+	return VK_SUCCESS;
 }
 
 VulkanCommandBuffer::VulkanCommandBuffer()
@@ -201,5 +215,27 @@ void VulkanCommandBuffer::CopyBufferToImage(VulkanBuffer & buffer, VkImage image
 		dstImageLayout,
 		regionCount,
 		regions
+	);
+}
+
+void VulkanCommandBuffer::BlitImage(VulkanImage & imageSrc, VkImageLayout layoutSrc, VulkanImage & imageDst, VkImageLayout layoutDst, uint32_t regionCount, const VkImageBlit * pRegions, VkFilter filter)
+{
+	vkCmdBlitImage(
+		m_kBufferObject,
+		imageSrc, layoutSrc,
+		imageDst, layoutDst,
+		regionCount, pRegions,
+		filter
+	);
+}
+
+void VulkanCommandBuffer::BlitImage(VkImage & imageSrc, VkImageLayout layoutSrc, VkImage & imageDst, VkImageLayout layoutDst, uint32_t regionCount, const VkImageBlit * pRegions, VkFilter filter)
+{
+	vkCmdBlitImage(
+		m_kBufferObject,
+		imageSrc, layoutSrc,
+		imageDst, layoutDst,
+		regionCount, pRegions,
+		filter
 	);
 }

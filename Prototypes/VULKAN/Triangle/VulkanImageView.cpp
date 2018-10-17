@@ -12,7 +12,7 @@ VulkanImageView::~VulkanImageView()
 {
 }
 
-void VulkanImageView::Init(VulkanDevice & device, VulkanImage& image, VkFormat format, VkImageAspectFlags aspectMask)
+void VulkanImageView::Init(VulkanDevice & device, VulkanImage& image, VkFormat format, VkImageAspectFlags aspectMask, uint32_t mipLevels)
 {
 	VkImageViewCreateInfo viewInfo = {};
 	viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -21,7 +21,7 @@ void VulkanImageView::Init(VulkanDevice & device, VulkanImage& image, VkFormat f
 	viewInfo.format = format;
 	viewInfo.subresourceRange.aspectMask = aspectMask;
 	viewInfo.subresourceRange.baseMipLevel = 0;
-	viewInfo.subresourceRange.levelCount = 1;
+	viewInfo.subresourceRange.levelCount = mipLevels;
 	viewInfo.subresourceRange.baseArrayLayer = 0;
 	viewInfo.subresourceRange.layerCount = 1;
 

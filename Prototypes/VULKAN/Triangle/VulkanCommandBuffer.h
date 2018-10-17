@@ -3,6 +3,7 @@ class VulkanDevice;
 class VulkanBuffer;
 class VulkanGraphicsPipeline;
 class VulkanMesh;
+class VulkanImage;
 class VulkanRenderPass;
 class VulkanFramebuffer;
 class VulkanCommandBuffer
@@ -13,6 +14,8 @@ public:
 
 	static void Free(VulkanCommandBuffer& buffer, VulkanDevice& device, VkCommandPool& pool);
 	static void Free(std::vector<VulkanCommandBuffer>& buffers, VulkanDevice& device, VkCommandPool& pool);
+
+	static VkResult Reset(std::vector<VulkanCommandBuffer>& buffers, VkCommandBufferResetFlagBits flags);
 
 public:
 	VulkanCommandBuffer();
@@ -84,6 +87,9 @@ public:
 		uint32_t regionCount,
 		const VkBufferImageCopy* regions
 	);
+
+	void BlitImage(VulkanImage& imageSrc, VkImageLayout layoutSrc, VulkanImage& imageDst, VkImageLayout layoutDst, uint32_t regionCount, const VkImageBlit* pRegions, VkFilter filter);
+	void BlitImage(VkImage& imageSrc, VkImageLayout layoutSrc, VkImage& imageDst, VkImageLayout layoutDst, uint32_t regionCount, const VkImageBlit* pRegions, VkFilter filter);
 
 
 

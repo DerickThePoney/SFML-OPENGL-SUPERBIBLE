@@ -38,9 +38,16 @@ void HelloTriangleApplication::InitWindow()
 	glfwInit();
 
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-	glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+	//glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-	window = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan triangle example", nullptr, nullptr);
+
+	const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+	glfwWindowHint(GLFW_RED_BITS, mode->redBits);
+	glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
+	glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
+	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
+
+	window = glfwCreateWindow(mode->width, mode->height, "Vulkan triangle example", nullptr, nullptr);
 	glfwSetKeyCallback(window, HelloTriangleApplication::key_callback);
 }
 
@@ -107,6 +114,7 @@ void HelloTriangleApplication::MainLoop()
 		}
 
 		UpdateUniformBufferData();
+		CreateCommandBuffer(currentFrame);
 		DrawFrame();
 		end = std::chrono::high_resolution_clock::now();
 	}
@@ -152,12 +160,74 @@ void HelloTriangleApplication::UpdateUniformBufferData()
 
 	auto currentTime = std::chrono::high_resolution_clock::now();
 	float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
+	//std::cout << "time = " << time << std::endl;
 
+	static CameraProgram program;
+	static int nbReset = 0;
+
+	if (!program.IsSet())
+	{
+		program.Set
+		(
+			glm::vec3(-30.0f, 3.0f, 3.0f), glm::vec3(15.0f, 8.0f, 1.0f), 0.005f,
+			glm::vec3(20.0f, 0.0f, -90.0f), glm::vec3(-20.0f, 0.0f, 75.0f), 0.0185f
+		);
+	}
+	
+	glm::vec3 camPos, camODir;
+	if (program.Update(time, camPos, camODir))
+	{
+		nbReset = ++nbReset % 5;
+		switch (nbReset)
+		{
+		case 0:
+			program.Set
+			(
+				glm::vec3(-30.0f, 3.0f, 3.0f), glm::vec3(15.0f, 8.0f, 1.0f), 0.005f,
+				glm::vec3(20.0f, 0.0f, -90.0f), glm::vec3(-20.0f, 0.0f, 75.0f), 0.0185f
+			);
+			break;
+		case 4:
+			program.Set
+			(
+				glm::vec3(-25.0f, 10.0f, -11.0f), glm::vec3(22.5f, 14.0f, -10.0f), 0.005f,
+				glm::vec3(0.0f, 0.0f, 270.0f), glm::vec3(-20.0f, 0.0f, 180.0f), 0.010f
+			);
+			break;
+		case 2:
+			program.Set
+			(
+				glm::vec3(20.0f, 35.0f, -20.0f), glm::vec3(-30.0f, 35.0f, 5.0f), 0.005f,
+				glm::vec3(-45.0f, 0.0f, 160.0f), glm::vec3(-45.0f, 0.0f, 300.0f), 0.015f
+			);
+			break;
+		case 3:
+			program.Set
+			(
+				glm::vec3(20.0f, 1.0f, -11.0f), glm::vec3(-25.0f, 6.0f, -9.0f), 0.004f,
+				glm::vec3(-10.0f, 0.0f, 80.0f), glm::vec3(0.0f, 0.0f, 160.0f), 0.007f
+			);
+			break;
+		case 1:
+			program.Set
+			(
+				glm::vec3(-20.0f, 3.0f, -1.0f), glm::vec3(20.0f, 3.0f, -1.0f), 0.003f,
+				glm::vec3(180.0f, 90.0f, 0.0f), glm::vec3(0.0f, 0.0f, 180.0f), 0.0f
+			);
+			break;
+		}
+	}
+	
 	UniformBufferObject ubo = {};
 	ubo.model = glm::mat4();
-	ubo.view = glm::lookAt(glm::vec3(-50.0f, 20.0f, -1.0f), glm::vec3(10.0f, 5.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	ubo.proj = glm::perspective(glm::radians(75.0f), VulkanRenderer::GetSurfaceExtent().width / (float)VulkanRenderer::GetSurfaceExtent().height, 0.1f, 50000.0f);
+	//ubo.view = glm::translate(camPos) * glm::orientate4(camO); // glm::lookAt(camPos, glm::vec3(10.0f, 5.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	//ubo.view = m_kScene.GetCameraPosition(time / 1000.0f); 
+	ubo.view = glm::lookAt(glm::vec3(213.0f,120.0f,-8.0f), glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	ubo.proj = glm::perspective(glm::radians(35.0f), VulkanRenderer::GetSurfaceExtent().width / (float)VulkanRenderer::GetSurfaceExtent().height, 0.1f, 1000.0f);
 	ubo.proj[1][1] *= -1; // necessary Vulkan is Y down
+	ubo.time = time;
+
+	frustum.Set(ubo.proj * ubo.view);
 
 	
 
@@ -189,22 +259,72 @@ void HelloTriangleApplication::UpdateUniformBufferData()
 	uniformBuffer.UnMapBuffer(VulkanRenderer::GetDevice());
 }
 
+void HelloTriangleApplication::CreateCommandBuffer(int i)
+{
+	if (commandBuffers[i].BeginCommandBuffer(VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT, nullptr) != VK_SUCCESS) {
+		throw std::runtime_error("failed to begin recording command buffer!");
+	}
+
+	VkViewport viewport = {};// vks::initializers::viewport((float)width, (float)height, 0.0f, 1.0f);
+	viewport.height = (float)VulkanRenderer::GetSurfaceExtent().height;
+	viewport.width = (float)VulkanRenderer::GetSurfaceExtent().width;
+	viewport.minDepth = 0.0f;
+	viewport.maxDepth = 1.0f;
+	commandBuffers[i].SetViewport(0, 1, &viewport);
+
+	VkRect2D scissor = {};// vks::initializers::rect2D(width, height, 0, 0);
+	scissor.extent = VulkanRenderer::GetSurfaceExtent();
+	scissor.offset = VkOffset2D{ 0,0 };
+	commandBuffers[i].SetScissors(0, 1, &scissor);
+
+	//start render pass
+	std::vector<VkClearValue> clearColor = { {},{} };
+	clearColor[0].color = { 0.0f, 0.0f, 0.0f, 1.0f };
+	clearColor[1].depthStencil = { 1.0f, 0 };
+	commandBuffers[i].BeginRenderPass
+	(
+		VulkanRenderer::GetRenderPass(0),
+		VulkanRenderer::GetSwapchainBuffers()[i],
+		VkOffset2D({ 0, 0 }),
+		VulkanRenderer::GetSurfaceExtent(),
+		clearColor,
+		VK_SUBPASS_CONTENTS_INLINE//VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS
+	);
+
+
+	m_kScene.Draw(commandBuffers[i], frustum);
+
+	//End render pass and command buffer
+	commandBuffers[i].EndRenderPass();
+
+	if (commandBuffers[i].EndCommandBuffer() != VK_SUCCESS)
+	{
+		throw std::runtime_error("failed to record command buffer!");
+	}
+}
+
 void HelloTriangleApplication::Cleanup()
 {
+	VulkanRenderer::EnsureDeviceIdle();
 	//CleanUpSwapChain();
 	CleanUpOffscreenPass();
 
 	uniformBuffer.Free(VulkanRenderer::GetDevice());
 	uniformBufferOffscreen.Free(VulkanRenderer::GetDevice());
 
-	m_kScene.Destroy();
+	//VulkanCommandBuffer::Reset(commandBuffers, 0);
+	//VulkanCommandBuffer::Reset(commandBuffers, VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
+	//VulkanCommandBuffer::Free(commandBuffers, VulkanRenderer::GetDevice(), VulkanRenderer::GetGraphicsPool());
 	//m_kMesh.Destroy(VulkanRenderer::GetDevice());
 	//m_kMeshPlane.Destroy(VulkanRenderer::GetDevice());
 
 	vkDestroySampler(VulkanRenderer::GetDevice(), textureSampler, nullptr);
+	vkDestroySampler(VulkanRenderer::GetDevice(), textureSamplerNoRepeat, nullptr);
 	textureImageView.Destroy(VulkanRenderer::GetDevice());
 	textureImage.Free();
+	m_kScene.Destroy();
 	VulkanRenderer::Cleanup();
+	
 
 	glfwDestroyWindow(window);
 
@@ -286,34 +406,6 @@ void HelloTriangleApplication::CreateGraphicsPipeline()
 void HelloTriangleApplication::CreateVertexBuffers()
 {	
 	m_kScene.InitialiseFromFile("data/Models/Sponza/sponza.obj");
-	//ObjectCreator c;
-	//MeshData data = c.Execute(glm::vec3(-4, -2, -4), glm::vec3(4, 4, 4), .2f);
-	/*m_kMesh.Initialise(VulkanRenderer::GetPhysicalDevice(), VulkanRenderer::GetDevice(), data, VulkanRenderer::GetTranferPool(), VulkanRenderer::GetTransferQueue());
-
-	Scene scene;
-	scene.InitialiseFromFile("data/Models/Sponza/sponza.obj");
-	scene.Destroy();
-	const float extent = 10.0f;
-	MeshData Plane;
-	VertexData v;
-	v.pos = glm::vec3(-extent, 0.0f, -extent);
-	v.color = glm::vec3(127.0f / 255.0f, 80.0f / 255.0f, 53.0f / 255.0f);
-	v.normal = glm::vec3(0.0f, 1.0f, 0.0f);
-	Plane.vertices.push_back(v);
-	v.pos = glm::vec3(extent, 0.0f, -extent);
-	v.color = glm::vec3(127.0f / 255.0f, 80.0f / 255.0f, 53.0f / 255.0f);
-	v.normal = glm::vec3(0.0f, 1.0f, 0.0f);
-	Plane.vertices.push_back(v);
-	v.pos = glm::vec3(extent, 0.0f, extent);
-	v.color = glm::vec3(127.0f / 255.0f, 80.0f / 255.0f, 53.0f / 255.0f);
-	v.normal = glm::vec3(0.0f, 1.0f, 0.0f);
-	Plane.vertices.push_back(v);
-	v.pos = glm::vec3(-extent, 0.0f, extent);
-	v.color = glm::vec3(127.0f / 255.0f, 80.0f / 255.0f, 53.0f / 255.0f);
-	v.normal = glm::vec3(0.0f, 1.0f, 0.0f);
-	Plane.vertices.push_back(v);
-	Plane.indices = { 0, 2, 1, 0, 3, 2 };
-	m_kMeshPlane.Initialise(VulkanRenderer::GetPhysicalDevice(), VulkanRenderer::GetDevice(), Plane, VulkanRenderer::GetTranferPool(), VulkanRenderer::GetTransferQueue());*/
 }
 
 void HelloTriangleApplication::CreateUniformBuffer()
@@ -354,9 +446,32 @@ void HelloTriangleApplication::CreateTextureSampler()
 	samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
 	samplerInfo.mipLodBias = 0.0f;
 	samplerInfo.minLod = 0.0f;
-	samplerInfo.maxLod = 0.0f;
+	samplerInfo.maxLod = 20.0f;
 
 	if (vkCreateSampler(VulkanRenderer::GetDevice(), &samplerInfo, nullptr, &textureSampler) != VK_SUCCESS)
+	{
+		throw std::runtime_error("Unable to create a sampler!");
+	}
+
+	samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+	samplerInfo.magFilter = VK_FILTER_LINEAR;
+	samplerInfo.minFilter = VK_FILTER_LINEAR;
+	samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+	samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+	samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+
+	samplerInfo.anisotropyEnable = VK_TRUE;
+	samplerInfo.maxAnisotropy = 16;
+	samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+	samplerInfo.unnormalizedCoordinates = VK_FALSE;
+	samplerInfo.compareEnable = VK_FALSE;
+	samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
+	samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+	samplerInfo.mipLodBias = 0.0f;
+	samplerInfo.minLod = 0.0f;
+	samplerInfo.maxLod = 20.0f;
+
+	if (vkCreateSampler(VulkanRenderer::GetDevice(), &samplerInfo, nullptr, &textureSamplerNoRepeat) != VK_SUCCESS)
 	{
 		throw std::runtime_error("Unable to create a sampler!");
 	}
@@ -369,63 +484,6 @@ void HelloTriangleApplication::CreateCommandBuffers()
 	frustum.Set(proj * view);
 
 	commandBuffers = VulkanCommandBuffer::CreateCommandBuffers(VulkanRenderer::GetDevice(), VulkanRenderer::GetGraphicsPool(), VK_COMMAND_BUFFER_LEVEL_PRIMARY, VulkanRenderer::GetSwapchainBuffers().size());
-
-	for (size_t i = 0; i < commandBuffers.size(); i++)
-	{
-		if (commandBuffers[i].BeginCommandBuffer(VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT, nullptr) != VK_SUCCESS) {
-			throw std::runtime_error("failed to begin recording command buffer!");
-		}
-
-		VkViewport viewport = {};// vks::initializers::viewport((float)width, (float)height, 0.0f, 1.0f);
-		viewport.height = (float)VulkanRenderer::GetSurfaceExtent().height;
-		viewport.width = (float)VulkanRenderer::GetSurfaceExtent().width;
-		viewport.minDepth = 0.0f;
-		viewport.maxDepth = 1.0f;
-		commandBuffers[i].SetViewport(0, 1, &viewport);
-
-		VkRect2D scissor = {};// vks::initializers::rect2D(width, height, 0, 0);
-		scissor.extent = VulkanRenderer::GetSurfaceExtent();
-		scissor.offset = VkOffset2D{ 0,0 };
-		commandBuffers[i].SetScissors(0, 1, &scissor);
-
-		//start render pass
-		std::vector<VkClearValue> clearColor = { {},{} };
-		clearColor[0].color = { 0.0f, 0.0f, 0.0f, 1.0f };
-		clearColor[1].depthStencil = { 1.0f, 0 };
-		commandBuffers[i].BeginRenderPass
-		(
-			VulkanRenderer::GetRenderPass(0),
-			VulkanRenderer::GetSwapchainBuffers()[i],
-			VkOffset2D({ 0, 0 }),
-			VulkanRenderer::GetSurfaceExtent(),
-			clearColor,
-			VK_SUBPASS_CONTENTS_INLINE//VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS
-		);
-
-		//commandBuffers[i].ExecuteCommandBuffer(&commandBuffersSubpass[i], 1);
-		//Bind the pipeline
-		//commandBuffers[i].BindPipeline(VK_PIPELINE_BIND_POINT_GRAPHICS, m_kPipeline);
-
-		//Bind Objects		
-		//commandBuffers[i].BindDescriptorSets(VK_PIPELINE_BIND_POINT_GRAPHICS, m_kPipeline.GetLayout(), 0, 1, &descriptorSet, 0, nullptr);
-
-		//Draw
-		//commandBuffers[i].DrawMesh(m_kMeshPlane);
-		//Draw
-		//commandBuffers[i].DrawMesh(m_kMesh);
-
-		
-
-		m_kScene.Draw(commandBuffers[i], frustum);
-
-		//End render pass and command buffer
-		commandBuffers[i].EndRenderPass();
-
-		if (commandBuffers[i].EndCommandBuffer() != VK_SUCCESS)
-		{
-			throw std::runtime_error("failed to record command buffer!");
-		}
-	}
 }
 
 void HelloTriangleApplication::DrawFrame()
@@ -567,7 +625,12 @@ void HelloTriangleApplication::CreateDescriptorSet()
 	imageInfoOpacityMap.imageView = offscreenPass.depth.view;
 	imageInfoOpacityMap.sampler = textureSampler;
 
-	descriptorWrites = std::vector<VkWriteDescriptorSet>({ {}, {}, {}, {}, {} });
+	imageInfoNormalMap = {};
+	imageInfoNormalMap.imageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+	imageInfoNormalMap.imageView = offscreenPass.depth.view;
+	imageInfoNormalMap.sampler = textureSampler;
+
+	descriptorWrites = std::vector<VkWriteDescriptorSet>({ {}, {}, {}, {}, {} , {} });
 
 	//descriptorWrites = {};
 	descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -609,6 +672,14 @@ void HelloTriangleApplication::CreateDescriptorSet()
 	descriptorWrites[4].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 	descriptorWrites[4].descriptorCount = 1;
 	descriptorWrites[4].pImageInfo = &imageInfoOpacityMap;
+
+	descriptorWrites[5].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	descriptorWrites[5].dstSet = descriptorSet;
+	descriptorWrites[5].dstBinding = 5;
+	descriptorWrites[5].dstArrayElement = 0;
+	descriptorWrites[5].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	descriptorWrites[5].descriptorCount = 1;
+	descriptorWrites[5].pImageInfo = &imageInfoNormalMap;
 
 	/*vkUpdateDescriptorSets(VulkanRenderer::GetDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 	*/
@@ -756,6 +827,7 @@ void HelloTriangleApplication::CleanUpOffscreenPass()
 	offscreenPass.depth.view.Destroy(VulkanRenderer::GetDevice());
 	offscreenPass.depth.image.Free();
 	offscreenPass.frameBuffer.Destroy(VulkanRenderer::GetDevice());
+	vkDestroySampler(VulkanRenderer::GetDevice(), offscreenPass.depthSampler, nullptr);
 	vkDestroySemaphore(VulkanRenderer::GetDevice(), offscreenPass.semaphore, nullptr);
 
 	m_kOffscreenPipeline.Destroy();

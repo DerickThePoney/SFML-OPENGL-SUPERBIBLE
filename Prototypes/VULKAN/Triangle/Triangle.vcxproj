@@ -23,6 +23,7 @@
     <ClCompile Include="BezierCurve.cpp" />
     <ClCompile Include="BlockAllocator.cpp" />
     <ClCompile Include="BoundingSphere.cpp" />
+    <ClCompile Include="CameraProgram.cpp" />
     <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="Intersections.cpp" />
     <ClCompile Include="MeshData.cpp" />
@@ -37,6 +38,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Triangle.cpp" />
     <ClCompile Include="ValueNoise2D.cpp" />
     <ClCompile Include="VulkanBuffer.cpp" />
@@ -62,6 +64,8 @@
     <None Include="data\shaders\UberNoOpacity.frag" />
     <None Include="data\shaders\UberNoOpacity.vert" />
     <None Include="data\shaders\UberOpacity.frag" />
+    <None Include="data\shaders\UberWater.frag" />
+    <None Include="data\shaders\UberWater.vert" />
     <None Include="Triangle.vert" />
   </ItemGroup>
   <ItemGroup>
@@ -70,6 +74,7 @@
     <ClInclude Include="BezierSpline.h" />
     <ClInclude Include="BlockAllocator.h" />
     <ClInclude Include="BoundingSphere.h" />
+    <ClInclude Include="CameraProgram.h" />
     <ClInclude Include="Frustum.h" />
     <ClInclude Include="Intersections.h" />
     <ClInclude Include="MeshData.h" />
@@ -79,6 +84,7 @@
     <ClInclude Include="SceneObject.h" />
     <ClInclude Include="SignedDistanceField.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Timer.h" />
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="ValueNoise2D.h" />
     <ClInclude Include="VulkanBuffer.h" />

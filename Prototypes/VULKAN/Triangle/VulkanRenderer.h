@@ -77,6 +77,7 @@ public:
 	static void Init(GLFWwindow* window);
 	static void Cleanup();
 	static void RecreateSwapChain(GLFWwindow* window);
+	static void EnsureDeviceIdle();
 	
 	static VulkanInstance& GetInstance() { return instance.m_kInstance; }
 	static VulkanDevice& GetDevice() { return instance.m_kDevice; }
@@ -108,6 +109,7 @@ private:
 	void CleanupSwapChain();
 	void CleanupAdditionalRenderPasses();
 	void InstanceRecreateSwapChain(GLFWwindow* window);
+	void InstanceEnsureDeviceIdle();
 
 
 

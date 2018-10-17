@@ -4,6 +4,7 @@
 #include "Frustum.h"
 
 #include "ObjectCreator.h"
+#include "CameraProgram.h"
 
 using namespace PolyVox;
 
@@ -19,6 +20,7 @@ public:
 	void TestBlockAlocator();
 
 	void UpdateUniformBufferData();
+	void CreateCommandBuffer(int i);
 	void Cleanup();
 
 	static HelloTriangleApplication& getInstance() // Singleton is accessed via getInstance()
@@ -29,6 +31,8 @@ public:
 	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 	static std::vector<VkWriteDescriptorSet> GetDescriptorWrites() { return getInstance().descriptorWrites; }
+	static VkSampler GetRepeatSampler() { return getInstance().textureSampler; }
+	static VkSampler GetNoRepeatSampler() { return getInstance().textureSamplerNoRepeat; }
 private:
 	
 
@@ -104,11 +108,13 @@ private:
 	VkDescriptorImageInfo imageInfoDiffuseColor;
 	VkDescriptorImageInfo imageInfoAmbientColor;
 	VkDescriptorImageInfo imageInfoOpacityMap;
+	VkDescriptorImageInfo imageInfoNormalMap;
 	std::vector<VkWriteDescriptorSet> descriptorWrites;
 
 	VulkanImage textureImage;
 	VulkanImageView textureImageView;
 	VkSampler textureSampler;
+	VkSampler textureSamplerNoRepeat;
 
 	Frustum frustum;
 

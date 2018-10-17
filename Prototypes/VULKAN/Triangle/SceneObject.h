@@ -10,9 +10,12 @@ public:
 	~SceneObject();
 	
 	glm::mat4 transform;
-	VulkanMesh mesh;
-	AABB boundingBox;
-	BoundingSphere boundingSphere;
-	int matID;
+	size_t meshIDX;
+	//size_t pipelineIDX;
+	size_t materialIDX;
+	//VulkanMesh mesh;
+	//size_t boundingBox;
+	//size_t boundingSphere;
+	//int matID;
 };
 

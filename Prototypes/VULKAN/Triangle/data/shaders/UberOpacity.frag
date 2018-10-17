@@ -6,11 +6,13 @@ layout(location = 0) in vec3 fragColor;
 layout(location = 1) in vec2 fragTexCoord;
 layout(location = 2) in vec3 fragNormal;
 layout (location = 3) in vec4 fragShadowCoord;
+layout (location = 4) in mat3 TBN;
 
 layout(binding = 1) uniform sampler2D shadowMap;
 layout(binding = 2) uniform sampler2D diffuseMap;
 layout(binding = 3) uniform sampler2D ambientMap;
 layout(binding = 4) uniform sampler2D opacityMap;
+layout(binding = 4) uniform sampler2D normalMap;
 
 
 #define ambient 0.1
@@ -58,7 +60,7 @@ void main()
 
 	vec4 diffuseColor = texture ( diffuseMap, fragTexCoord);
 	vec4 ambientColor = texture ( ambientMap, fragTexCoord);
-	float opacity = texture ( opacityMap, fragTexCoord).r;
+	//float opacity = texture ( opacityMap, fragTexCoord).r;
     outColor = vec4(.1,.1,.1,1.0) * ambientColor + shadow * 1.0 * diffuseColor * clamp(dot(normalize(fragNormal), normalize(vec3(-1,-1,-1))),0.0,1.0);
-	outColor.a = opacity;
+	outColor.a = diffuseColor.a;
 }

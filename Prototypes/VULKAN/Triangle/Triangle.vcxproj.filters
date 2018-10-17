@@ -34,6 +34,12 @@
     <Filter Include="Intersections">
       <UniqueIdentifier>{ef56d9b9-6927-4439-9461-96601186d402}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Timing">
+      <UniqueIdentifier>{f5901870-6d96-4fc8-bf07-386d23e1e1fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CameraProgram">
+      <UniqueIdentifier>{52398830-e93a-4829-ad72-31cdfa2470c7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Triangle.cpp">
@@ -129,6 +135,12 @@
     <ClCompile Include="BoundingSphere.cpp">
       <Filter>Intersections</Filter>
     </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>Timing</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraProgram.cpp">
+      <Filter>CameraProgram</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Triangle.vert" />
@@ -145,6 +157,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="data\shaders\UberOpacity.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="data\shaders\UberWater.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="data\shaders\UberWater.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
@@ -244,6 +262,12 @@
     </ClInclude>
     <ClInclude Include="BoundingSphere.h">
       <Filter>Intersections</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>Timing</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraProgram.h">
+      <Filter>CameraProgram</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -25,7 +25,7 @@ VulkanImage::~VulkanImage()
 {
 }
 
-void VulkanImage::Init(uint32_t width, uint32_t height, void * pData, VkDeviceSize size, VkFormat format, VkImageTiling imageTiling, VkImageUsageFlags usage, VkMemoryPropertyFlags memoryFlags)
+void VulkanImage::Init(uint32_t width, uint32_t height, void * pData, VkDeviceSize size, VkFormat format, VkImageTiling imageTiling, VkImageUsageFlags usage, VkMemoryPropertyFlags memoryFlags, bool bGenerateMipMaps)
 {
 	//put it all into a staging buffer
 	VulkanBuffer stagingBuffer;
@@ -36,16 +36,24 @@ void VulkanImage::Init(uint32_t width, uint32_t height, void * pData, VkDeviceSi
 	
 
 	//create the image
-	Init(width, height, format, imageTiling, usage, memoryFlags);
+	Init(width, height, format, imageTiling, usage, memoryFlags, bGenerateMipMaps);
 
 	TransitionImageLayout(VulkanRenderer::GetGraphicsPool(), VulkanRenderer::GetGraphicsQueue(), VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 	CopyBufferToImage(VulkanRenderer::GetTranferPool(), VulkanRenderer::GetTransferQueue(), stagingBuffer);
-	TransitionImageLayout(VulkanRenderer::GetGraphicsPool(), VulkanRenderer::GetGraphicsQueue(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+	if (bGenerateMipMaps)
+	{
+		GenerateMipMaps();
+	}
+	else
+	{
+		TransitionImageLayout(VulkanRenderer::GetGraphicsPool(), VulkanRenderer::GetGraphicsQueue(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+	}
+
 
 	stagingBuffer.Free(VulkanRenderer::GetDevice());
 }
 
-void VulkanImage::Init(const std::string & filename, VkFormat format, VkImageTiling imageTiling, VkImageUsageFlags usage, VkMemoryPropertyFlags memoryFlags)
+void VulkanImage::Init(const std::string & filename, VkFormat format, VkImageTiling imageTiling, VkImageUsageFlags usage, VkMemoryPropertyFlags memoryFlags, bool bGenerateMipMaps)
 {
 	int texWidth, texHeight, texChannels;
 	stbi_uc* pixels = stbi_load(filename.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
@@ -56,12 +64,12 @@ void VulkanImage::Init(const std::string & filename, VkFormat format, VkImageTil
 		throw std::runtime_error("Failed to load image texture !" + filename);
 	}
 
-	Init(texWidth, texHeight, pixels, imageSize, format, imageTiling, usage, memoryFlags);
+	Init(texWidth, texHeight, pixels, imageSize, format, imageTiling, usage, memoryFlags, bGenerateMipMaps);
 
 	stbi_image_free(pixels);
 }
 
-void VulkanImage::Init(uint32_t width, uint32_t height, VkFormat format, VkImageTiling imageTiling, VkImageUsageFlags usage, VkMemoryPropertyFlags memoryFlags)
+void VulkanImage::Init(uint32_t width, uint32_t height, VkFormat format, VkImageTiling imageTiling, VkImageUsageFlags usage, VkMemoryPropertyFlags memoryFlags, bool bGenerateMipMaps)
 {
 	size = VkExtent3D{ width, height, 1 };
 	imageFormat = format;
@@ -69,12 +77,13 @@ void VulkanImage::Init(uint32_t width, uint32_t height, VkFormat format, VkImage
 	usageFlags = usage;
 	this->memoryFlags = memoryFlags;
 
+	mipLevels = (bGenerateMipMaps) ? static_cast<uint32_t>(std::floor(std::log2(std::max(width, height)))) + 1 : 1;
 
 	VkImageCreateInfo imageInfo = {};
 	imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 	imageInfo.imageType = VK_IMAGE_TYPE_2D;
 	imageInfo.extent = size;
-	imageInfo.mipLevels = 1;
+	imageInfo.mipLevels = mipLevels;
 	imageInfo.arrayLayers = 1;
 	imageInfo.format = imageFormat;
 	imageInfo.tiling = imageTiling;
@@ -119,7 +128,7 @@ void VulkanImage::Init(uint32_t width, uint32_t height, VkFormat format, VkImage
 	vkBindImageMemory(VulkanRenderer::GetDevice(), m_kImage, m_kImageMemory, 0);
 }
 
-void VulkanImage::Init(VkImage & imageHandle, uint32_t width, uint32_t height, VkFormat format, VkImageTiling imageTiling, VkImageUsageFlags usage)
+void VulkanImage::Init(VkImage & imageHandle, uint32_t width, uint32_t height, VkFormat format, VkImageTiling imageTiling, VkImageUsageFlags usage, bool bGenerateMipMaps)
 {
 	size = VkExtent3D{ width, height, 1 };
 	imageFormat = format;
@@ -127,6 +136,8 @@ void VulkanImage::Init(VkImage & imageHandle, uint32_t width, uint32_t height, V
 	usageFlags = usage;
 	this->memoryFlags = memoryFlags;
 	m_kImage = imageHandle;
+	mipLevels = 1;
+
 }
 
 void VulkanImage::Free()
@@ -205,7 +216,7 @@ void VulkanImage::TransitionImageLayout(VkCommandPool& pool, VkQueue& queue, VkI
 	}
 
 	barrier.subresourceRange.baseMipLevel = 0;
-	barrier.subresourceRange.levelCount = 1;
+	barrier.subresourceRange.levelCount = mipLevels;
 	barrier.subresourceRange.baseArrayLayer = 0;
 	barrier.subresourceRange.layerCount = 1;
 
@@ -264,7 +275,98 @@ void VulkanImage::TransitionImageLayout(VkCommandPool& pool, VkQueue& queue, VkI
 VulkanImageView VulkanImage::CreateImageView(VkFormat format, VkImageAspectFlags aspectMask)
 {
 	VulkanImageView view;
-	view.Init(VulkanRenderer::GetDevice(), *this, format, aspectMask);
+	view.Init(VulkanRenderer::GetDevice(), *this, format, aspectMask, mipLevels);
 
 	return view;
+}
+
+void VulkanImage::GenerateMipMaps()
+{
+	VulkanCommandBuffer commandBuffer = VulkanCommandBuffer::CreateCommandBuffer(VulkanRenderer::GetDevice(), VulkanRenderer::GetGraphicsPool(), VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+	commandBuffer.BeginCommandBuffer(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT, nullptr);
+
+	VkImageMemoryBarrier barrier = {};
+	barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+	barrier.image = m_kImage;
+	barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	barrier.subresourceRange.baseArrayLayer = 0;
+	barrier.subresourceRange.layerCount = 1;
+	barrier.subresourceRange.levelCount = 1;
+
+	int32_t mipWidth = size.width;
+	int32_t mipHeight = size.height;
+
+	for (uint32_t i = 1; i < mipLevels; i++) 
+	{
+		//transition level i - 1 to layout src optimal
+		barrier.subresourceRange.baseMipLevel = i - 1;
+		barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+		barrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+		barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+		barrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+
+		commandBuffer.PipelineBarrier(VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0,
+			0, nullptr,
+			0, nullptr,
+			1, &barrier);
+
+		VkImageBlit blit = {};
+		blit.srcOffsets[0] = { 0, 0, 0 };
+		blit.srcOffsets[1] = { mipWidth, mipHeight, 1 };
+		blit.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		blit.srcSubresource.mipLevel = i - 1;
+		blit.srcSubresource.baseArrayLayer = 0;
+		blit.srcSubresource.layerCount = 1;
+		blit.dstOffsets[0] = { 0, 0, 0 };
+		blit.dstOffsets[1] = { mipWidth > 1 ? mipWidth / 2 : 1, mipHeight > 1 ? mipHeight / 2 : 1, 1 };
+		blit.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		blit.dstSubresource.mipLevel = i;
+		blit.dstSubresource.baseArrayLayer = 0;
+		blit.dstSubresource.layerCount = 1;
+
+		commandBuffer.BlitImage(
+			m_kImage, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+			m_kImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+			1, &blit,
+			VK_FILTER_LINEAR
+		);
+
+		barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+		barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		barrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+		barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+
+		commandBuffer.PipelineBarrier(VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0,
+			0, nullptr,
+			0, nullptr,
+			1, &barrier);
+
+		if (mipWidth > 1) mipWidth /= 2;
+		if (mipHeight > 1) mipHeight /= 2;
+	}
+
+	barrier.subresourceRange.baseMipLevel = mipLevels - 1;
+	barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+	barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+	barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+	barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+
+	commandBuffer.PipelineBarrier(VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0,
+		0, nullptr,
+		0, nullptr,
+		1, &barrier);
+
+	commandBuffer.EndCommandBuffer();
+
+	VkSubmitInfo submitInfo = {};
+	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	submitInfo.commandBufferCount = 1;
+	submitInfo.pCommandBuffers = commandBuffer.GetCommandBuffer();
+
+	vkQueueSubmit(VulkanRenderer::GetGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE);
+	vkQueueWaitIdle(VulkanRenderer::GetGraphicsQueue());
+
+	VulkanCommandBuffer::Free(commandBuffer, VulkanRenderer::GetDevice(), VulkanRenderer::GetGraphicsPool());
 }

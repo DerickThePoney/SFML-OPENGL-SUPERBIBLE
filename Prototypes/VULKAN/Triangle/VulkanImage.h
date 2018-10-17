@@ -12,10 +12,10 @@ public:
 	VulkanImage();
 	~VulkanImage();
 
-	void Init(uint32_t width, uint32_t height, void* pData, VkDeviceSize size, VkFormat format, VkImageTiling imageTiling, VkImageUsageFlags usage, VkMemoryPropertyFlags memoryFlags);
-	void Init(const std::string& filename, VkFormat format, VkImageTiling imageTiling, VkImageUsageFlags usage, VkMemoryPropertyFlags memoryFlags);
-	void Init(uint32_t width, uint32_t height, VkFormat format, VkImageTiling imageTiling, VkImageUsageFlags usage, VkMemoryPropertyFlags memoryFlags);
-	void Init(VkImage& imageHandle, uint32_t width, uint32_t height, VkFormat format, VkImageTiling imageTiling, VkImageUsageFlags usage);
+	void Init(uint32_t width, uint32_t height, void* pData, VkDeviceSize size, VkFormat format, VkImageTiling imageTiling, VkImageUsageFlags usage, VkMemoryPropertyFlags memoryFlags, bool bGenerateMipMaps = false);
+	void Init(const std::string& filename, VkFormat format, VkImageTiling imageTiling, VkImageUsageFlags usage, VkMemoryPropertyFlags memoryFlags, bool bGenerateMipMaps = false);
+	void Init(uint32_t width, uint32_t height, VkFormat format, VkImageTiling imageTiling, VkImageUsageFlags usage, VkMemoryPropertyFlags memoryFlags, bool bGenerateMipMaps = false);
+	void Init(VkImage& imageHandle, uint32_t width, uint32_t height, VkFormat format, VkImageTiling imageTiling, VkImageUsageFlags usage, bool bGenerateMipMaps = false);
 
 	void Free();
 
@@ -27,6 +27,8 @@ public:
 	operator VkImage() { return m_kImage; }
 private:
 
+	void GenerateMipMaps();
+
 	VkImage m_kImage;
 	VkDeviceMemory m_kImageMemory = VK_NULL_HANDLE;
 
@@ -36,5 +38,6 @@ private:
 	VkImageTiling imageTiling;
 	VkImageUsageFlags usageFlags;
 	VkMemoryPropertyFlags memoryFlags;
+	uint32_t mipLevels;
 };
 
