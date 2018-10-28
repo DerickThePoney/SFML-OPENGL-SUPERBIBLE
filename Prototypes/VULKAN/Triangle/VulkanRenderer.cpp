@@ -271,10 +271,7 @@ void VulkanRenderer::InstancePrepareCommandBuffer(Scene* scene, const Frustum& f
 
 void VulkanRenderer::RenderOverlays()
 {
-	if (commandBuffers[currentFrame].BeginCommandBuffer(VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT, nullptr) != VK_SUCCESS) {
-		throw std::runtime_error("failed to begin recording command buffer!");
-	}
-
+	
 	VkViewport viewport = {};// vks::initializers::viewport((float)width, (float)height, 0.0f, 1.0f);
 	viewport.height = (float)VulkanRenderer::GetSurfaceExtent().height;
 	viewport.width = (float)VulkanRenderer::GetSurfaceExtent().width;
@@ -288,9 +285,9 @@ void VulkanRenderer::RenderOverlays()
 	commandBuffers[currentFrame].SetScissors(0, 1, &scissor);
 
 	//start render pass
-	std::vector<VkClearValue> clearColor = { {},{} };
-	clearColor[0].color = { 0.0f, 0.0f, 0.0f, 1.0f };
-	clearColor[1].depthStencil = { 1.0f, 0 };
+	std::vector<VkClearValue> clearColor = { {} };
+	clearColor[0].color = { 1.0f, 1.0f, 1.0f, 1.0f };
+	//clearColor[1].depthStencil = { 1.0f, 0 };
 	commandBuffers[currentFrame].BeginRenderPass
 	(
 		m_kOverlaysRenderPass,
@@ -677,7 +674,7 @@ void VulkanRenderer::CreateFinalRenderPass()
 {
 	m_kFinalRenderPass.AddAttachment(
 		ATTACHMENT_COLOR, m_kSwapwhain.swapChainImageFormat, VK_SAMPLE_COUNT_1_BIT, VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_STORE,
-		VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+		VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
 		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 	);
 
@@ -703,17 +700,17 @@ void VulkanRenderer::CreateOverlaysRenderPass()
 {
 	m_kOverlaysRenderPass.AddAttachment(
 		ATTACHMENT_COLOR, m_kSwapwhain.swapChainImageFormat, VK_SAMPLE_COUNT_1_BIT, VK_ATTACHMENT_LOAD_OP_LOAD, VK_ATTACHMENT_STORE_OP_STORE,
-		VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+		VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
 		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 	);
 
-	m_kOverlaysRenderPass.AddAttachment(
+	/*m_kOverlaysRenderPass.AddAttachment(
 		ATTACHMENT_DEPTH, FindDepthFormat(), VK_SAMPLE_COUNT_1_BIT, VK_ATTACHMENT_LOAD_OP_LOAD, VK_ATTACHMENT_STORE_OP_DONT_CARE,
 		VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
 		VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
-	);
+	);*/
 
-	m_kOverlaysRenderPass.AddSubpass(VK_PIPELINE_BIND_POINT_GRAPHICS, { 0 }, { 0 }, {});
+	m_kOverlaysRenderPass.AddSubpass(VK_PIPELINE_BIND_POINT_GRAPHICS, { 0 }, -1, {});
 
 	m_kOverlaysRenderPass.AddSubpassDependency(VK_SUBPASS_EXTERNAL, 0, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, VK_ACCESS_MEMORY_READ_BIT,
 		VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,

@@ -53,7 +53,7 @@ void HelloTriangleApplication::InitWindow()
 	glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
 	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
 
-	window = glfwCreateWindow(mode->width, mode->height, "Vulkan triangle example", nullptr, nullptr);
+	window = glfwCreateWindow(mode->width, mode->height, "Vulkan triangle example", glfwGetPrimaryMonitor(), nullptr);
 	WIDTH = mode->width;
 	HEIGHT = mode->height;
 
