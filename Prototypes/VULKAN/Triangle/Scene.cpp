@@ -178,7 +178,7 @@ void Scene::BuildPipelines()
 	m_kPipelines[0].CreatePipeline(&VulkanRenderer::GetDescriptorSetLayout(), VulkanRenderer::GetRenderPass(0));
 
 
-	/** Aplha blended pipeline **/
+	/** Water pipeline **/
 	//build aplha blended
 	shaders[0].filepath = "data/shaders/UberWater.vert.spv";
 	shaders[1].filepath = "data/shaders/UberWater.frag.spv";
@@ -192,10 +192,10 @@ void Scene::BuildPipelines()
 
 	//set blend mode
 	m_kPipelines[1].SetDepthTest(true, true);
-	m_kPipelines[1].SetBlendAttachementCount(1);
+	/*m_kPipelines[1].SetBlendAttachementCount(1);
 	m_kPipelines[1].SetBlendingForAttachement(0, VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT,
 		true, VK_BLEND_FACTOR_SRC_ALPHA, VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA, VK_BLEND_OP_ADD,
-		VK_BLEND_FACTOR_SRC_ALPHA, VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA, VK_BLEND_OP_ADD);
+		VK_BLEND_FACTOR_SRC_ALPHA, VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA, VK_BLEND_OP_ADD);*/
 
 	//Create the pipline
 	m_kPipelines[1].CreatePipeline(&VulkanRenderer::GetDescriptorSetLayout(), VulkanRenderer::GetRenderPass(0));

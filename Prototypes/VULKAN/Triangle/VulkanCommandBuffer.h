@@ -21,6 +21,8 @@ public:
 	VulkanCommandBuffer();
 	~VulkanCommandBuffer();
 
+	operator VkCommandBuffer() { return m_kBufferObject; }
+
 public:
 	//Commands
 	VkResult BeginCommandBuffer(VkCommandBufferUsageFlags flags, VkCommandBufferInheritanceInfo* inheritanceInfo);

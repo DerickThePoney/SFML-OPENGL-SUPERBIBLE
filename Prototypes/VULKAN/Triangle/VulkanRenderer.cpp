@@ -7,6 +7,7 @@ VulkanRenderer VulkanRenderer::instance = {};
 
 
 VulkanRenderer::VulkanRenderer()
+	: m_bDrawOverlays(true)
 {
 }
 
@@ -66,9 +67,30 @@ void VulkanRenderer::EnsureDeviceIdle()
 	instance.InstanceEnsureDeviceIdle();
 }
 
+void VulkanRenderer::PrepareFrame()
+{
+	instance.InstancePrepareFrame();
+}
+
+void VulkanRenderer::PrepareCommandBuffer(Scene* scene, const Frustum& frustum)
+{
+	instance.InstancePrepareCommandBuffer(scene, frustum);
+}
+
+void VulkanRenderer::DrawFrame()
+{
+	instance.InstanceDrawFrame();
+}
+
+void VulkanRenderer::EndFrame()
+{
+	instance.InstanceEndFrame();
+}
+
 
 void VulkanRenderer::InstanceInit(GLFWwindow* window)
 {
+	this->window = window;
 	glfwGetWindowSize(window, &width, &height);
 	CreateInstance();
 	CreateSurface(window);
@@ -78,6 +100,7 @@ void VulkanRenderer::InstanceInit(GLFWwindow* window)
 
 
 	CreateFinalRenderPass();
+	CreateOverlaysRenderPass();
 	CreateDescriptorPool();
 	CreateDescriptorSetLayout();
 	//CreateGraphicsPipeline();
@@ -85,6 +108,8 @@ void VulkanRenderer::InstanceInit(GLFWwindow* window)
 	CreateDepthAttachment();
 	CreateFrameBuffers();
 	CreateSyncObjects();
+
+	CreateCommandBuffers();
 
 
 	/*CreateTextureImage();
@@ -130,9 +155,10 @@ void VulkanRenderer::CleanupSwapChain()
 		m_akSwapchainFrameBuffers[i].Destroy(m_kDevice);
 	}
 
-	//VulkanCommandBuffer::Free(commandBuffers, m_kDevice, commandPoolGraphics);
+	VulkanCommandBuffer::Free(commandBuffers, m_kDevice, commandPoolGraphics);
 
 	//m_kPipeline.Destroy(m_kDevice);
+	m_kOverlaysRenderPass.Destroy(m_kDevice);
 	m_kFinalRenderPass.Destroy(m_kDevice);
 
 	for (size_t i = 0; i < m_kSwapwhain.swapchainAttachments.size(); i++) {
@@ -173,9 +199,11 @@ void VulkanRenderer::InstanceRecreateSwapChain(GLFWwindow* window)
 
 	CreateSwapChain();
 	CreateImageViews();
+	CreateOverlaysRenderPass();
 	CreateFinalRenderPass();
 	CreateDepthAttachment();
 	CreateFrameBuffers();
+	CreateCommandBuffers();
 }
 
 void VulkanRenderer::InstanceEnsureDeviceIdle()
@@ -189,6 +217,183 @@ void VulkanRenderer::InstanceEnsureDeviceIdle()
 	vkQueueWaitIdle(transferQueue);
 	vkQueueWaitIdle(graphicsQueue);
 	vkDeviceWaitIdle(m_kDevice);
+}
+
+void VulkanRenderer::InstancePrepareFrame()
+{
+	ImGui_ImplGlfwVulkan_NewFrame();
+}
+
+void VulkanRenderer::InstancePrepareCommandBuffer(Scene* scene, const Frustum& frustum)
+{
+	if (commandBuffers[currentFrame].BeginCommandBuffer(VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT, nullptr) != VK_SUCCESS) {
+		throw std::runtime_error("failed to begin recording command buffer!");
+	}
+
+	VkViewport viewport = {};// vks::initializers::viewport((float)width, (float)height, 0.0f, 1.0f);
+	viewport.height = (float)VulkanRenderer::GetSurfaceExtent().height;
+	viewport.width = (float)VulkanRenderer::GetSurfaceExtent().width;
+	viewport.minDepth = 0.0f;
+	viewport.maxDepth = 1.0f;
+	commandBuffers[currentFrame].SetViewport(0, 1, &viewport);
+
+	VkRect2D scissor = {};// vks::initializers::rect2D(width, height, 0, 0);
+	scissor.extent = VulkanRenderer::GetSurfaceExtent();
+	scissor.offset = VkOffset2D{ 0,0 };
+	commandBuffers[currentFrame].SetScissors(0, 1, &scissor);
+
+	//start render pass
+	std::vector<VkClearValue> clearColor = { {},{} };
+	clearColor[0].color = { 0.0f, 0.0f, 0.0f, 1.0f };
+	clearColor[1].depthStencil = { 1.0f, 0 };
+	commandBuffers[currentFrame].BeginRenderPass
+	(
+		VulkanRenderer::GetRenderPass(0),
+		VulkanRenderer::GetSwapchainBuffers()[currentFrame],
+		VkOffset2D({ 0, 0 }),
+		VulkanRenderer::GetSurfaceExtent(),
+		clearColor,
+		VK_SUBPASS_CONTENTS_INLINE//VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS
+	);
+
+	scene->Draw(commandBuffers[currentFrame],frustum);
+
+	//End render pass and command buffer
+	commandBuffers[currentFrame].EndRenderPass();
+
+	if (m_bDrawOverlays) RenderOverlays();
+
+	if (commandBuffers[currentFrame].EndCommandBuffer() != VK_SUCCESS)
+	{
+		throw std::runtime_error("failed to record command buffer!");
+	}
+}
+
+void VulkanRenderer::RenderOverlays()
+{
+	if (commandBuffers[currentFrame].BeginCommandBuffer(VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT, nullptr) != VK_SUCCESS) {
+		throw std::runtime_error("failed to begin recording command buffer!");
+	}
+
+	VkViewport viewport = {};// vks::initializers::viewport((float)width, (float)height, 0.0f, 1.0f);
+	viewport.height = (float)VulkanRenderer::GetSurfaceExtent().height;
+	viewport.width = (float)VulkanRenderer::GetSurfaceExtent().width;
+	viewport.minDepth = 0.0f;
+	viewport.maxDepth = 1.0f;
+	commandBuffers[currentFrame].SetViewport(0, 1, &viewport);
+
+	VkRect2D scissor = {};// vks::initializers::rect2D(width, height, 0, 0);
+	scissor.extent = VulkanRenderer::GetSurfaceExtent();
+	scissor.offset = VkOffset2D{ 0,0 };
+	commandBuffers[currentFrame].SetScissors(0, 1, &scissor);
+
+	//start render pass
+	std::vector<VkClearValue> clearColor = { {},{} };
+	clearColor[0].color = { 0.0f, 0.0f, 0.0f, 1.0f };
+	clearColor[1].depthStencil = { 1.0f, 0 };
+	commandBuffers[currentFrame].BeginRenderPass
+	(
+		m_kOverlaysRenderPass,
+		m_akSwapchainFrameBuffers[currentFrame],
+		VkOffset2D({ 0, 0 }),
+		m_kSwapwhain.swapChainExtent,
+		clearColor,
+		VK_SUBPASS_CONTENTS_INLINE//VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS
+	);
+
+
+	ImGui_ImplGlfwVulkan_Render(commandBuffers[currentFrame]);
+
+	//End render pass and command buffer
+	commandBuffers[currentFrame].EndRenderPass();
+}
+
+void VulkanRenderer::InstanceDrawFrame()
+{
+	vkWaitForFences(VulkanRenderer::GetDevice(), 1, &VulkanRenderer::GetFence(currentFrame), VK_TRUE, std::numeric_limits<uint64_t>::max());
+	vkResetFences(VulkanRenderer::GetDevice(), 1, &VulkanRenderer::GetFence(currentFrame));
+
+	//SetupSubpassBuffer();
+	uint32_t imageIndex = 0;
+	VkResult result = vkAcquireNextImageKHR(VulkanRenderer::GetDevice(), VulkanRenderer::GetSwapChain(), std::numeric_limits<uint64_t>::max(), VulkanRenderer::GetImageAvailableSemaphore(currentFrame), VK_NULL_HANDLE, &imageIndex);
+
+	if (result == VK_ERROR_OUT_OF_DATE_KHR)
+	{
+		RecreateSwapChain(window);
+		return;
+	}
+	else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
+	{
+		throw std::runtime_error("Failed to acquire swap chain image");
+	}
+
+
+	/*VkSubmitInfo submitInfoOffscreen = {};
+	submitInfoOffscreen.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	VkSemaphore waitSemaphoresOff[] = { VulkanRenderer::GetImageAvailableSemaphore(currentFrame) };
+	VkPipelineStageFlags waitStagesOff[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+	submitInfoOffscreen.waitSemaphoreCount = 1;
+	submitInfoOffscreen.pWaitSemaphores = waitSemaphoresOff;
+	submitInfoOffscreen.pWaitDstStageMask = waitStagesOff;
+
+	submitInfoOffscreen.commandBufferCount = 1;
+	submitInfoOffscreen.pCommandBuffers = commandBuffersOffscreen[imageIndex].GetCommandBuffer();
+
+	VkSemaphore signalSemaphoresOff[] = { offscreenPass.semaphore };
+	submitInfoOffscreen.signalSemaphoreCount = 1;
+	submitInfoOffscreen.pSignalSemaphores = signalSemaphoresOff;*/
+
+	//if (vkQueueSubmit(VulkanRenderer::GetGraphicsQueue(), 1, &submitInfoOffscreen, VK_NULL_HANDLE) != VK_SUCCESS) {
+		//throw std::runtime_error("failed to submit draw command buffer!");
+	//}
+
+	VkSubmitInfo submitInfo = {};
+	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	VkSemaphore waitSemaphores[] = { VulkanRenderer::GetImageAvailableSemaphore(currentFrame) };
+	VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+	submitInfo.waitSemaphoreCount = 1;
+	submitInfo.pWaitSemaphores = waitSemaphores;
+	submitInfo.pWaitDstStageMask = waitStages;
+
+	submitInfo.commandBufferCount = 1;
+	submitInfo.pCommandBuffers = commandBuffers[imageIndex].GetCommandBuffer();
+
+	VkSemaphore signalSemaphores[] = { VulkanRenderer::GetRenderFinishedSemaphores(currentFrame) };
+	submitInfo.signalSemaphoreCount = 1;
+	submitInfo.pSignalSemaphores = signalSemaphores;
+	VkResult res = vkQueueSubmit(VulkanRenderer::GetGraphicsQueue(), 1, &submitInfo, VulkanRenderer::GetFence(currentFrame));
+	if (res != VK_SUCCESS) {
+		throw std::runtime_error("failed to submit draw command buffer!");
+	}
+
+	VkPresentInfoKHR presentInfo = {};
+	presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+
+	presentInfo.waitSemaphoreCount = 1;
+	presentInfo.pWaitSemaphores = signalSemaphores;
+	VkSwapchainKHR swapChains[] = { VulkanRenderer::GetSwapChain() };
+	presentInfo.swapchainCount = 1;
+	presentInfo.pSwapchains = swapChains;
+	presentInfo.pImageIndices = &imageIndex;
+
+	presentInfo.pResults = nullptr; // Optional
+
+	result = vkQueuePresentKHR(VulkanRenderer::GetPresentQueue(), &presentInfo);
+
+	if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR)
+	{
+		RecreateSwapChain(window);
+		return;
+	}
+	else if (result != VK_SUCCESS)
+	{
+		throw std::runtime_error("failed to present swap chain image!");
+	}
+}
+
+void VulkanRenderer::InstanceEndFrame()
+{
+	currentFrame = (currentFrame + 1) % m_akSwapchainFrameBuffers.size();
 }
 
 void VulkanRenderer::CreateInstance()
@@ -295,6 +500,8 @@ void VulkanRenderer::CreateSwapChain()
 	m_kSwapwhain.swapChainImageFormat = surfaceFormat.format;
 	m_kSwapwhain.swapChainExtent = extent;
 	CreateImageViews();
+
+	currentFrame = 0;
 }
 
 void VulkanRenderer::CreateImageViews()
@@ -374,6 +581,11 @@ void VulkanRenderer::CreateCommandPool()
 	{
 		throw std::runtime_error("Unable to create graphics command pool");
 	}
+}
+
+void VulkanRenderer::CreateCommandBuffers()
+{
+	commandBuffers = VulkanCommandBuffer::CreateCommandBuffers(m_kDevice, commandPoolGraphics, VK_COMMAND_BUFFER_LEVEL_PRIMARY, m_akSwapchainFrameBuffers.size());
 }
 
 void VulkanRenderer::CreateDescriptorPool()
@@ -470,7 +682,7 @@ void VulkanRenderer::CreateFinalRenderPass()
 	);
 
 	m_kFinalRenderPass.AddAttachment(
-		ATTACHMENT_DEPTH, FindDepthFormat(), VK_SAMPLE_COUNT_1_BIT, VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_DONT_CARE,
+		ATTACHMENT_DEPTH, FindDepthFormat(), VK_SAMPLE_COUNT_1_BIT, VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_STORE,
 		VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
 		VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
 	);
@@ -485,6 +697,32 @@ void VulkanRenderer::CreateFinalRenderPass()
 		VK_DEPENDENCY_BY_REGION_BIT);
 
 	m_kFinalRenderPass.Init(m_kDevice);
+}
+
+void VulkanRenderer::CreateOverlaysRenderPass()
+{
+	m_kOverlaysRenderPass.AddAttachment(
+		ATTACHMENT_COLOR, m_kSwapwhain.swapChainImageFormat, VK_SAMPLE_COUNT_1_BIT, VK_ATTACHMENT_LOAD_OP_LOAD, VK_ATTACHMENT_STORE_OP_STORE,
+		VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+	);
+
+	m_kOverlaysRenderPass.AddAttachment(
+		ATTACHMENT_DEPTH, FindDepthFormat(), VK_SAMPLE_COUNT_1_BIT, VK_ATTACHMENT_LOAD_OP_LOAD, VK_ATTACHMENT_STORE_OP_DONT_CARE,
+		VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+		VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
+	);
+
+	m_kOverlaysRenderPass.AddSubpass(VK_PIPELINE_BIND_POINT_GRAPHICS, { 0 }, { 0 }, {});
+
+	m_kOverlaysRenderPass.AddSubpassDependency(VK_SUBPASS_EXTERNAL, 0, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, VK_ACCESS_MEMORY_READ_BIT,
+		VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+		VK_DEPENDENCY_BY_REGION_BIT);
+	m_kOverlaysRenderPass.AddSubpassDependency(0, VK_SUBPASS_EXTERNAL, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+		VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, VK_ACCESS_MEMORY_READ_BIT,
+		VK_DEPENDENCY_BY_REGION_BIT);
+
+	m_kOverlaysRenderPass.Init(m_kDevice);
 }
 
 VkSurfaceFormatKHR VulkanRenderer::ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats)

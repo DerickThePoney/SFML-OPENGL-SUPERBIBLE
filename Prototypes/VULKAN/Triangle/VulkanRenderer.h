@@ -14,6 +14,8 @@
 #include "VulkanImage.h"
 #include "VulkanImageView.h"
 
+#include "Scene.h"
+
 // Framebuffer for offscreen rendering
 struct FramebufferAttachment
 {
@@ -78,6 +80,12 @@ public:
 	static void Cleanup();
 	static void RecreateSwapChain(GLFWwindow* window);
 	static void EnsureDeviceIdle();
+
+	static void PrepareFrame();
+	static void PrepareCommandBuffer(Scene* scene, const Frustum& frustum);
+	static void DrawFrame();
+	static void EndFrame();
+
 	
 	static VulkanInstance& GetInstance() { return instance.m_kInstance; }
 	static VulkanDevice& GetDevice() { return instance.m_kDevice; }
@@ -99,6 +107,7 @@ public:
 	static std::vector<VulkanFramebuffer>& GetSwapchainBuffers() { return instance.m_akSwapchainFrameBuffers; }
 	static void AddRenderPass(VulkanRenderPass& renderPass, std::vector<VulkanFramebuffer>& framebuffers, bool bCreateSemaphore);
 	static void SetFinalRenderPassAndFramebuffers(VulkanRenderPass& renderPass, std::vector<VulkanFramebuffer>& framebuffers);
+
 private:
 	VulkanRenderer();
 	~VulkanRenderer();
@@ -110,6 +119,12 @@ private:
 	void CleanupAdditionalRenderPasses();
 	void InstanceRecreateSwapChain(GLFWwindow* window);
 	void InstanceEnsureDeviceIdle();
+
+	void InstancePrepareFrame();
+	void InstancePrepareCommandBuffer(Scene* scene, const Frustum& frustum);
+	void RenderOverlays();
+	void InstanceDrawFrame();
+	void InstanceEndFrame();
 
 
 
@@ -126,10 +141,12 @@ private:
 	void CreateFrameBuffers();
 	void CreateSyncObjects();
 	void CreateCommandPool();
+	void CreateCommandBuffers();
 	void CreateDescriptorPool();
 	void CreateDescriptorSetLayout();
 
 	void CreateFinalRenderPass();
+	void CreateOverlaysRenderPass();
 
 
 	VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
@@ -138,6 +155,8 @@ private:
 	VkFormat FindDepthFormat();
 
 private:
+	GLFWwindow* window;
+
 	VulkanInstance m_kInstance;
 	VulkanSurface m_kSurface;
 	VulkanPhysicalDevice m_kPhysicalDevice;
@@ -154,11 +173,14 @@ private:
 	VkCommandPool commandPoolGraphics;
 	VkCommandPool commandPoolTransfer;
 
+	std::vector<VulkanCommandBuffer> commandBuffers;
+
 	VkDescriptorPool descriptorPool;
 	VkDescriptorSetLayout descriptorSetLayout;
 
 	std::vector<RenderPassData> m_akAdditionalRenderPasses;
 	VulkanRenderPass m_kFinalRenderPass;
+	VulkanRenderPass m_kOverlaysRenderPass;
 
 	//Synchronisation primitives
 	std::vector<VkSemaphore> imageAvailableSemaphores;
@@ -182,5 +204,8 @@ private:
 
 	int width;
 	int height;
+
+	//flags
+	bool m_bDrawOverlays;
 };
 

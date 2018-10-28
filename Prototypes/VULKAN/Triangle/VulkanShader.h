@@ -25,6 +25,9 @@ public:
 	operator VkShaderModule() { return m_kShaderModule; }
 
 private:
+
+	void Reflect(std::vector<uint32_t> shaderCode);
+
 	VkShaderModule m_kShaderModule;
 	std::string m_kFilename;
 	SHADER_TYPE m_eShaderType;
