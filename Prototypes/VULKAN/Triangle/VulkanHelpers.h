@@ -89,7 +89,7 @@ class VulkanSurface;
 class VulkanHelperFunctions
 {
 public:
-	static bool IsDeviceSuitable(VkPhysicalDevice device, VulkanSurface& surface, const std::vector<const char*> deviceExtensions);
+	static bool IsDeviceSuitable(VkPhysicalDevice device, VulkanSurface& surface, VkPhysicalDeviceProperties& properties, VkPhysicalDeviceFeatures& features, const std::vector<const char*> deviceExtensions);
 	static QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device, VulkanSurface& surface);
 	static bool CheckDeviceExtensionSupport(VkPhysicalDevice device, const std::vector<const char*> deviceExtensions);
 	static SwapChainSupportDetails QuerySwapChainSupportDetails(VkPhysicalDevice device, VulkanSurface& surface);

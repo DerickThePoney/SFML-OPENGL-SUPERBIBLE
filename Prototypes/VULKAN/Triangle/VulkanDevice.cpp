@@ -73,6 +73,8 @@ void VulkanDevice::Initialise(VulkanPhysicalDevice& physicalDevice,
 	//create used device features struct
 	VkPhysicalDeviceFeatures deviceFeatures = {};
 	deviceFeatures.samplerAnisotropy = VK_TRUE;
+	deviceFeatures.tessellationShader = VK_TRUE;
+	deviceFeatures.fillModeNonSolid = VK_TRUE;
 
 
 	//create the logical device

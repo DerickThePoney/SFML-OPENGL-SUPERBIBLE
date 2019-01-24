@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Scene.h"
+#include "SceneTestObjLoading.h"
 #include "MeshData.h"
 #include "AABB.h"
 #include "VulkanMesh.h"
@@ -8,24 +8,27 @@
 #include "SceneObject.h"
 #include "Frustum.h"
 #include "Intersections.h"
+#include "WaterRenderingSystem.h"
+
 //#include "CameraProgram.h"
 
 #include <assimp/Importer.hpp>		// C++ importer interface
 #include <assimp/scene.h>           // Output data structure
 #include <assimp/postprocess.h>     // Post processing flags
-
+#include "Material.h"
 #include "Triangle.h"
 
-Scene::Scene()
+
+SceneTestObjLoading::SceneTestObjLoading()
 {
 }
 
 
-Scene::~Scene()
+SceneTestObjLoading::~SceneTestObjLoading()
 {
 }
 
-void Scene::InitialiseFromFile(const std::string & filename)
+void SceneTestObjLoading::InitialiseFromFile(const std::string & filename)
 {
 	BuildPipelines();
 	// Create an instance of the Importer class
@@ -34,7 +37,7 @@ void Scene::InitialiseFromFile(const std::string & filename)
 	// Usually - if speed is not the most important aspect for you - you'll 
 	// propably to request more postprocessing than we do in this example.
 
-	const aiScene* scene = importer.ReadFile("data/Models/BlenderScene/BlenderScene.obj",
+	const aiScene* scene = importer.ReadFile("data/Models/BlenderScene/BlenderScene_subdiv.obj",
 		aiProcess_CalcTangentSpace |
 		aiProcess_Triangulate |
 		aiProcess_JoinIdenticalVertices |
@@ -74,11 +77,13 @@ void Scene::InitialiseFromFile(const std::string & filename)
 
 	GroupByPipeline();
 
+	water.Initialise(500.0f, 16);
 	
 }
 
-void Scene::Destroy()
+void SceneTestObjLoading::Destroy()
 {
+	water.Destroy();
 	for (size_t i = 0; i < meshes.size(); ++i)
 	{
 		meshes[i].Destroy(VulkanRenderer::GetDevice());
@@ -116,15 +121,16 @@ void Scene::Destroy()
 	}
 }
 
-glm::mat4 Scene::GetCameraPosition(float dt)
+glm::mat4 SceneTestObjLoading::GetCameraPosition(float dt)
 {
 	return glm::translate(glm::vec3(13.0f, 10.0f, 0.0f));// cameraAnimation.Update(dt);
 }
 
-void Scene::Draw(VulkanCommandBuffer & buffer, const Frustum& frustum)
+void SceneTestObjLoading::Draw(VulkanCommandBuffer & buffer, const Frustum& frustum)
 {
 	//VkEngine::Timer<std::chrono::microseconds::period> timer("SCENE_DRAW_PROFILING");
 	int objectsDrawn = 0;
+	water.Draw(buffer, frustum);
 
 	for (size_t i = 0; i < pipelineMeshIDs.size(); ++i)
 	{
@@ -143,12 +149,28 @@ void Scene::Draw(VulkanCommandBuffer & buffer, const Frustum& frustum)
 			}
 		}
 	}
+
+	
 }
 
-void Scene::BuildPipelines()
+void SceneTestObjLoading::Update(float deltaTime)
+{
+	water.Update(deltaTime);
+}
+
+void SceneTestObjLoading::DrawOverlays()
+{
+	ImGui::Begin("Scene parameters");
+	water.DrawOverlays();
+	ImGui::End();
+}
+
+
+void SceneTestObjLoading::BuildPipelines()
 {
 	//read the shaders
 	std::vector<ShadersFileType> shaders;
+	std::vector<ShadersFileType> shadersWater;
 	ShadersFileType vert;
 	vert.filepath = "data/shaders/UberNoOpacity.vert.spv";
 	vert.type = VERTEX;
@@ -158,6 +180,10 @@ void Scene::BuildPipelines()
 	shaders.push_back(vert);
 	shaders.push_back(frag);
 
+	Material m;
+	m.SetShaders(shaders, 10);
+	m.Destroy();
+
 	std::vector<VkDynamicState> dynamicStateEnables = {
 			VK_DYNAMIC_STATE_VIEWPORT,
 			VK_DYNAMIC_STATE_SCISSOR
@@ -165,7 +191,7 @@ void Scene::BuildPipelines()
 
 	//Init the pipeline
 	m_kPipelines.push_back({});
-	m_kPipelines.push_back({});
+	//m_kPipelines.push_back({});
 	m_kPipelines.push_back({});
 	m_kPipelines[0].Initialise(VulkanRenderer::GetSurfaceExtent());
 
@@ -178,10 +204,11 @@ void Scene::BuildPipelines()
 	m_kPipelines[0].CreatePipeline(&VulkanRenderer::GetDescriptorSetLayout(), VulkanRenderer::GetRenderPass(0));
 
 
-	/** Water pipeline **/
+
+	/** Aplha blended pipeline **/
 	//build aplha blended
-	shaders[0].filepath = "data/shaders/UberWater.vert.spv";
-	shaders[1].filepath = "data/shaders/UberWater.frag.spv";
+	shaders[0].filepath = "data/shaders/UberNoOpacity.vert.spv";
+	shaders[1].filepath = "data/shaders/UberOpacity.frag.spv";
 
 	m_kPipelines[1].Initialise(VulkanRenderer::GetSurfaceExtent());
 
@@ -191,52 +218,102 @@ void Scene::BuildPipelines()
 	//m_kPipeline.SetPolygonMode(VK_POLYGON_MODE_LINE, .2f);
 
 	//set blend mode
-	m_kPipelines[1].SetDepthTest(true, true);
-	/*m_kPipelines[1].SetBlendAttachementCount(1);
-	m_kPipelines[1].SetBlendingForAttachement(0, VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT,
-		true, VK_BLEND_FACTOR_SRC_ALPHA, VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA, VK_BLEND_OP_ADD,
-		VK_BLEND_FACTOR_SRC_ALPHA, VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA, VK_BLEND_OP_ADD);*/
-
-	//Create the pipline
-	m_kPipelines[1].CreatePipeline(&VulkanRenderer::GetDescriptorSetLayout(), VulkanRenderer::GetRenderPass(0));
-
-
-	/** Aplha blended pipeline **/
-	//build aplha blended
-	shaders[0].filepath = "data/shaders/UberNoOpacity.vert.spv";
-	shaders[1].filepath = "data/shaders/UberOpacity.frag.spv";
-
-	m_kPipelines[2].Initialise(VulkanRenderer::GetSurfaceExtent());
-
-	//Set the shaders
-	m_kPipelines[2].SetShaders(shaders.size(), shaders.data());
-	m_kPipelines[2].SetDynamicStates(dynamicStateEnables.data(), dynamicStateEnables.size());
-	//m_kPipeline.SetPolygonMode(VK_POLYGON_MODE_LINE, .2f);
-
-	//set blend mode
 	//m_kPipelines[2].SetPolygonMode(VK_POLYGON_MODE_LINE);
-	m_kPipelines[2].SetCullMode(VK_CULL_MODE_NONE);
-	m_kPipelines[2].SetDepthTest(true, false);
-	m_kPipelines[2].SetBlendAttachementCount(1);
-	m_kPipelines[2].SetBlendingForAttachement(0, VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT,
+	m_kPipelines[1].SetCullMode(VK_CULL_MODE_NONE);
+	m_kPipelines[1].SetDepthTest(true, false);
+	m_kPipelines[1].SetBlendAttachementCount(1);
+	m_kPipelines[1].SetBlendingForAttachement(0, VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT,
 		true, VK_BLEND_FACTOR_SRC_ALPHA, VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA, VK_BLEND_OP_ADD,
 		VK_BLEND_FACTOR_SRC_ALPHA, VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA, VK_BLEND_OP_ADD);
 
 	//Create the pipline
-	m_kPipelines[2].CreatePipeline(&VulkanRenderer::GetDescriptorSetLayout(), VulkanRenderer::GetRenderPass(0));
+	m_kPipelines[1].CreatePipeline(&VulkanRenderer::GetDescriptorSetLayout(), VulkanRenderer::GetRenderPass(0));
 
-	pipelineMeshIDs = { {},{},{} };
+	pipelineMeshIDs = { {},{} };
+
+	//pipeline cache test
+	/*{
+		VulkanShader* pshaders = new VulkanShader[2];
+		pshaders[0].Initialise(VulkanRenderer::GetDevice(), shaders[0].type, shaders[0].filepath.c_str());
+		pshaders[1].Initialise(VulkanRenderer::GetDevice(), shaders[1].type, shaders[1].filepath.c_str());
+
+		VkPipelineCache cache;
+		VkPipelineCacheCreateInfo info;
+		info.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
+		info.initialDataSize = 0;
+		info.pInitialData = nullptr;
+		info.pNext = nullptr;
+		info.flags = 0;
+		if (vkCreatePipelineCache(VulkanRenderer::GetDevice(), &info, nullptr, &cache) != VK_SUCCESS)
+		{
+			throw std::runtime_error("Unable to build pipeline cache");
+		}
+
+		{
+			std::vector<VulkanGraphicsPipeline> pipelines; pipelines.resize(1000);
+			{
+
+				VkEngine::Timer<std::chrono::milliseconds::period> t("Pipeline creation with cache");
+
+				for (int i = 0; i < 1000; ++i)
+				{
+					pipelines[i].Initialise(VulkanRenderer::GetSurfaceExtent());
+					pipelines[i].SetShaders(pshaders, shaders.size(), shaders.data());
+					pipelines[i].CreatePipeline(&VulkanRenderer::GetDescriptorSetLayout(), VulkanRenderer::GetRenderPass(0), cache);
+				}
+
+			}
+
+			for (int i = 0; i < 1000; ++i)
+			{
+				pipelines[i].Destroy();
+			}
+		}
+
+		{
+			std::vector<VulkanGraphicsPipeline> pipelines; pipelines.resize(1000);
+			{
+
+				VkEngine::Timer<std::chrono::milliseconds::period> t("Pipeline creation without cache");
+
+				for (int i = 0; i < 1000; ++i)
+				{
+					pipelines[i].Initialise(VulkanRenderer::GetSurfaceExtent());
+					pipelines[i].SetShaders(pshaders, shaders.size(), shaders.data());
+					pipelines[i].CreatePipeline(&VulkanRenderer::GetDescriptorSetLayout(), VulkanRenderer::GetRenderPass(0));
+				}
+
+			}
+
+			for (int i = 0; i < 1000; ++i)
+			{
+				pipelines[i].Destroy();
+			}
+		}
+
+		pshaders[0].Destroy(VulkanRenderer::GetDevice());
+		pshaders[1].Destroy(VulkanRenderer::GetDevice());
+		delete[] pshaders;
+
+		size_t dataSize;
+		vkGetPipelineCacheData(VulkanRenderer::GetDevice(), cache, &dataSize, nullptr);
+
+		std::vector<char> pData; pData.resize(dataSize);
+		vkGetPipelineCacheData(VulkanRenderer::GetDevice(), cache, &dataSize, pData.data());
+
+		vkDestroyPipelineCache(VulkanRenderer::GetDevice(), cache, nullptr);
+	}*/
 	
 }
 
-void Scene::LoadNodes(const aiScene * scene)
+void SceneTestObjLoading::LoadNodes(const aiScene * scene)
 {
 	if (!scene->HasMeshes()) return;
 
-	LoadNode(scene, scene->mRootNode);
+	LoadNode(scene, scene->mRootNode);	
 }
 
-void Scene::LoadNode(const aiScene * scene, const aiNode * node)
+void SceneTestObjLoading::LoadNode(const aiScene * scene, const aiNode * node)
 {
 
 	if (node->mNumMeshes > 0)
@@ -250,7 +327,7 @@ void Scene::LoadNode(const aiScene * scene, const aiNode * node)
 	}
 }
 
-void Scene::LoadMeshNode(const aiScene* scene, const aiNode * node)
+void SceneTestObjLoading::LoadMeshNode(const aiScene* scene, const aiNode * node)
 {
 	
 	glm::mat4 tr = glm::mat4(
@@ -274,7 +351,7 @@ void Scene::LoadMeshNode(const aiScene* scene, const aiNode * node)
 	}
 }
 
-void Scene::CreateDescriptorSets(int number)
+void SceneTestObjLoading::CreateDescriptorSets(int number)
 {
 	std::vector<VkDescriptorSetLayout> layouts(number, VulkanRenderer::GetDescriptorSetLayout());
 	//VkDescriptorSetLayout layouts[] = { VulkanRenderer::GetDescriptorSetLayout() };
@@ -292,7 +369,7 @@ void Scene::CreateDescriptorSets(int number)
 	}
 }
 
-void Scene::UpdateDescriptorSet(int idImage, int idOpacityMap, int idDescriptor, VkSampler sampler)
+void SceneTestObjLoading::UpdateDescriptorSet(int idImage, int idOpacityMap, int idDescriptor, VkSampler sampler)
 {
 	std::vector<VkWriteDescriptorSet> desc = HelloTriangleApplication::GetDescriptorWrites();
 	
@@ -330,20 +407,20 @@ void Scene::UpdateDescriptorSet(int idImage, int idOpacityMap, int idDescriptor,
 	vkUpdateDescriptorSets(VulkanRenderer::GetDevice(), desc.size(), desc.data(), 0, nullptr);
 }
 
-void Scene::LoadMeshes(const aiScene * scene)
+void SceneTestObjLoading::LoadMeshes(const aiScene * scene)
 {
 	if (!scene->HasMeshes()) return;
 	meshes.resize(scene->mNumMeshes);
 	boundingSpheres.resize(scene->mNumMeshes);
 	boundingBoxes.resize(scene->mNumMeshes);
 
-	for (size_t i = 0; i < meshes.size(); ++i)
+	for (size_t i = 0; i < scene->mNumMeshes; ++i)
 	{
 		LoadMesh(scene, scene->mMeshes[i], i);
-	}
+	}	
 }
 
-void Scene::LoadMesh(const aiScene * scene, const aiMesh * mesh, int IDX)
+void SceneTestObjLoading::LoadMesh(const aiScene * scene, const aiMesh * mesh, int IDX)
 {
 	MeshData data;
 	data.vertices.resize(mesh->mNumVertices);
@@ -373,7 +450,7 @@ void Scene::LoadMesh(const aiScene * scene, const aiMesh * mesh, int IDX)
 	meshes[IDX].Initialise(VulkanRenderer::GetPhysicalDevice(), VulkanRenderer::GetDevice(), data, VulkanRenderer::GetTranferPool(), VulkanRenderer::GetTransferQueue());
 }
 
-void Scene::LoadMaterials(const aiScene * scene)
+void SceneTestObjLoading::LoadMaterials(const aiScene * scene)
 {
 	CreateDescriptorSets(scene->mNumMaterials);
 
@@ -383,7 +460,7 @@ void Scene::LoadMaterials(const aiScene * scene)
 	}
 }
 
-void Scene::LoadMaterial(const aiScene * scene, const aiMaterial * material, int idx)
+void SceneTestObjLoading::LoadMaterial(const aiScene * scene, const aiMaterial * material, int idx)
 {
 	aiString name;
 	material->Get(AI_MATKEY_NAME, name);
@@ -477,7 +554,7 @@ void Scene::LoadMaterial(const aiScene * scene, const aiMaterial * material, int
 	//pipelineID[idx]  = (bHasOpacityMap) ? 1 : 0;
 	if (isWater)
 	{
-		pipelineID[idx] = 1;
+		//pipelineID[idx] = 1;
 	}
 	else if (opacity == 1.0f)
 	{
@@ -485,7 +562,7 @@ void Scene::LoadMaterial(const aiScene * scene, const aiMaterial * material, int
 	}
 	else
 	{
-		pipelineID[idx] = 2;
+		pipelineID[idx] = 1;
 	}
 
 	if (diffuseImages.size() > 0)
@@ -494,7 +571,7 @@ void Scene::LoadMaterial(const aiScene * scene, const aiMaterial * material, int
 	}
 }
 
-void Scene::LoadAnimations(const aiScene * scene)
+void SceneTestObjLoading::LoadAnimations(const aiScene * scene)
 {
 	for (uint32_t i = 0; i < scene->mNumAnimations; ++i)
 	{
@@ -502,7 +579,7 @@ void Scene::LoadAnimations(const aiScene * scene)
 	}
 }
 
-void Scene::LoadAnimation(const aiScene * scene, const aiAnimation * animation)
+void SceneTestObjLoading::LoadAnimation(const aiScene * scene, const aiAnimation * animation)
 {
 	cameraAnimation.SetTicksPerSecond(1);
 	for (unsigned int i = 0; i < animation->mChannels[0]->mNumPositionKeys; ++i)
@@ -515,7 +592,7 @@ void Scene::LoadAnimation(const aiScene * scene, const aiAnimation * animation)
 	
 }
 
-void Scene::DisplayMaterialProperties(const aiMaterial * material)
+void SceneTestObjLoading::DisplayMaterialProperties(const aiMaterial * material)
 {
 	for (size_t i = 0; i < material->mNumProperties; ++i)
 	{
@@ -572,7 +649,7 @@ void Scene::DisplayMaterialProperties(const aiMaterial * material)
 
 
 
-void Scene::GroupByPipeline()
+void SceneTestObjLoading::GroupByPipeline()
 {
 	for (size_t i = 0; i < objects.size(); ++i)
 	{

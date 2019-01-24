@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "VulkanRenderer.h"
+#include "MaterialManager.h"
 
 
 VulkanRenderer VulkanRenderer::instance = {};
@@ -72,7 +73,7 @@ void VulkanRenderer::PrepareFrame()
 	instance.InstancePrepareFrame();
 }
 
-void VulkanRenderer::PrepareCommandBuffer(Scene* scene, const Frustum& frustum)
+void VulkanRenderer::PrepareCommandBuffer(IScene* scene, const Frustum& frustum)
 {
 	instance.InstancePrepareCommandBuffer(scene, frustum);
 }
@@ -85,6 +86,11 @@ void VulkanRenderer::DrawFrame()
 void VulkanRenderer::EndFrame()
 {
 	instance.InstanceEndFrame();
+}
+
+void VulkanRenderer::Inspect()
+{
+	instance.InstanceInspect();
 }
 
 
@@ -111,6 +117,8 @@ void VulkanRenderer::InstanceInit(GLFWwindow* window)
 
 	CreateCommandBuffers();
 
+	MaterialManager::Get().Initialise();
+
 
 	/*CreateTextureImage();
 	CreateTextureImageView();
@@ -125,6 +133,7 @@ void VulkanRenderer::InstanceInit(GLFWwindow* window)
 
 void VulkanRenderer::InstanceCleanup()
 {
+	MaterialManager::Get().Destroy();
 	CleanupAdditionalRenderPasses();
 	CleanupSwapChain();
 	
@@ -224,7 +233,7 @@ void VulkanRenderer::InstancePrepareFrame()
 	ImGui_ImplGlfwVulkan_NewFrame();
 }
 
-void VulkanRenderer::InstancePrepareCommandBuffer(Scene* scene, const Frustum& frustum)
+void VulkanRenderer::InstancePrepareCommandBuffer(IScene* scene, const Frustum& frustum)
 {
 	if (commandBuffers[currentFrame].BeginCommandBuffer(VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT, nullptr) != VK_SUCCESS) {
 		throw std::runtime_error("failed to begin recording command buffer!");
@@ -391,6 +400,34 @@ void VulkanRenderer::InstanceDrawFrame()
 void VulkanRenderer::InstanceEndFrame()
 {
 	currentFrame = (currentFrame + 1) % m_akSwapchainFrameBuffers.size();
+}
+
+void VulkanRenderer::InstanceInspect()
+{
+	ImGui::Begin("Renderer");
+
+	ImGui::Text("%s", m_kPhysicalDevice.GetDeviceProperties().deviceName);
+
+	if (ImGui::CollapsingHeader("Available extensions"))
+	{
+		for (const auto& extension : m_kInstance.GetExtensionsProps())
+		{
+			ImGui::BulletText("%s", extension.extensionName);
+		}
+	}
+
+	if (ImGui::CollapsingHeader("Physical device properties"))
+	{
+		const VkPhysicalDeviceProperties& props = m_kPhysicalDevice.GetDeviceProperties();
+		const VkPhysicalDeviceFeatures& feats = m_kPhysicalDevice.GetDeviceFeatures();
+		ImGui::Text("Device name:\t%s", props.deviceName);
+
+		InspectFeatures(feats);
+		InspectSparseProperties(props);
+		InspectLimits(props);	
+	}
+
+	ImGui::End();
 }
 
 void VulkanRenderer::CreateInstance()
@@ -610,7 +647,7 @@ void VulkanRenderer::CreateDescriptorSetLayout()
 	uboLayoutBinding.binding = 0;
 	uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	uboLayoutBinding.descriptorCount = 1;
-	uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+	uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT|VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT;
 	uboLayoutBinding.pImmutableSamplers = nullptr;
 
 	VkDescriptorSetLayoutBinding samplerLayoutBinding = {};
@@ -704,13 +741,13 @@ void VulkanRenderer::CreateOverlaysRenderPass()
 		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 	);
 
-	/*m_kOverlaysRenderPass.AddAttachment(
+	m_kOverlaysRenderPass.AddAttachment(
 		ATTACHMENT_DEPTH, FindDepthFormat(), VK_SAMPLE_COUNT_1_BIT, VK_ATTACHMENT_LOAD_OP_LOAD, VK_ATTACHMENT_STORE_OP_DONT_CARE,
 		VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
 		VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
-	);*/
+	);
 
-	m_kOverlaysRenderPass.AddSubpass(VK_PIPELINE_BIND_POINT_GRAPHICS, { 0 }, -1, {});
+	m_kOverlaysRenderPass.AddSubpass(VK_PIPELINE_BIND_POINT_GRAPHICS, { 0 }, 0, {});
 
 	m_kOverlaysRenderPass.AddSubpassDependency(VK_SUBPASS_EXTERNAL, 0, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, VK_ACCESS_MEMORY_READ_BIT,
 		VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
@@ -776,5 +813,249 @@ VkFormat VulkanRenderer::FindDepthFormat()
 	return m_kPhysicalDevice.FindSupportedFormats({ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT, VK_FORMAT_D16_UNORM, VK_FORMAT_D16_UNORM_S8_UINT },
 		VK_IMAGE_TILING_OPTIMAL,
 		VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
+}
+
+void VulkanRenderer::InspectSparseProperties(const VkPhysicalDeviceProperties & props)
+{
+	if (ImGui::CollapsingHeader("Sparse properties"))
+	{
+		if (props.sparseProperties.residencyStandard2DBlockShape) ImGui::BulletText("residencyStandard2DBlockShape");
+		if (props.sparseProperties.residencyStandard2DMultisampleBlockShape) ImGui::BulletText("residencyStandard2DMultisampleBlockShape");
+		if (props.sparseProperties.residencyStandard3DBlockShape) ImGui::BulletText("residencyStandard3DBlockShape");
+		if (props.sparseProperties.residencyAlignedMipSize) ImGui::BulletText("residencyAlignedMipSize");
+		if (props.sparseProperties.residencyNonResidentStrict) ImGui::BulletText("residencyNonResidentStrict");
+	}
+}
+
+void VulkanRenderer::InspectLimits(const VkPhysicalDeviceProperties & props)
+{
+	
+	if (ImGui::CollapsingHeader("Limits"))
+	{
+		ImGui::BulletText("maxImageDimension1D:\t%u", props.limits.maxImageDimension1D);
+		ImGui::BulletText("maxImageDimension2D:\t%u", props.limits.maxImageDimension2D);
+		ImGui::BulletText("maxImageDimension3D:\t%u", props.limits.maxImageDimension3D);
+		ImGui::BulletText("maxImageDimensionCube:\t%u", props.limits.maxImageDimensionCube);
+		ImGui::BulletText("maxImageArrayLayers:\t%u", props.limits.maxImageArrayLayers);
+		ImGui::BulletText("maxTexelBufferElements:\t%u", props.limits.maxTexelBufferElements);
+		ImGui::BulletText("maxUniformBufferRange:\t%u", props.limits.maxUniformBufferRange);
+		ImGui::BulletText("maxStorageBufferRange:\t%u", props.limits.maxStorageBufferRange);
+		ImGui::BulletText("maxPushConstantsSize:\t%u", props.limits.maxPushConstantsSize);
+		ImGui::BulletText("maxMemoryAllocationCount:\t%u", props.limits.maxMemoryAllocationCount);
+		ImGui::BulletText("maxSamplerAllocationCount:\t%u", props.limits.maxSamplerAllocationCount);
+		ImGui::BulletText("bufferImageGranularity:\t%u", props.limits.bufferImageGranularity);
+		ImGui::BulletText("sparseAddressSpaceSize:\t%u", props.limits.sparseAddressSpaceSize);
+		ImGui::BulletText("maxBoundDescriptorSets:\t%u", props.limits.maxBoundDescriptorSets);
+		ImGui::BulletText("maxPerStageDescriptorSamplers:\t%u", props.limits.maxPerStageDescriptorSamplers);
+		ImGui::BulletText("maxPerStageDescriptorUniformBuffers:\t%u", props.limits.maxPerStageDescriptorUniformBuffers);
+		ImGui::BulletText("maxPerStageDescriptorStorageBuffers:\t%u", props.limits.maxPerStageDescriptorStorageBuffers);
+		ImGui::BulletText("maxPerStageDescriptorSampledImages:\t%u", props.limits.maxPerStageDescriptorSampledImages);
+		ImGui::BulletText("maxPerStageDescriptorStorageImages:\t%u", props.limits.maxPerStageDescriptorStorageImages);
+		ImGui::BulletText("maxPerStageDescriptorInputAttachments:\t%u", props.limits.maxPerStageDescriptorInputAttachments);
+		ImGui::BulletText("maxPerStageResources:\t%u", props.limits.maxPerStageResources);
+		ImGui::BulletText("maxDescriptorSetSamplers:\t%u", props.limits.maxDescriptorSetSamplers);
+		ImGui::BulletText("maxDescriptorSetUniformBuffers:\t%u", props.limits.maxDescriptorSetUniformBuffers);
+		ImGui::BulletText("maxDescriptorSetUniformBuffersDynamic:\t%u", props.limits.maxDescriptorSetUniformBuffersDynamic);
+		ImGui::BulletText("maxDescriptorSetStorageBuffers:\t%u", props.limits.maxDescriptorSetStorageBuffers);
+		ImGui::BulletText("maxDescriptorSetStorageBuffersDynamic:\t%u", props.limits.maxDescriptorSetStorageBuffersDynamic);
+		ImGui::BulletText("maxDescriptorSetSampledImages:\t%u", props.limits.maxDescriptorSetSampledImages);
+		ImGui::BulletText("maxDescriptorSetInputAttachments:\t%u", props.limits.maxDescriptorSetInputAttachments);
+		ImGui::BulletText("maxVertexInputBindings:\t%u", props.limits.maxVertexInputBindings);
+		ImGui::BulletText("maxVertexInputAttributes:\t%u", props.limits.maxVertexInputAttributes);
+		ImGui::BulletText("maxVertexInputAttributeOffset:\t%u", props.limits.maxVertexInputAttributeOffset);
+		ImGui::BulletText("maxVertexInputBindingStride:\t%u", props.limits.maxVertexInputBindingStride);
+		ImGui::BulletText("maxVertexOutputComponents:\t%u", props.limits.maxVertexOutputComponents);
+		ImGui::BulletText("maxTessellationGenerationLevel:\t%u", props.limits.maxTessellationGenerationLevel);
+		ImGui::BulletText("maxTessellationPatchSize:\t%u", props.limits.maxTessellationPatchSize);
+		ImGui::BulletText("maxTessellationControlPerVertexInputComponents:\t%u", props.limits.maxTessellationControlPerVertexInputComponents);
+		ImGui::BulletText("maxTessellationControlPerVertexOutputComponents:\t%u", props.limits.maxTessellationControlPerVertexOutputComponents);
+		ImGui::BulletText("maxTessellationControlPerPatchOutputComponents:\t%u", props.limits.maxTessellationControlPerPatchOutputComponents);
+		ImGui::BulletText("maxTessellationControlTotalOutputComponents:\t%u", props.limits.maxTessellationControlTotalOutputComponents);
+		ImGui::BulletText("maxTessellationEvaluationInputComponents:\t%u", props.limits.maxTessellationEvaluationInputComponents);
+		ImGui::BulletText("maxTessellationEvaluationOutputComponents:\t%u", props.limits.maxTessellationEvaluationOutputComponents);
+		ImGui::BulletText("maxGeometryShaderInvocations:\t%u", props.limits.maxGeometryShaderInvocations);
+		ImGui::BulletText("maxGeometryInputComponents:\t%u", props.limits.maxGeometryInputComponents);
+		ImGui::BulletText("maxGeometryOutputComponents:\t%u", props.limits.maxGeometryOutputComponents);
+		ImGui::BulletText("maxGeometryOutputVertices:\t%u", props.limits.maxGeometryOutputVertices);
+		ImGui::BulletText("maxGeometryTotalOutputComponents:\t%u", props.limits.maxGeometryTotalOutputComponents);
+		ImGui::BulletText("maxFragmentInputComponents:\t%u", props.limits.maxFragmentInputComponents);
+		ImGui::BulletText("maxFragmentOutputAttachments:\t%u", props.limits.maxFragmentOutputAttachments);
+		ImGui::BulletText("maxFragmentDualSrcAttachments:\t%u", props.limits.maxFragmentDualSrcAttachments);
+		ImGui::BulletText("maxFragmentCombinedOutputResources:\t%u", props.limits.maxFragmentCombinedOutputResources);
+		ImGui::BulletText("maxComputeSharedMemorySize:\t%u", props.limits.maxComputeSharedMemorySize);
+		ImGui::BulletText("maxComputeWorkGroupCount[0]:\t%u", props.limits.maxComputeWorkGroupCount[0]);
+		ImGui::BulletText("maxComputeWorkGroupCount[1]:\t%u", props.limits.maxComputeWorkGroupCount[1]);
+		ImGui::BulletText("maxComputeWorkGroupCount[2]:\t%u", props.limits.maxComputeWorkGroupCount[2]);
+		ImGui::BulletText("maxComputeWorkGroupInvocations:\t%u", props.limits.maxComputeWorkGroupInvocations);
+		ImGui::BulletText("maxComputeWorkGroupSize[0]:\t%u", props.limits.maxComputeWorkGroupSize[0]);
+		ImGui::BulletText("maxComputeWorkGroupSize[1]:\t%u", props.limits.maxComputeWorkGroupSize[1]);
+		ImGui::BulletText("maxComputeWorkGroupSize[2]:\t%u", props.limits.maxComputeWorkGroupSize[2]);
+		ImGui::BulletText("subPixelPrecisionBits:\t%u", props.limits.subPixelPrecisionBits);
+		ImGui::BulletText("maxDrawIndexedIndexValue:\t%u", props.limits.maxDrawIndexedIndexValue);
+		ImGui::BulletText("maxDrawIndirectCount:\t%u", props.limits.maxDrawIndirectCount);
+		ImGui::BulletText("maxSamplerLodBias:\t%f", props.limits.maxSamplerLodBias);
+		ImGui::BulletText("maxSamplerAnisotropy:\t%f", props.limits.maxSamplerAnisotropy);
+		ImGui::BulletText("maxViewports:\t%u", props.limits.maxViewports);
+		ImGui::BulletText("maxViewportDimensions[0]:\t%u", props.limits.maxViewportDimensions[0]);
+		ImGui::BulletText("maxViewportDimensions[1]:\t%u", props.limits.maxViewportDimensions[1]);
+		ImGui::BulletText("viewportBoundsRange[0]:\t%f", props.limits.viewportBoundsRange[0]);
+		ImGui::BulletText("viewportBoundsRange[1]:\t%f", props.limits.viewportBoundsRange[1]);
+		ImGui::BulletText("viewportSubPixelBits:\t%u", props.limits.viewportSubPixelBits);
+		ImGui::BulletText("minMemoryMapAlignment:\t%u", props.limits.minMemoryMapAlignment);
+		ImGui::BulletText("minTexelBufferOffsetAlignment:\t%u", props.limits.minTexelBufferOffsetAlignment);
+		ImGui::BulletText("minUniformBufferOffsetAlignment:\t%u", props.limits.minUniformBufferOffsetAlignment);
+		ImGui::BulletText("minStorageBufferOffsetAlignment:\t%u", props.limits.minStorageBufferOffsetAlignment);
+		ImGui::BulletText("minTexelOffset:\t%i", props.limits.minTexelOffset);
+		ImGui::BulletText("maxTexelOffset:\t%u", props.limits.maxTexelOffset);
+		ImGui::BulletText("minTexelGatherOffset:\t%i", props.limits.minTexelGatherOffset);
+		ImGui::BulletText("maxTexelGatherOffset:\t%u", props.limits.maxTexelGatherOffset);
+		ImGui::BulletText("minInterpolationOffset:\t%f", props.limits.minInterpolationOffset);
+		ImGui::BulletText("maxInterpolationOffset:\t%f", props.limits.maxInterpolationOffset);
+		ImGui::BulletText("subPixelInterpolationOffsetBits:\t%u", props.limits.subPixelInterpolationOffsetBits);
+		ImGui::BulletText("maxFramebufferWidth:\t%u", props.limits.maxFramebufferWidth);
+		ImGui::BulletText("maxFramebufferHeight:\t%u", props.limits.maxFramebufferHeight);
+		ImGui::BulletText("maxFramebufferLayers:\t%u", props.limits.maxFramebufferLayers);
+
+		{
+			std::stringstream sstr;
+			InspectSampleCounts(props.limits.framebufferColorSampleCounts, sstr);
+			ImGui::BulletText("framebufferColorSampleCounts:\t%s", sstr.str().c_str());//
+		}
+		{
+			std::stringstream sstr;
+			InspectSampleCounts(props.limits.framebufferDepthSampleCounts, sstr);
+			ImGui::BulletText("framebufferDepthSampleCounts:\t%s", sstr.str().c_str());//
+		}
+		{
+			std::stringstream sstr;
+			InspectSampleCounts(props.limits.framebufferStencilSampleCounts, sstr);
+			ImGui::BulletText("framebufferStencilSampleCounts:\t%s", sstr.str().c_str());//
+		}
+		{
+			std::stringstream sstr;
+			InspectSampleCounts(props.limits.framebufferNoAttachmentsSampleCounts, sstr);
+			ImGui::BulletText("framebufferNoAttachmentsSampleCounts:\t%s", sstr.str().c_str());//
+		}
+		
+		ImGui::BulletText("maxColorAttachments:\t%u", props.limits.maxColorAttachments);
+
+		{
+			std::stringstream sstr;
+			InspectSampleCounts(props.limits.sampledImageColorSampleCounts, sstr);
+			ImGui::BulletText("sampledImageColorSampleCounts:\t%s", sstr.str().c_str());//
+		}
+		{
+			std::stringstream sstr;
+			InspectSampleCounts(props.limits.sampledImageIntegerSampleCounts, sstr);
+			ImGui::BulletText("sampledImageIntegerSampleCounts:\t%s", sstr.str().c_str());//
+		}
+		{
+			std::stringstream sstr;
+			InspectSampleCounts(props.limits.sampledImageDepthSampleCounts, sstr);
+			ImGui::BulletText("sampledImageDepthSampleCounts:\t%s", sstr.str().c_str());//
+		}
+		{
+			std::stringstream sstr;
+			InspectSampleCounts(props.limits.sampledImageStencilSampleCounts, sstr);
+			ImGui::BulletText("sampledImageStencilSampleCounts:\t%s", sstr.str().c_str());//
+		}
+		{
+			std::stringstream sstr;
+			InspectSampleCounts(props.limits.storageImageSampleCounts, sstr);
+			ImGui::BulletText("storageImageSampleCounts:\t%s", sstr.str().c_str());//
+		}
+
+		ImGui::BulletText("maxSampleMaskWords:\t%u", props.limits.maxSampleMaskWords);
+		ImGui::BulletText("timestampComputeAndGraphics:\t%s", (props.limits.timestampComputeAndGraphics) ? "true" : "false");
+		ImGui::BulletText("timestampPeriod:\t%f", props.limits.timestampPeriod);
+		ImGui::BulletText("maxClipDistances:\t%u", props.limits.maxClipDistances);
+		ImGui::BulletText("maxCullDistances:\t%u", props.limits.maxCullDistances);
+		ImGui::BulletText("maxCombinedClipAndCullDistances:\t%u", props.limits.maxCombinedClipAndCullDistances);
+		ImGui::BulletText("discreteQueuePriorities:\t%u", props.limits.discreteQueuePriorities);
+		ImGui::BulletText("pointSizeRange[0]:\t%f", props.limits.pointSizeRange[0]);
+		ImGui::BulletText("pointSizeRange[1]:\t%f", props.limits.pointSizeRange[1]);
+		ImGui::BulletText("lineWidthRange[0]:\t%f", props.limits.lineWidthRange[0]);
+		ImGui::BulletText("lineWidthRange[1]:\t%f", props.limits.lineWidthRange[1]);
+		ImGui::BulletText("pointSizeGranularity:\t%f", props.limits.pointSizeGranularity);
+		ImGui::BulletText("lineWidthGranularity:\t%f", props.limits.lineWidthGranularity);
+		ImGui::BulletText("strictLines:\t%s", (props.limits.strictLines) ? "true" : "false");
+		ImGui::BulletText("standardSampleLocations:\t%s", (props.limits.standardSampleLocations) ? "true" : "false");
+		ImGui::BulletText("optimalBufferCopyOffsetAlignment:\t%u", props.limits.optimalBufferCopyOffsetAlignment);
+		ImGui::BulletText("optimalBufferCopyRowPitchAlignment:\t%u", props.limits.optimalBufferCopyRowPitchAlignment);
+		ImGui::BulletText("nonCoherentAtomSize:\t%u", props.limits.nonCoherentAtomSize);
+	}
+}
+
+void VulkanRenderer::InspectFeatures(const VkPhysicalDeviceFeatures & feats)
+{
+	if (ImGui::CollapsingHeader("Features"))
+	{
+		if (feats.robustBufferAccess) ImGui::BulletText("robustBufferAccess");
+		if (feats.fullDrawIndexUint32) ImGui::BulletText("fullDrawIndexUint32");
+		if (feats.imageCubeArray) ImGui::BulletText("imageCubeArray");
+		if (feats.independentBlend) ImGui::BulletText("independentBlend");
+		if (feats.geometryShader) ImGui::BulletText("geometryShader");
+		if (feats.tessellationShader) ImGui::BulletText("tessellationShader");
+		if (feats.sampleRateShading) ImGui::BulletText("sampleRateShading");
+		if (feats.dualSrcBlend) ImGui::BulletText("dualSrcBlend");
+		if (feats.logicOp) ImGui::BulletText("logicOp");
+		if (feats.multiDrawIndirect) ImGui::BulletText("multiDrawIndirect");
+		if (feats.drawIndirectFirstInstance) ImGui::BulletText("drawIndirectFirstInstance");
+		if (feats.depthClamp) ImGui::BulletText("depthClamp");
+		if (feats.depthBiasClamp) ImGui::BulletText("depthBiasClamp");
+		if (feats.fillModeNonSolid) ImGui::BulletText("fillModeNonSolid");
+		if (feats.depthBounds) ImGui::BulletText("depthBounds");
+		if (feats.wideLines) ImGui::BulletText("wideLines");
+		if (feats.largePoints) ImGui::BulletText("largePoints");
+		if (feats.alphaToOne) ImGui::BulletText("alphaToOne");
+		if (feats.multiViewport) ImGui::BulletText("multiViewport");
+		if (feats.samplerAnisotropy) ImGui::BulletText("samplerAnisotropy");
+		if (feats.textureCompressionETC2) ImGui::BulletText("textureCompressionETC2");
+		if (feats.textureCompressionASTC_LDR) ImGui::BulletText("textureCompressionASTC_LDR");
+		if (feats.textureCompressionBC) ImGui::BulletText("textureCompressionBC");
+		if (feats.occlusionQueryPrecise) ImGui::BulletText("occlusionQueryPrecise");
+		if (feats.pipelineStatisticsQuery) ImGui::BulletText("pipelineStatisticsQuery");
+		if (feats.vertexPipelineStoresAndAtomics) ImGui::BulletText("vertexPipelineStoresAndAtomics");
+		if (feats.fragmentStoresAndAtomics) ImGui::BulletText("fragmentStoresAndAtomics");
+		if (feats.shaderTessellationAndGeometryPointSize) ImGui::BulletText("shaderTessellationAndGeometryPointSize");
+		if (feats.shaderImageGatherExtended) ImGui::BulletText("shaderImageGatherExtended");
+		if (feats.shaderStorageImageExtendedFormats) ImGui::BulletText("shaderStorageImageExtendedFormats");
+		if (feats.shaderStorageImageMultisample) ImGui::BulletText("shaderStorageImageMultisample");
+		if (feats.shaderStorageImageReadWithoutFormat) ImGui::BulletText("shaderStorageImageReadWithoutFormat");
+		if (feats.shaderStorageImageWriteWithoutFormat) ImGui::BulletText("shaderStorageImageWriteWithoutFormat");
+		if (feats.shaderUniformBufferArrayDynamicIndexing) ImGui::BulletText("shaderUniformBufferArrayDynamicIndexing");
+		if (feats.shaderSampledImageArrayDynamicIndexing) ImGui::BulletText("shaderSampledImageArrayDynamicIndexing");
+		if (feats.shaderStorageBufferArrayDynamicIndexing) ImGui::BulletText("shaderStorageBufferArrayDynamicIndexing");
+		if (feats.shaderStorageImageArrayDynamicIndexing) ImGui::BulletText("shaderStorageImageArrayDynamicIndexing");
+		if (feats.shaderClipDistance) ImGui::BulletText("shaderClipDistance");
+		if (feats.shaderCullDistance) ImGui::BulletText("shaderCullDistance");
+		if (feats.shaderFloat64) ImGui::BulletText("shaderFloat64");
+		if (feats.shaderInt64) ImGui::BulletText("shaderInt64");
+		if (feats.shaderInt16) ImGui::BulletText("shaderInt16");
+		if (feats.shaderResourceResidency) ImGui::BulletText("shaderResourceResidency");
+		if (feats.shaderResourceMinLod) ImGui::BulletText("shaderResourceMinLod");
+		if (feats.sparseBinding) ImGui::BulletText("sparseBinding");
+		if (feats.sparseResidencyBuffer) ImGui::BulletText("sparseResidencyBuffer");
+		if (feats.sparseResidencyImage2D) ImGui::BulletText("sparseResidencyImage2D");
+		if (feats.sparseResidencyImage3D) ImGui::BulletText("sparseResidencyImage3D");
+		if (feats.sparseResidency2Samples) ImGui::BulletText("sparseResidency2Samples");
+		if (feats.sparseResidency4Samples) ImGui::BulletText("sparseResidency4Samples");
+		if (feats.sparseResidency8Samples) ImGui::BulletText("sparseResidency8Samples");
+		if (feats.sparseResidency16Samples) ImGui::BulletText("sparseResidency16Samples");
+		if (feats.sparseResidencyAliased) ImGui::BulletText("sparseResidencyAliased");
+		if (feats.variableMultisampleRate) ImGui::BulletText("variableMultisampleRate");
+		if (feats.inheritedQueries) ImGui::BulletText("inheritedQueries");
+	}
+}
+
+void VulkanRenderer::InspectSampleCounts(const VkSampleCountFlags flags, std::stringstream & sstr)
+{
+	if (flags & VK_SAMPLE_COUNT_1_BIT) sstr << "1, ";
+	if (flags & VK_SAMPLE_COUNT_2_BIT) sstr << "2, ";
+	if (flags & VK_SAMPLE_COUNT_4_BIT) sstr << "4, ";
+	if (flags & VK_SAMPLE_COUNT_8_BIT) sstr << "8, ";
+	if (flags & VK_SAMPLE_COUNT_16_BIT) sstr << "16, ";
+	if (flags & VK_SAMPLE_COUNT_32_BIT) sstr << "32, ";
+	if (flags & VK_SAMPLE_COUNT_64_BIT) sstr << "64, ";
 }
 

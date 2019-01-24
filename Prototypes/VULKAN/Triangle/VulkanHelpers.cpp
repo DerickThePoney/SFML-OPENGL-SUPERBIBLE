@@ -3,11 +3,10 @@
 
 #include "VulkanSurface.h"
 
-bool VulkanHelperFunctions::IsDeviceSuitable(VkPhysicalDevice device, VulkanSurface & surface, const std::vector<const char*> deviceExtensions)
+bool VulkanHelperFunctions::IsDeviceSuitable(VkPhysicalDevice device, VulkanSurface & surface, 
+	VkPhysicalDeviceProperties& properties, VkPhysicalDeviceFeatures& features, 
+	const std::vector<const char*> deviceExtensions)
 {
-	VkPhysicalDeviceProperties properties;
-	VkPhysicalDeviceFeatures features;
-
 	vkGetPhysicalDeviceProperties(device, &properties);
 	vkGetPhysicalDeviceFeatures(device, &features);
 

@@ -14,8 +14,7 @@
 #include "VulkanImage.h"
 #include "VulkanImageView.h"
 
-#include "Scene.h"
-
+#include "IScene.h"
 // Framebuffer for offscreen rendering
 struct FramebufferAttachment
 {
@@ -82,9 +81,13 @@ public:
 	static void EnsureDeviceIdle();
 
 	static void PrepareFrame();
-	static void PrepareCommandBuffer(Scene* scene, const Frustum& frustum);
+	static void PrepareCommandBuffer(IScene* scene, const Frustum& frustum);
 	static void DrawFrame();
 	static void EndFrame();
+
+	static void Inspect();
+
+	
 
 	
 	static VulkanInstance& GetInstance() { return instance.m_kInstance; }
@@ -99,6 +102,7 @@ public:
 	static VkCommandPool& GetGraphicsPool() { return instance.commandPoolGraphics; }
 	static VkCommandPool& GetTranferPool() { return instance.commandPoolTransfer; }
 	static VulkanRenderPass& GetRenderPass(uint32_t index) { return instance.m_kFinalRenderPass; }
+	static VulkanRenderPass& GetOverlayRenderPass() { return instance.m_kOverlaysRenderPass; }
 	static VkDescriptorPool& GetDescriptorPool() { return instance.descriptorPool; }
 	static VkDescriptorSetLayout& GetDescriptorSetLayout() { return instance.descriptorSetLayout; }
 	static VkFence& GetFence(uint32_t index) { return instance.inFlightFences[index]; }
@@ -121,10 +125,12 @@ private:
 	void InstanceEnsureDeviceIdle();
 
 	void InstancePrepareFrame();
-	void InstancePrepareCommandBuffer(Scene* scene, const Frustum& frustum);
+	void InstancePrepareCommandBuffer(IScene* scene, const Frustum& frustum);
 	void RenderOverlays();
 	void InstanceDrawFrame();
 	void InstanceEndFrame();
+
+	void InstanceInspect();
 
 
 
@@ -153,6 +159,11 @@ private:
 	VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR> availablePresentModes);
 	VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
 	VkFormat FindDepthFormat();
+
+	void InspectSparseProperties(const VkPhysicalDeviceProperties& props);
+	void InspectLimits(const VkPhysicalDeviceProperties& props);
+	void InspectFeatures(const VkPhysicalDeviceFeatures& feats);
+	void InspectSampleCounts(const VkSampleCountFlags flags, std::stringstream& sstr);
 
 private:
 	GLFWwindow* window;
@@ -189,7 +200,8 @@ private:
 	size_t currentFrame = 0;
 
 	const std::vector<const char*> validationLayers = {
-		"VK_LAYER_LUNARG_standard_validation"
+		"VK_LAYER_LUNARG_standard_validation",
+		"VK_LAYER_LUNARG_assistant_layer"
 	};
 
 	const std::vector<const char*> deviceExtensions = {

@@ -24,8 +24,13 @@ public:
 	uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 	VkFormat FindSupportedFormats(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
 
+	const VkPhysicalDeviceProperties& GetDeviceProperties() { return properties; }
+	const VkPhysicalDeviceFeatures& GetDeviceFeatures() { return features; }
+
 private:
 	VkPhysicalDevice m_kPhysicalDevice = VK_NULL_HANDLE;
 	QueueFamilyIndices m_kIndices;
 	SwapChainSupportDetails m_kSwapChainSupportDetails;
+	VkPhysicalDeviceProperties properties;
+	VkPhysicalDeviceFeatures features;
 };

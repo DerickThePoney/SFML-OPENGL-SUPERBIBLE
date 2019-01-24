@@ -115,4 +115,6 @@ void main()
 	//float opacity = texture ( opacityMap, fragTexCoord).r;
 	outColor = ComputeLighting(normalize(lightDir), normalize(outVertexData.fragNormal), vec3(normalize(outVertexData.fragViewDir)), diffuseColor, vec4(0.7,0.7,0.7,1.0), ambientColor, shadow);
 	outColor.a = diffuseColor.a;
+
+	//outColor = vec4(outVertexData.fragNormal,1.0);
 }

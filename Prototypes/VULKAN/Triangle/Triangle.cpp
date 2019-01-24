@@ -53,11 +53,14 @@ void HelloTriangleApplication::InitWindow()
 	glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
 	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
 
-	window = glfwCreateWindow(mode->width, mode->height, "Vulkan triangle example", glfwGetPrimaryMonitor(), nullptr);
+	window = glfwCreateWindow(mode->width, mode->height, "Vulkan triangle example", nullptr, nullptr);
+	//window = glfwCreateWindow(mode->width, mode->height, "Vulkan triangle example", glfwGetPrimaryMonitor(), nullptr);
 	WIDTH = mode->width;
 	HEIGHT = mode->height;
 
 	glfwSetKeyCallback(window, HelloTriangleApplication::key_callback);
+	glfwSetWindowIconifyCallback(window, window_iconify_callback);
+	m_bIsIconified = false;
 }
 
 void HelloTriangleApplication::InitVulkan()
@@ -77,40 +80,7 @@ void HelloTriangleApplication::InitVulkan()
 
 	CreateOffscreenCommandBuffers();
 
-	ImGui_ImplGlfwVulkan_Init_Data init_data = {};
-	init_data.allocator = nullptr;
-	init_data.gpu = VulkanRenderer::GetPhysicalDevice();
-	init_data.device = VulkanRenderer::GetDevice();
-	init_data.render_pass = VulkanRenderer::GetRenderPass(0);
-	init_data.pipeline_cache = VK_NULL_HANDLE;
-	init_data.descriptor_pool = VulkanRenderer::GetDescriptorPool();
-	init_data.check_vk_result = check_vk_result;
-	ImGui_ImplGlfwVulkan_Init(window, true, &init_data);
-
-	// Upload Fonts
-	{
-		VkResult err;
-		err = vkResetCommandPool(VulkanRenderer::GetDevice(), VulkanRenderer::GetTranferPool(), 0);
-		check_vk_result(err);
-		
-		VulkanCommandBuffer buffer = VulkanCommandBuffer::CreateCommandBuffer(VulkanRenderer::GetDevice(), VulkanRenderer::GetTranferPool(), VK_COMMAND_BUFFER_LEVEL_PRIMARY);
-		buffer.BeginCommandBuffer(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT, nullptr);
-		
-
-		ImGui_ImplGlfwVulkan_CreateFontsTexture(buffer);
-
-		VkSubmitInfo end_info = {};
-		end_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-		end_info.commandBufferCount = 1;
-		end_info.pCommandBuffers = buffer.GetCommandBuffer();
-		buffer.EndCommandBuffer();
-		err = vkQueueSubmit(VulkanRenderer::GetTransferQueue(), 1, &end_info, VK_NULL_HANDLE);
-		check_vk_result(err);
-
-		err = vkDeviceWaitIdle(VulkanRenderer::GetDevice());
-		check_vk_result(err);
-		ImGui_ImplGlfwVulkan_InvalidateFontUploadObjects();
-	}
+	InitImGUI();
 }
 
 void HelloTriangleApplication::MainLoop()
@@ -144,11 +114,13 @@ void HelloTriangleApplication::MainLoop()
 		}
 		aveDurations[idx] = avg;
 
-		std::cout << "time elapsed " << durations[idx];
-		std::cout << "\ttime elapsed average " << avg << std::endl;
+		//std::cout << "time elapsed " << durations[idx];
+		//std::cout << "\ttime elapsed average " << avg << std::endl;
 
 		start = std::chrono::high_resolution_clock::now();
 		glfwPollEvents();
+
+		if (m_bIsIconified) continue;
 
 		VulkanRenderer::PrepareFrame();
 
@@ -170,8 +142,12 @@ void HelloTriangleApplication::MainLoop()
 		ImGui::PlotLines("Average frame times", aveDurations, aveSize, idx + 1, sstr.str().c_str(), 0, scalemax, ImVec2(0, 80));// , "", 0, 1.0f, ImVec2(0, 80));
 		ImGui::End();
 
+		VulkanRenderer::Inspect();
+		m_pkScene->DrawOverlays();
+		
+		m_pkScene->Update((float)std::chrono::duration_cast<std::chrono::nanoseconds>(elapsed).count() / 1000000000.0f);
 		UpdateUniformBufferData();
-		VulkanRenderer::PrepareCommandBuffer(&m_kScene, frustum);
+		VulkanRenderer::PrepareCommandBuffer(m_pkScene, frustum);
 		VulkanRenderer::DrawFrame();
 		idx = (idx + 1) % aveSize;
 
@@ -225,7 +201,7 @@ void HelloTriangleApplication::UpdateUniformBufferData()
 
 	auto currentTime = std::chrono::high_resolution_clock::now();
 	float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
-	std::cout << "time = " << time << std::endl;
+	//std::cout << "time = " << time << std::endl;
 
 	static CameraProgram program;
 	static int nbReset = 0;
@@ -357,7 +333,7 @@ void HelloTriangleApplication::CreateCommandBuffer(int i)
 	);
 
 
-	m_kScene.Draw(commandBuffers[i], frustum);
+	m_pkScene->Draw(commandBuffers[i], frustum);
 
 
 	/*static bool showTestWindow = true;
@@ -389,7 +365,8 @@ void HelloTriangleApplication::Cleanup()
 	vkDestroySampler(VulkanRenderer::GetDevice(), textureSamplerNoRepeat, nullptr);
 	textureImageView.Destroy(VulkanRenderer::GetDevice());
 	textureImage.Free();
-	m_kScene.Destroy();
+	m_pkScene->Destroy();
+	delete m_pkScene;
 	VulkanRenderer::Cleanup();
 	
 
@@ -413,6 +390,20 @@ void HelloTriangleApplication::key_callback(GLFWwindow * window, int key, int sc
 	}
 
 
+}
+
+void HelloTriangleApplication::window_iconify_callback(GLFWwindow * window, int iconified)
+{
+	if (iconified)
+	{
+		getInstance().m_bIsIconified = true;
+		std::cout << "We are iconified" << std::endl;
+	}
+	else
+	{
+		getInstance().m_bIsIconified = false;
+		std::cout << "We are not iconified" << std::endl;
+	}
 }
 
 
@@ -464,7 +455,8 @@ void HelloTriangleApplication::CreateGraphicsPipeline()
 
 void HelloTriangleApplication::CreateVertexBuffers()
 {	
-	m_kScene.InitialiseFromFile("data/Models/Sponza/sponza.obj");
+	m_pkScene = new SceneTestObjLoading();
+	m_pkScene->InitialiseFromFile("data/Models/Sponza/sponza.obj");
 }
 
 void HelloTriangleApplication::CreateUniformBuffer()
@@ -761,7 +753,7 @@ void HelloTriangleApplication::CreateDescriptorSet()
 	descriptorWritesOff[0].descriptorCount = 1;
 	descriptorWritesOff[0].pBufferInfo = &bufferInfoOff;
 
-	vkUpdateDescriptorSets(VulkanRenderer::GetDevice(), descriptorWritesOff.size(), descriptorWritesOff.data(), 0, NULL);
+	vkUpdateDescriptorSets(VulkanRenderer::GetDevice(), static_cast<uint32_t>(descriptorWritesOff.size()), descriptorWritesOff.data(), 0, NULL);
 }
 
 
@@ -830,7 +822,7 @@ void HelloTriangleApplication::PrepareOffscreenPass()
 }
 void HelloTriangleApplication::CreateOffscreenCommandBuffers()
 {
-	commandBuffersOffscreen = VulkanCommandBuffer::CreateCommandBuffers(VulkanRenderer::GetDevice(), VulkanRenderer::GetGraphicsPool(), VK_COMMAND_BUFFER_LEVEL_PRIMARY, VulkanRenderer::GetSwapchainBuffers().size());
+	commandBuffersOffscreen = VulkanCommandBuffer::CreateCommandBuffers(VulkanRenderer::GetDevice(), VulkanRenderer::GetGraphicsPool(), VK_COMMAND_BUFFER_LEVEL_PRIMARY, static_cast<uint32_t>(VulkanRenderer::GetSwapchainBuffers().size()));
 
 	for (size_t i = 0; i < commandBuffersOffscreen.size(); ++i)
 	{
@@ -892,6 +884,44 @@ void HelloTriangleApplication::CleanUpOffscreenPass()
 
 	m_kOffscreenPipeline.Destroy();
 	offscreenPass.renderPass.Destroy(VulkanRenderer::GetDevice());
+}
+
+void HelloTriangleApplication::InitImGUI()
+{
+	ImGui_ImplGlfwVulkan_Init_Data init_data = {};
+	init_data.allocator = nullptr;
+	init_data.gpu = VulkanRenderer::GetPhysicalDevice();
+	init_data.device = VulkanRenderer::GetDevice();
+	init_data.render_pass = VulkanRenderer::GetOverlayRenderPass();
+	init_data.pipeline_cache = VK_NULL_HANDLE;
+	init_data.descriptor_pool = VulkanRenderer::GetDescriptorPool();
+	init_data.check_vk_result = check_vk_result;
+	ImGui_ImplGlfwVulkan_Init(window, true, &init_data);
+
+	// Upload Fonts
+	{
+		VkResult err;
+		err = vkResetCommandPool(VulkanRenderer::GetDevice(), VulkanRenderer::GetTranferPool(), 0);
+		check_vk_result(err);
+
+		VulkanCommandBuffer buffer = VulkanCommandBuffer::CreateCommandBuffer(VulkanRenderer::GetDevice(), VulkanRenderer::GetGraphicsPool(), VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+		buffer.BeginCommandBuffer(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT, nullptr);
+
+
+		ImGui_ImplGlfwVulkan_CreateFontsTexture(buffer);
+
+		VkSubmitInfo end_info = {};
+		end_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		end_info.commandBufferCount = 1;
+		end_info.pCommandBuffers = buffer.GetCommandBuffer();
+		buffer.EndCommandBuffer();
+		err = vkQueueSubmit(VulkanRenderer::GetGraphicsQueue(), 1, &end_info, VK_NULL_HANDLE);
+		check_vk_result(err);
+
+		err = vkDeviceWaitIdle(VulkanRenderer::GetDevice());
+		check_vk_result(err);
+		ImGui_ImplGlfwVulkan_InvalidateFontUploadObjects();
+	}
 }
 
 

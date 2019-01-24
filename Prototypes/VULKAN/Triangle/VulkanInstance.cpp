@@ -68,14 +68,14 @@ void VulkanInstance::Init(const char* pApplicationName,
 	uint32_t extensionCount = 0;
 	vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
 
-	std::vector<VkExtensionProperties> extensionsProps(extensionCount);
+	extensionsProps.resize(extensionCount);
 	vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensionsProps.data());
 
-	std::cout << "available extensions:" << std::endl;
+	/*std::cout << "available extensions:" << std::endl;
 
 	for (const auto& extension : extensionsProps) {
 		std::cout << "\t" << extension.extensionName << std::endl;
-	}
+	}*/
 }
 
 void VulkanInstance::Destroy()

@@ -24,6 +24,7 @@ public:
 	void Initialise(VkExtent2D& extent);
 
 	//Shaders stuff
+	void SetShaders(VulkanShader* pShaders, uint32_t shaderFileTypeCount, ShadersFileType* akShaders);
 	void SetShaders(uint32_t shaderFileTypeCount, ShadersFileType* akShaders);
 	void SetSpecialisationForShader(uint32_t idx, VkSpecializationInfo info);
 	void ResetSpecialisations();
@@ -55,11 +56,14 @@ public:
 
 	//Depth test
 	void SetDepthTest(bool bEnabledTest, bool bEnabledWrite);
+	void SetDepthOperation(VkCompareOp depthOperation);
+	void SetDepthBoundEnabled(bool bEnableDepthBoundTest, float fMinDepthBound, float fMaxDepthBound);
+	void SetStencilTest(bool bStencilTest, VkStencilOpState front, VkStencilOpState back);
 
 	//dynamic state
 	void SetDynamicStates(const VkDynamicState* states, uint32_t dynamicStateCount);
 
-	void CreatePipeline(VkDescriptorSetLayout* descriptorSetLayout, VulkanRenderPass& renderPass);
+	void CreatePipeline(VkDescriptorSetLayout* descriptorSetLayout, VulkanRenderPass& renderPass, VkPipelineCache cache = VK_NULL_HANDLE);
 	void Destroy();
 
 	operator VkPipeline() { return m_kGraphicsPipeline; }
@@ -82,6 +86,7 @@ private:
 		VkViewport viewport;
 		VkRect2D scissor;
 		std::vector<VkSpecializationInfo> specialisationInfos;
+		bool ownsShaders;
 
 		//pipeline info
 		std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
@@ -94,6 +99,7 @@ private:
 		VkPipelineColorBlendStateCreateInfo colorBlending;
 		VkPipelineDepthStencilStateCreateInfo depthStencil;
 		VkPipelineDynamicStateCreateInfo dynamicState;
+		VkPipelineTessellationStateCreateInfo tessellation;
 	};
 
 	DataCache m_kData;

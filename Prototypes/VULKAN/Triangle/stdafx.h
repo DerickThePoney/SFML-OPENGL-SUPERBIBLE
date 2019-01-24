@@ -12,6 +12,7 @@
 #include <queue>
 #include <algorithm>
 #include <fstream>
+#include <sstream>
 #include <map>
 #include <unordered_map>
 #include "imgui.h"

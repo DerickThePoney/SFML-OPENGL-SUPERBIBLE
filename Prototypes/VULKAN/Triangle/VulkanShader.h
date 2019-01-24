@@ -13,12 +13,13 @@ enum SHADER_TYPE
 class VulkanDevice;
 class VulkanShader
 {
-	NONCOPYABLE(VulkanShader);
+	//NONCOPYABLE(VulkanShader);
 
 public:
 	VulkanShader();
 	~VulkanShader();
 
+	void Initialise(VulkanDevice& kDevice, const SHADER_TYPE& type, const std::string& filename, const size_t filesize, const std::vector<uint32_t>& shaderCode);
 	void Initialise(VulkanDevice& kDevice, const SHADER_TYPE& type, const std::string& filename);
 	void Destroy(VulkanDevice& kDevice);
 

@@ -1,6 +1,6 @@
 #pragma once
 #include "VulkanRenderer.h"
-#include "Scene.h"
+#include "SceneTestObjLoading.h"
 #include "Frustum.h"
 
 #include "ObjectCreator.h"
@@ -29,6 +29,7 @@ public:
 		return instance;
 	}
 	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+	static void window_iconify_callback(GLFWwindow* window, int iconified);
 
 	static std::vector<VkWriteDescriptorSet> GetDescriptorWrites() { return getInstance().descriptorWrites; }
 	static VkSampler GetRepeatSampler() { return getInstance().textureSampler; }
@@ -54,6 +55,8 @@ private:
 	void PrepareOffscreenPass();
 	void CreateOffscreenCommandBuffers();
 	void CleanUpOffscreenPass();
+
+	void InitImGUI();
 	
 
 	
@@ -65,7 +68,8 @@ private:
 	
 
 	const std::vector<const char*> validationLayers = {
-		"VK_LAYER_LUNARG_standard_validation"
+		"VK_LAYER_LUNARG_standard_validation",
+		"VK_LAYER_LUNARG_assistant_layer"
 	};
 
 	const std::vector<const char*> deviceExtensions = {
@@ -90,7 +94,7 @@ private:
 
 	//VulkanMesh m_kMesh;
 	//VulkanMesh m_kMeshPlane;
-	Scene m_kScene;
+	IScene* m_pkScene;
 
 	VulkanBuffer uniformBuffer;
 	VulkanBuffer uniformBufferOffscreen;
@@ -117,6 +121,8 @@ private:
 	VkSampler textureSamplerNoRepeat;
 
 	Frustum frustum;
+
+	bool m_bIsIconified;
 
 	// Framebuffer for offscreen rendering
 	struct OffscreenPass {

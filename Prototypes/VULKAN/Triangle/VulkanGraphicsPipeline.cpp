@@ -26,8 +26,49 @@ void VulkanGraphicsPipeline::Initialise(VkExtent2D& extent)
 	InitialiseDefaultValues(extent);
 }
 
+void VulkanGraphicsPipeline::SetShaders(VulkanShader * pShaders, uint32_t shaderFileTypeCount, ShadersFileType* akShaders)
+{
+	m_kData.ownsShaders = false;
+	m_kData.shaders = pShaders;
+	m_kData.shaderStages.clear();
+	for (uint32_t i = 0; i < shaderFileTypeCount; ++i)
+	{
+		//m_kData.shaders[i].Initialise(VulkanRenderer::GetDevice(), akShaders[i].type, akShaders[i].filepath.c_str());
+
+
+		VkPipelineShaderStageCreateInfo shagerStageInfo = {};
+		shagerStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+		switch (akShaders[i].type)
+		{
+		case VERTEX:
+			shagerStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
+			break;
+		case TESSELATION_CONTROL:
+			shagerStageInfo.stage = VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT;
+			break;
+		case TESSELATION_EVALUATION:
+			shagerStageInfo.stage = VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT;
+			break;
+		case GEOMETRY:
+			shagerStageInfo.stage = VK_SHADER_STAGE_GEOMETRY_BIT;
+			break;
+		case FRAGMENT:
+			shagerStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+			break;
+		case COMPUTE:
+			throw std::runtime_error("Compute shader impossible in graphics pipeline");
+			break;
+		}
+		shagerStageInfo.module = m_kData.shaders[i];
+		shagerStageInfo.pName = "main";
+
+		m_kData.shaderStages.push_back(shagerStageInfo);
+	}
+}
+
 void VulkanGraphicsPipeline::SetShaders(uint32_t shaderFileTypeCount, ShadersFileType * akShaders)
 {
+	m_kData.ownsShaders = true;
 	m_kData.shaders = new VulkanShader[shaderFileTypeCount];
 	m_kData.shaderStages.clear();
 	for (uint32_t i = 0; i < shaderFileTypeCount; ++i)
@@ -97,7 +138,7 @@ void VulkanGraphicsPipeline::SetScissors(VkRect2D & v)
 
 void VulkanGraphicsPipeline::SetTopology(VkPrimitiveTopology v)
 {
-	m_kData.inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+	m_kData.inputAssembly.topology = v;
 }
 
 void VulkanGraphicsPipeline::SetPrimitiveRestart(bool v)
@@ -198,13 +239,32 @@ void VulkanGraphicsPipeline::SetDepthTest(bool bEnabledTest, bool bEnabledWrite)
 	m_kData.depthStencil.depthWriteEnable = bEnabledWrite;
 }
 
+void VulkanGraphicsPipeline::SetDepthOperation(VkCompareOp depthOperation)
+{
+	m_kData.depthStencil.depthCompareOp = depthOperation;
+}
+
+void VulkanGraphicsPipeline::SetDepthBoundEnabled(bool bEnableDepthBoundTest, float fMinDepthBound, float fMaxDepthBound)
+{
+	m_kData.depthStencil.depthBoundsTestEnable = bEnableDepthBoundTest;
+	m_kData.depthStencil.minDepthBounds = fMinDepthBound;
+	m_kData.depthStencil.maxDepthBounds = fMaxDepthBound;
+}
+
+void VulkanGraphicsPipeline::SetStencilTest(bool bStencilTest, VkStencilOpState front, VkStencilOpState back)
+{
+	m_kData.depthStencil.stencilTestEnable = bStencilTest;
+	m_kData.depthStencil.front = front;
+	m_kData.depthStencil.back = back;
+}
+
 void VulkanGraphicsPipeline::SetDynamicStates(const VkDynamicState * states, uint32_t dynamicStateCount)
 {
 	m_kData.dynamicState.dynamicStateCount = dynamicStateCount;
 	m_kData.dynamicState.pDynamicStates = states;
 }
 
-void VulkanGraphicsPipeline::CreatePipeline(VkDescriptorSetLayout* descriptorSetLayout, VulkanRenderPass& renderPass)
+void VulkanGraphicsPipeline::CreatePipeline(VkDescriptorSetLayout* descriptorSetLayout, VulkanRenderPass& renderPass, VkPipelineCache cache)
 {
 	//create the meta struct for viewport and scissor
 	VkPipelineViewportStateCreateInfo viewportState = {};
@@ -241,7 +301,7 @@ void VulkanGraphicsPipeline::CreatePipeline(VkDescriptorSetLayout* descriptorSet
 	pipelineInfo.pDepthStencilState = &m_kData.depthStencil;
 	pipelineInfo.pColorBlendState = &m_kData.colorBlending;
 	pipelineInfo.pDynamicState = (m_kData.dynamicState.dynamicStateCount == 0) ? nullptr : &m_kData.dynamicState;
-
+	pipelineInfo.pTessellationState = &m_kData.tessellation;
 	pipelineInfo.layout = m_kPipelineLayout;
 
 	pipelineInfo.renderPass = renderPass;
@@ -250,7 +310,7 @@ void VulkanGraphicsPipeline::CreatePipeline(VkDescriptorSetLayout* descriptorSet
 	pipelineInfo.basePipelineHandle = VK_NULL_HANDLE; // Optional
 	pipelineInfo.basePipelineIndex = -1; // Optional
 
-	if (vkCreateGraphicsPipelines(VulkanRenderer::GetDevice(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_kGraphicsPipeline) != VK_SUCCESS)
+	if (vkCreateGraphicsPipelines(VulkanRenderer::GetDevice(), cache, 1, &pipelineInfo, nullptr, &m_kGraphicsPipeline) != VK_SUCCESS)
 	{
 		throw std::runtime_error("Unable to build graphics pipeline!");
 	}
@@ -258,11 +318,14 @@ void VulkanGraphicsPipeline::CreatePipeline(VkDescriptorSetLayout* descriptorSet
 
 void VulkanGraphicsPipeline::Destroy()
 {
-	for (size_t i = 0; i < m_kData.shaderStages.size(); ++i)
+	if (m_kData.ownsShaders)
 	{
-		m_kData.shaders[i].Destroy(VulkanRenderer::GetDevice());
+		for (size_t i = 0; i < m_kData.shaderStages.size(); ++i)
+		{
+			m_kData.shaders[i].Destroy(VulkanRenderer::GetDevice());
+		}
+		delete[] m_kData.shaders;
 	}
-	delete[] m_kData.shaders;
 
 	vkDestroyPipeline(VulkanRenderer::GetDevice(), m_kGraphicsPipeline, nullptr);
 	m_kGraphicsPipeline = VK_NULL_HANDLE;
@@ -365,4 +428,8 @@ void VulkanGraphicsPipeline::InitialiseDefaultValues(VkExtent2D& swapChainExtent
 	m_kData.dynamicState.dynamicStateCount = 0;
 	m_kData.dynamicState.flags = 0;
 
+	//default tessellation
+	m_kData.tessellation = {};
+	m_kData.tessellation.sType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO;
+	m_kData.tessellation.patchControlPoints = 4;
 }

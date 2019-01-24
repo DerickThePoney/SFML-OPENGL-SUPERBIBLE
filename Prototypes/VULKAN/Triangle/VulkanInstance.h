@@ -79,6 +79,7 @@ public:
 	void Destroy();
 
 	operator VkInstance() { return m_kInstance; }
+	const std::vector<VkExtensionProperties>& GetExtensionsProps() { return extensionsProps; }
 
 private:
 
@@ -114,4 +115,5 @@ private:
 	VkDebugReportCallbackEXT m_kDebugCallback;
 	bool m_bEnableValidationLayers;
 	VkAllocationCallbacks callbacks;
+	std::vector<VkExtensionProperties> extensionsProps;
 };

@@ -30,7 +30,7 @@ void VulkanPhysicalDevice::PickDevice(VulkanInstance & instance, VulkanSurface &
 	//check for suitable device
 	for (auto& device : devices)
 	{
-		if (VulkanHelperFunctions::IsDeviceSuitable(device, surface, deviceExtensions))
+		if (VulkanHelperFunctions::IsDeviceSuitable(device, surface, properties, features, deviceExtensions))
 		{
 			m_kPhysicalDevice = device;
 			m_kIndices = VulkanHelperFunctions::FindQueueFamilies(device, surface);

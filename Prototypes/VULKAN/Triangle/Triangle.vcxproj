@@ -20,6 +20,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AABB.cpp" />
+    <ClCompile Include="AmplitudeGrid.cpp" />
+    <ClCompile Include="AmplitudeSimulationSpace.cpp" />
     <ClCompile Include="BezierCurve.cpp" />
     <ClCompile Include="BlockAllocator.cpp" />
     <ClCompile Include="BoundingSphere.cpp" />
@@ -30,10 +32,14 @@
     <ClCompile Include="imgui_draw.cpp" />
     <ClCompile Include="imgui_impl_glfw_vulkan.cpp" />
     <ClCompile Include="Intersections.cpp" />
+    <ClCompile Include="IScene.cpp" />
+    <ClCompile Include="Material.cpp" />
+    <ClCompile Include="MaterialInstance.cpp" />
+    <ClCompile Include="MaterialManager.cpp" />
     <ClCompile Include="MeshData.cpp" />
     <ClCompile Include="ObjectCreator.cpp" />
     <ClCompile Include="Plane.cpp" />
-    <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="SceneTestObjLoading.cpp" />
     <ClCompile Include="SceneObject.cpp" />
     <ClCompile Include="SignedDistanceField.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -61,6 +67,9 @@
     <ClCompile Include="VulkanRenderPass.cpp" />
     <ClCompile Include="VulkanShader.cpp" />
     <ClCompile Include="VulkanSurface.cpp" />
+    <ClCompile Include="WaterRenderingSystem.cpp" />
+    <ClCompile Include="WaveProfileBuffer.cpp" />
+    <ClCompile Include="WaveSpectrum.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="data\shaders\shadowmappingdirectional.frag" />
@@ -69,11 +78,18 @@
     <None Include="data\shaders\UberNoOpacity.vert" />
     <None Include="data\shaders\UberOpacity.frag" />
     <None Include="data\shaders\UberWater.frag" />
+    <None Include="data\shaders\UberWater.tesc" />
+    <None Include="data\shaders\UberWater.tese" />
     <None Include="data\shaders\UberWater.vert" />
+    <None Include="data\shaders\UI.frag" />
+    <None Include="data\shaders\UI.vert" />
+    <None Include="data\shaders\WireframeFragment.frag" />
     <None Include="Triangle.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AABB.h" />
+    <ClInclude Include="AmplitudeGrid.h" />
+    <ClInclude Include="AmplitudeSimulationSpace.h" />
     <ClInclude Include="BezierCurve.h" />
     <ClInclude Include="BezierSpline.h" />
     <ClInclude Include="BlockAllocator.h" />
@@ -85,10 +101,14 @@
     <ClInclude Include="imgui_impl_glfw_vulkan.h" />
     <ClInclude Include="imgui_internal.h" />
     <ClInclude Include="Intersections.h" />
+    <ClInclude Include="IScene.h" />
+    <ClInclude Include="Material.h" />
+    <ClInclude Include="MaterialInstance.h" />
+    <ClInclude Include="MaterialManager.h" />
     <ClInclude Include="MeshData.h" />
     <ClInclude Include="ObjectCreator.h" />
     <ClInclude Include="Plane.h" />
-    <ClInclude Include="Scene.h" />
+    <ClInclude Include="SceneTestObjLoading.h" />
     <ClInclude Include="SceneObject.h" />
     <ClInclude Include="SignedDistanceField.h" />
     <ClInclude Include="stb_rect_pack.h" />
@@ -114,6 +134,9 @@
     <ClInclude Include="VulkanRenderPass.h" />
     <ClInclude Include="VulkanShader.h" />
     <ClInclude Include="VulkanSurface.h" />
+    <ClInclude Include="WaterRenderingSystem.h" />
+    <ClInclude Include="WaveProfileBuffer.h" />
+    <ClInclude Include="WaveSpectrum.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{d067753e-9ca6-4ca4-8f83-2830f2d46402}</ProjectGuid>
@@ -185,12 +208,13 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>D:\Applications\SPIRV-Cross-master;ImGUI;%ASSIMP%\include;C:\Program Files (x86)\PolyVoxGIT\include;..\..\..\3RDPartyLibs\VulkanMemoryAllocator-master\src;..\..\..\stb;%VULKAN_SDK%\Include;..\..\..\3RdPartyLibs\glm;..\..\..\3RDPartyLibs\glfw-3.2.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>D:\Applications\SPIRV-Cross-master\BUILD32\$(Configuration)\;%ASSIMPW32%\lib;%VULKAN_SDK%\Lib32;..\..\..\3RDPartyLibs\glfw-3.2.1\src\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>spirv-cross-glsl.lib;spirv-cross-hlsl.lib;spirv-cross-cpp.lib;spirv-cross-reflect.lib;spirv-cross-msl.lib;spirv-cross-util.lib;spirv-cross-core.lib;spirv-cross-glsl.lib;spirv-cross-core.lib;assimp-vc140-mt-d.lib;vulkan-1.lib;glfw3.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>spirv-cross-glsl.lib;spirv-cross-hlsl.lib;spirv-cross-cpp.lib;spirv-cross-reflect.lib;spirv-cross-msl.lib;spirv-cross-util.lib;spirv-cross-core.lib;assimp-vc140-mt-d.lib;vulkan-1.lib;glfw3.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>data/shaders/Compile.bat</Command>
@@ -202,12 +226,14 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>%VULKAN_SDK%\Include;..\..\..\3RdPartyLibs\glm;..\..\..\3RDPartyLibs\glfw-3.2.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Applications\SPIRV-Cross-master;ImGUI;..\..\..\stb;%ASSIMP%\include;C:\Program Files (x86)\PolyVoxGIT\include;%VULKAN_SDK%\Include;..\..\..\3RdPartyLibs\glm;..\..\..\3RDPartyLibs\glfw-3.2.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>%VULKAN_SDK%\Lib32;..\..\..\3RDPartyLibs\glfw-3.2.1\src\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\Applications\SPIRV-Cross-master\BUILD64\$(Configuration)\;%ASSIMP%\lib\x64;%VULKAN_SDK%\Lib;..\..\..\3RDPartyLibs\glfw-3.2.1\BUILD64\src\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>spirv-cross-glsl.lib;spirv-cross-hlsl.lib;spirv-cross-cpp.lib;spirv-cross-reflect.lib;spirv-cross-msl.lib;spirv-cross-util.lib;spirv-cross-core.lib;assimp-vc140-mt.lib;vulkan-1.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -219,6 +245,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>D:\Applications\SPIRV-Cross-master;ImGUI;%ASSIMPW32%\include;C:\Program Files (x86)\PolyVoxGIT\include;..\..\..\3RDPartyLibs\VulkanMemoryAllocator-master\src;..\..\..\stb;%VULKAN_SDK%\Include;..\..\..\3RdPartyLibs\glm;..\..\..\3RDPartyLibs\glfw-3.2.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -241,15 +268,17 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>%VULKAN_SDK%\Include;..\..\..\3RdPartyLibs\glm;..\..\..\3RDPartyLibs\glfw-3.2.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Applications\SPIRV-Cross-master;ImGUI;..\..\..\stb;%ASSIMPW32%\include;C:\Program Files (x86)\PolyVoxGIT\include;%VULKAN_SDK%\Include;..\..\..\3RdPartyLibs\glm;..\..\..\3RDPartyLibs\glfw-3.2.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>%VULKAN_SDK%\Lib32;..\..\..\3RDPartyLibs\glfw-3.2.1\src\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\Applications\SPIRV-Cross-master\BUILD64\$(Configuration)\;%ASSIMP%\lib\x64;%VULKAN_SDK%\Lib;..\..\..\3RDPartyLibs\glfw-3.2.1\BUILD64\src\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <Profile>true</Profile>
+      <AdditionalDependencies>spirv-cross-glsl.lib;spirv-cross-hlsl.lib;spirv-cross-cpp.lib;spirv-cross-reflect.lib;spirv-cross-msl.lib;spirv-cross-util.lib;spirv-cross-core.lib;assimp-vc140-mt.lib;vulkan-1.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

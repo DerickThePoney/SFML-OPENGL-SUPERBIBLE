@@ -76,7 +76,7 @@ public:
 	BezierCurve(const std::vector<glm::vec3> akControlPoints)
 		:m_akControlPoints(akControlPoints)
 	{
-		iDegree = m_akControlPoints.size() - 1;
+		iDegree = static_cast<uint32_t>(m_akControlPoints.size()) - 1;
 		assert(iDegree > 0);
 	}
 
@@ -126,7 +126,7 @@ public:
 
 protected:
 	std::vector<glm::vec3> m_akControlPoints;
-	int iDegree;
+	uint32_t iDegree;
 };
 
 typedef BezierCurve<glm::vec3> BezierCurve3D;

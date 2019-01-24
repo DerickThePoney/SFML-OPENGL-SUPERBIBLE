@@ -76,6 +76,7 @@ void VulkanImage::Init(uint32_t width, uint32_t height, VkFormat format, VkImage
 	this->imageTiling = imageTiling;
 	usageFlags = usage;
 	this->memoryFlags = memoryFlags;
+	currentLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 
 	mipLevels = (bGenerateMipMaps) ? static_cast<uint32_t>(std::floor(std::log2(std::max(width, height)))) + 1 : 1;
 
@@ -150,6 +151,29 @@ void VulkanImage::Free()
 	
 	m_kImage = VK_NULL_HANDLE;
 	m_kImageMemory = VK_NULL_HANDLE;
+}
+
+void VulkanImage::CopyNewData(uint32_t width, uint32_t height, void * pData, VkDeviceSize size, bool bGenerateMipMaps)
+{
+	//put it all into a staging buffer
+	VulkanBuffer stagingBuffer;
+	stagingBuffer.Init(VulkanRenderer::GetPhysicalDevice(), VulkanRenderer::GetDevice(), size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+
+	stagingBuffer.CopyDataToBuffer(VulkanRenderer::GetPhysicalDevice(), VulkanRenderer::GetDevice(), VulkanRenderer::GetTranferPool(), VulkanRenderer::GetTransferQueue(), 0, 0, size, pData);
+
+
+	TransitionImageLayout(VulkanRenderer::GetGraphicsPool(), VulkanRenderer::GetGraphicsQueue(), currentLayout, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+	CopyBufferToImage(VulkanRenderer::GetTranferPool(), VulkanRenderer::GetTransferQueue(), stagingBuffer);
+	if (bGenerateMipMaps)
+	{
+		GenerateMipMaps();
+	}
+	else
+	{
+		TransitionImageLayout(VulkanRenderer::GetGraphicsPool(), VulkanRenderer::GetGraphicsQueue(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+	}
+
+	stagingBuffer.Free(VulkanRenderer::GetDevice());
 }
 
 void VulkanImage::CopyBufferToImage(VkCommandPool& pool, VkQueue& queue, VulkanBuffer & buffer)
@@ -238,6 +262,13 @@ void VulkanImage::TransitionImageLayout(VkCommandPool& pool, VkQueue& queue, VkI
 		sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
 		destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
 	}
+	else if (oldLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
+		barrier.srcAccessMask = VK_ACCESS_SHADER_READ_BIT;
+		barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+
+		sourceStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+		destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+	}
 	else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
 		barrier.srcAccessMask = 0;
 		barrier.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
@@ -270,6 +301,8 @@ void VulkanImage::TransitionImageLayout(VkCommandPool& pool, VkQueue& queue, VkI
 	vkQueueWaitIdle(queue);
 
 	VulkanCommandBuffer::Free(commandBuffer, VulkanRenderer::GetDevice(), pool);
+
+	currentLayout = newLayout;
 }
 
 VulkanImageView VulkanImage::CreateImageView(VkFormat format, VkImageAspectFlags aspectMask)

@@ -19,6 +19,7 @@ public:
 
 	void Free();
 
+	void CopyNewData(uint32_t width, uint32_t height, void* pData, VkDeviceSize size, bool bGenerateMipMaps = false);
 	void CopyBufferToImage(VkCommandPool& pool, VkQueue& queue, VulkanBuffer& buffer);
 	void TransitionImageLayout(VkCommandPool& pool, VkQueue& queue, VkImageLayout oldLayout, VkImageLayout newLayout);
 
@@ -31,6 +32,7 @@ private:
 
 	VkImage m_kImage;
 	VkDeviceMemory m_kImageMemory = VK_NULL_HANDLE;
+	VkImageLayout currentLayout;
 
 	VkExtent3D size;
 	VkImageType type;

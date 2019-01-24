@@ -1,5 +1,7 @@
 #pragma once
+#include "IScene.h"
 #include "CameraProgram.h"
+#include "WaterRenderingSystem.h"
 
 class VulkanMesh;
 class VulkanCommandBuffer;
@@ -18,19 +20,26 @@ class Frustum;
 class SceneObject;
 
 class ObjectPositionAnimation;
+class WaterRenderingSystem;
 
-class Scene
+class SceneTestObjLoading : public IScene
 {
 public:
-	Scene();
-	~Scene();
+	SceneTestObjLoading();
+	~SceneTestObjLoading();
 
-	void InitialiseFromFile(const std::string& filename);
-	void Destroy();
+	virtual void InitialiseFromFile(const std::string& filename);
+	virtual void Destroy();
 
 	glm::mat4 GetCameraPosition(float dt);
 
-	void Draw(VulkanCommandBuffer& buffer, const Frustum& frustum);
+	virtual void Draw(VulkanCommandBuffer& buffer, const Frustum& frustum);
+
+
+	// Hérité via IScene
+	virtual void Update(float deltaTime) override;
+	virtual void DrawOverlays() override;
+
 
 private:
 	void BuildPipelines();
@@ -79,5 +88,8 @@ private:
 
 
 	ObjectPositionAnimation cameraAnimation;
+
+	WaterRenderingSystem water;
+
 };
 

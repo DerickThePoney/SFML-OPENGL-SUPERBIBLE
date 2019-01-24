@@ -43,6 +43,12 @@
     <Filter Include="VulkanRendering\ImGUI">
       <UniqueIdentifier>{639e2c7a-92a4-4b1c-96bc-bd7dd1294794}</UniqueIdentifier>
     </Filter>
+    <Filter Include="WaterSurfaceManagement">
+      <UniqueIdentifier>{9f317cc6-4b52-4a3b-87f6-8438ea1f91b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="VulkanRendering\Material">
+      <UniqueIdentifier>{d797349b-9bfe-4e67-b2b8-8b09a3b34a8f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Triangle.cpp">
@@ -114,9 +120,6 @@
     <ClCompile Include="VulkanRenderLoop.cpp">
       <Filter>VulkanRendering</Filter>
     </ClCompile>
-    <ClCompile Include="Scene.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
     <ClCompile Include="AABB.cpp">
       <Filter>Intersections</Filter>
     </ClCompile>
@@ -153,6 +156,36 @@
     <ClCompile Include="imgui_draw.cpp">
       <Filter>VulkanRendering\ImGUI</Filter>
     </ClCompile>
+    <ClCompile Include="IScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneTestObjLoading.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>VulkanRendering\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="MaterialInstance.cpp">
+      <Filter>VulkanRendering\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="MaterialManager.cpp">
+      <Filter>VulkanRendering\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="WaterRenderingSystem.cpp">
+      <Filter>WaterSurfaceManagement</Filter>
+    </ClCompile>
+    <ClCompile Include="WaveSpectrum.cpp">
+      <Filter>WaterSurfaceManagement</Filter>
+    </ClCompile>
+    <ClCompile Include="AmplitudeGrid.cpp">
+      <Filter>WaterSurfaceManagement</Filter>
+    </ClCompile>
+    <ClCompile Include="AmplitudeSimulationSpace.cpp">
+      <Filter>WaterSurfaceManagement</Filter>
+    </ClCompile>
+    <ClCompile Include="WaveProfileBuffer.cpp">
+      <Filter>WaterSurfaceManagement</Filter>
+    </ClCompile>
     <ClCompile Include="imgui_impl_glfw_vulkan.cpp">
       <Filter>VulkanRendering\ImGUI</Filter>
     </ClCompile>
@@ -178,6 +211,21 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="data\shaders\UberWater.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="data\shaders\UberWater.tesc">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="data\shaders\UberWater.tese">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="data\shaders\WireframeFragment.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="data\shaders\UI.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="data\shaders\UI.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
@@ -254,9 +302,6 @@
     <ClInclude Include="VulkanRenderLoop.h">
       <Filter>VulkanRendering</Filter>
     </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
     <ClInclude Include="AABB.h">
       <Filter>Intersections</Filter>
     </ClInclude>
@@ -287,10 +332,43 @@
     <ClInclude Include="imgui.h">
       <Filter>VulkanRendering\ImGUI</Filter>
     </ClInclude>
-    <ClInclude Include="imgui_impl_glfw_vulkan.h">
+    <ClInclude Include="imgui_internal.h">
       <Filter>VulkanRendering\ImGUI</Filter>
     </ClInclude>
-    <ClInclude Include="imgui_internal.h">
+    <ClInclude Include="imconfig.h">
+      <Filter>VulkanRendering\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="IScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneTestObjLoading.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>VulkanRendering\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="MaterialInstance.h">
+      <Filter>VulkanRendering\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="MaterialManager.h">
+      <Filter>VulkanRendering\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="WaterRenderingSystem.h">
+      <Filter>WaterSurfaceManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="WaveSpectrum.h">
+      <Filter>WaterSurfaceManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="AmplitudeGrid.h">
+      <Filter>WaterSurfaceManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="WaveProfileBuffer.h">
+      <Filter>WaterSurfaceManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="AmplitudeSimulationSpace.h">
+      <Filter>WaterSurfaceManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_impl_glfw_vulkan.h">
       <Filter>VulkanRendering\ImGUI</Filter>
     </ClInclude>
     <ClInclude Include="stb_rect_pack.h">
@@ -300,9 +378,6 @@
       <Filter>VulkanRendering\ImGUI</Filter>
     </ClInclude>
     <ClInclude Include="stb_truetype.h">
-      <Filter>VulkanRendering\ImGUI</Filter>
-    </ClInclude>
-    <ClInclude Include="imconfig.h">
       <Filter>VulkanRendering\ImGUI</Filter>
     </ClInclude>
   </ItemGroup>
