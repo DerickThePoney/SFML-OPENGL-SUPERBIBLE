@@ -17,6 +17,7 @@ public:
 	void Update(float deltaTime);
 	
 	void Draw(VulkanCommandBuffer& buffer, const Frustum& frustum);
+	void LateDraw(VulkanCommandBuffer& buffer, const Frustum& frustum);
 	void DrawOverlays();
 
 private:
@@ -26,6 +27,7 @@ private:
 
 	void CreateTextureViewer();
 	void DestroyTextureViewer();
+	void UpdateDebugUniformBuffer();
 
 	//Mesh data
 	float m_fSize;
@@ -47,6 +49,14 @@ private:
 	VulkanMesh textureQuad;
 	VulkanGraphicsPipeline textureViewPipeline;
 	VkDescriptorSetLayout textureViewLayout;
+	VulkanBuffer screenSizeBuffer;
+	VkDescriptorPool textureViewDescPool;
+	VkDescriptorSet textureViewDescSet;
+	VkSampler textureViewSampler;
+	struct ScreenSize
+	{
+		glm::vec2 screenSize;
+	} m_screenSize;
 
 
 	bool showWireFrame;

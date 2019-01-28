@@ -235,6 +235,10 @@ void VulkanRenderer::InstancePrepareFrame()
 
 void VulkanRenderer::InstancePrepareCommandBuffer(IScene* scene, const Frustum& frustum)
 {
+	//wait for the device to finish before killing of the buffer
+	vkWaitForFences(m_kDevice, 1, &inFlightFences[currentFrame], VK_TRUE, std::numeric_limits<uint64_t>::max());
+	//vkDeviceWaitIdle(VulkanRenderer::GetDevice());
+
 	if (commandBuffers[currentFrame].BeginCommandBuffer(VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT, nullptr) != VK_SUCCESS) {
 		throw std::runtime_error("failed to begin recording command buffer!");
 	}

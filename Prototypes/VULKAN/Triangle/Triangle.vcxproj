@@ -209,6 +209,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>D:\Applications\SPIRV-Cross-master;ImGUI;%ASSIMP%\include;C:\Program Files (x86)\PolyVoxGIT\include;..\..\..\3RDPartyLibs\VulkanMemoryAllocator-master\src;..\..\..\stb;%VULKAN_SDK%\Include;..\..\..\3RdPartyLibs\glm;..\..\..\3RDPartyLibs\glfw-3.2.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -228,6 +229,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>D:\Applications\SPIRV-Cross-master;ImGUI;..\..\..\stb;%ASSIMP%\include;C:\Program Files (x86)\PolyVoxGIT\include;%VULKAN_SDK%\Include;..\..\..\3RdPartyLibs\glm;..\..\..\3RDPartyLibs\glfw-3.2.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

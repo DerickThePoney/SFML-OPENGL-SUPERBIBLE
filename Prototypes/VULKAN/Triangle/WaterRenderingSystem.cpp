@@ -23,7 +23,15 @@ void WaterRenderingSystem::Initialise(float fSize, int32_t iResolution)
 
 	CreateWaterMesh();
 	CreateWaterMaterial();
+	
+	auto props = VulkanRenderer::GetPhysicalDevice().GetDeviceProperties();
+	auto feats = VulkanRenderer::GetPhysicalDevice().GetDeviceFeatures();
 
+	std::vector<VkFormat> formats = { VK_FORMAT_R32G32B32_SFLOAT };
+	bool sup = VulkanRenderer::GetPhysicalDevice().FindSupportedFormats(formats, VK_IMAGE_TILING_LINEAR, VkFormatFeatureFlagBits::VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT | VK_FORMAT_FEATURE_TRANSFER_SRC_BIT | VK_FORMAT_FEATURE_TRANSFER_DST_BIT);
+
+	waterNormals.Init(m_iResolution, m_iResolution, VK_FORMAT_R32G32B32_SFLOAT, VK_IMAGE_TILING_LINEAR, VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+	waterNormalsView = waterNormals.CreateImageView(VK_FORMAT_R32G32B32_SFLOAT, VK_IMAGE_ASPECT_COLOR_BIT);
 	CreateTextureViewer();
 
 	AmplitudeSimulationSpace::Settings s;
@@ -40,14 +48,15 @@ void WaterRenderingSystem::Initialise(float fSize, int32_t iResolution)
 	//waterNormals.Init(m_iResolution, m_iResolution, VK_FORMAT_R32G32B32_SFLOAT, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 	//waterNormalsView = waterNormals.CreateImageView(VK_FORMAT_R32G32B32_SFLOAT, VK_IMAGE_ASPECT_COLOR_BIT);
 
+	WaterRenderingSystem::Update(0.02f);
 
 }
 
 void WaterRenderingSystem::Destroy()
 {
 	DestroyTextureViewer();
-	//waterNormalsView.Destroy(VulkanRenderer::GetDevice());
-	//waterNormals.Free();
+	waterNormalsView.Destroy(VulkanRenderer::GetDevice());
+	waterNormals.Free();
 	waterPipeline.Destroy();
 	waterPipelineWireframe.Destroy();
 	waterMesh.Destroy(VulkanRenderer::GetDevice());
@@ -58,9 +67,9 @@ void WaterRenderingSystem::Destroy()
 
 void WaterRenderingSystem::Update(float deltaTime)
 {
-	/*space->timeStep(space->cflTimeStep(), true);
-	
+	space->timeStep(space->cflTimeStep(), true);
 
+#pragma omp parallel for collapse(2)
 	for (int i = 0; i < m_iResolution; i++)
 	{
 		for (int j = 0; j < m_iResolution; j++)
@@ -72,11 +81,12 @@ void WaterRenderingSystem::Update(float deltaTime)
 		}
 	}
 
-	//waterNormals.CopyNewData(m_iResolution, m_iResolution, waterheigthnormals.data(), m_iResolution * m_iResolution * sizeof(glm::vec3));*/
+	waterNormals.CopyNewData(m_iResolution, m_iResolution, waterheigthnormals.data(), m_iResolution * m_iResolution * sizeof(glm::vec3));
 }
 
 void WaterRenderingSystem::Draw(VulkanCommandBuffer & buffer, const Frustum & frustum)
 {
+	
 	if (!Intersect(bounds, frustum)) return;
 	buffer.BindPipeline(VK_PIPELINE_BIND_POINT_GRAPHICS, waterPipeline);
 	buffer.BindDescriptorSets(VK_PIPELINE_BIND_POINT_GRAPHICS, waterPipeline.GetLayout(), 0, 1, &materialData, 0, nullptr);
@@ -86,6 +96,14 @@ void WaterRenderingSystem::Draw(VulkanCommandBuffer & buffer, const Frustum & fr
 	buffer.BindPipeline(VK_PIPELINE_BIND_POINT_GRAPHICS, waterPipelineWireframe);
 	buffer.BindDescriptorSets(VK_PIPELINE_BIND_POINT_GRAPHICS, waterPipelineWireframe.GetLayout(), 0, 1, &materialData, 0, nullptr);
 	buffer.DrawMesh(waterMesh);
+}
+
+void WaterRenderingSystem::LateDraw(VulkanCommandBuffer & buffer, const Frustum & frustum)
+{
+	if (!showWaterNormalsTexture) return;
+	buffer.BindPipeline(VK_PIPELINE_BIND_POINT_GRAPHICS, textureViewPipeline);
+	buffer.BindDescriptorSets(VK_PIPELINE_BIND_POINT_GRAPHICS, textureViewPipeline.GetLayout(), 0, 1, &textureViewDescSet, 0, nullptr);
+	buffer.DrawMesh(textureQuad);
 }
 
 void WaterRenderingSystem::DrawOverlays()
@@ -113,7 +131,7 @@ void WaterRenderingSystem::DrawOverlays()
 
 		ImGui::Checkbox("Show wireframe", &showWireFrame);
 
-
+		ImGui::Checkbox("Show water normal texture", &showWaterNormalsTexture);
 		//ImGui::Image((void *)(unsigned long long)(VkImageView)waterNormalsView, ImVec2(256, 256), ImVec2(0, 0), ImVec2(1, 1));
 
 	}
@@ -267,6 +285,11 @@ void WaterRenderingSystem::SetMaterialData()
 
 void WaterRenderingSystem::DestroyTextureViewer()
 {
+
+	vkDestroyDescriptorPool(VulkanRenderer::GetDevice(), textureViewDescPool, nullptr);
+
+	vkDestroySampler(VulkanRenderer::GetDevice(), textureViewSampler, nullptr);
+	screenSizeBuffer.Free(VulkanRenderer::GetDevice());
 	textureQuad.Destroy(VulkanRenderer::GetDevice());
 	vkDestroyDescriptorSetLayout(VulkanRenderer::GetDevice(), textureViewLayout, nullptr);
 	textureViewPipeline.Destroy();
@@ -278,20 +301,44 @@ void WaterRenderingSystem::CreateTextureViewer()
 	MeshData data;
 	data.vertices.resize(4);
 	data.indices.resize(6);
-	
-	VertexData v0; v0.pos = glm::vec3(-1, -1, 0);
+
+	VertexData v0; v0.pos = glm::vec3(0.1f, 0.1f, 0); v0.texCoord = glm::vec2(0.0f, 0.0f);
 	data.vertices[0] = v0;
-	v0.pos = glm::vec3(1, -1, 0);
+	v0.pos = glm::vec3(0.1f, 0.9f, 0); v0.texCoord = glm::vec2(1.0f, 0.0f);
 	data.vertices[1] = v0;
-	v0.pos = glm::vec3(1, 1, 0);
+	v0.pos = glm::vec3(0.9f, 0.9f, 0); v0.texCoord = glm::vec2(1.0f, 1.0f);
 	data.vertices[2] = v0;
-	v0.pos = glm::vec3(-1, 1, 0);
+	v0.pos = glm::vec3(0.9f, 0.1f, 0); v0.texCoord = glm::vec2(0.0f, 1.0f);
 	data.vertices[3] = v0;
 
 	data.indices[0] = 0; data.indices[1] = 1; data.indices[2] = 2;
 	data.indices[3] = 0; data.indices[4] = 2; data.indices[5] = 3;
-	
+
 	textureQuad.Initialise(VulkanRenderer::GetPhysicalDevice(), VulkanRenderer::GetDevice(), data, VulkanRenderer::GetTranferPool(), VulkanRenderer::GetTransferQueue());
+
+	VkSamplerCreateInfo samplerInfo = {};
+	samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+	samplerInfo.magFilter = VK_FILTER_NEAREST;
+	samplerInfo.minFilter = VK_FILTER_NEAREST;
+	samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+	samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+	samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+
+	samplerInfo.anisotropyEnable = VK_FALSE;
+	samplerInfo.maxAnisotropy = 16;
+	samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+	samplerInfo.unnormalizedCoordinates = VK_FALSE;
+	samplerInfo.compareEnable = VK_FALSE;
+	samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
+	samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+	samplerInfo.mipLodBias = 0.0f;
+	samplerInfo.minLod = 0.0f;
+	samplerInfo.maxLod = 0.0f;
+
+	if (vkCreateSampler(VulkanRenderer::GetDevice(), &samplerInfo, nullptr, &textureViewSampler) != VK_SUCCESS)
+	{
+		throw std::runtime_error("Unable to create a sampler!");
+	}
 
 	//create the descriptorSet layout
 	VkDescriptorSetLayoutBinding uboLayoutBinding = {};
@@ -323,7 +370,7 @@ void WaterRenderingSystem::CreateTextureViewer()
 		throw std::runtime_error("failed to create descriptor set layout!");
 	}
 
-	
+
 
 	//create the pipeline
 	std::vector<VkDynamicState> dynamicStateEnables = {
@@ -340,6 +387,7 @@ void WaterRenderingSystem::CreateTextureViewer()
 
 	textureViewPipeline.Initialise(VulkanRenderer::GetSurfaceExtent());
 	textureViewPipeline.SetShaders(static_cast<uint32_t>(shaders.size()), shaders.data());
+
 	textureViewPipeline.SetDynamicStates(dynamicStateEnables.data(), static_cast<uint32_t>(dynamicStateEnables.size()));
 	//waterPipelineWireframe.SetPolygonMode(VK_POLYGON_MODE_LINE, 1.0f);
 	textureViewPipeline.SetDepthTest(false, false);
@@ -347,8 +395,75 @@ void WaterRenderingSystem::CreateTextureViewer()
 
 
 	// uniform buffer
+	screenSizeBuffer.Init(VulkanRenderer::GetPhysicalDevice(), VulkanRenderer::GetDevice(), sizeof(ScreenSize), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+	ScreenSize s = {};
+	VkExtent2D extent = VulkanRenderer::GetSurfaceExtent();
+	s.screenSize = glm::vec2(extent.width, extent.height);
+
+	void * dataUniform;
+	screenSizeBuffer.MapBuffer(VulkanRenderer::GetDevice(), 0, sizeof(ScreenSize), 0, &dataUniform);
+	memcpy(dataUniform, &s, sizeof(s));
+	screenSizeBuffer.UnMapBuffer(VulkanRenderer::GetDevice());
+
+
+	//DescriptorPool
+	std::array<VkDescriptorPoolSize, 2> poolSizes = {};
+	poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	poolSizes[0].descriptorCount = 1;
+	poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	poolSizes[1].descriptorCount = 1;
+	VkDescriptorPoolCreateInfo info = {};
+	info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+	info.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
+	info.pPoolSizes = poolSizes.data();
+	info.maxSets = 1;
+
+	if (vkCreateDescriptorPool(VulkanRenderer::GetDevice(), &info, nullptr, &textureViewDescPool) != VK_SUCCESS) {
+		throw std::runtime_error("failed to create descriptor pool for texture viewer!");
+	}
+
 	//descritor set
+	VkDescriptorSetAllocateInfo allocInfo = {};
+	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+	allocInfo.descriptorPool = textureViewDescPool;
+	allocInfo.pSetLayouts = &textureViewLayout;
+	allocInfo.descriptorSetCount = 1;
+
+	if (vkAllocateDescriptorSets(VulkanRenderer::GetDevice(), &allocInfo, &textureViewDescSet) != VK_SUCCESS) {
+		throw std::runtime_error("failed to create descriptor set for texture viewer!");
+	}
+
 	//update
+	VkDescriptorBufferInfo bufferInfo = {};
+	bufferInfo.buffer = screenSizeBuffer;
+	bufferInfo.offset = 0;
+	bufferInfo.range = sizeof(ScreenSize);
+
+	VkDescriptorImageInfo imageInfo = {};
+	imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+	imageInfo.imageView = waterNormalsView;
+	imageInfo.sampler = textureViewSampler;
+
+	std::vector<VkWriteDescriptorSet> descWrite;
+	descWrite.resize(2);
+
+	descWrite[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	descWrite[0].dstSet = textureViewDescSet;
+	descWrite[0].dstBinding = 0;
+	descWrite[0].dstArrayElement = 0;
+	descWrite[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	descWrite[0].descriptorCount = 1;
+	descWrite[0].pBufferInfo = &bufferInfo;
+
+	descWrite[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	descWrite[1].dstSet = textureViewDescSet;
+	descWrite[1].dstBinding = 1;
+	descWrite[1].dstArrayElement = 0;
+	descWrite[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	descWrite[1].descriptorCount = 1;
+	descWrite[1].pImageInfo = &imageInfo;
+
 	//late write
+	vkUpdateDescriptorSets(VulkanRenderer::GetDevice(), static_cast<uint32_t>(descWrite.size()), descWrite.data(), 0, nullptr);
 
 }

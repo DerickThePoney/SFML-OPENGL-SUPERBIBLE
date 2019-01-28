@@ -77,7 +77,7 @@ void SceneTestObjLoading::InitialiseFromFile(const std::string & filename)
 
 	GroupByPipeline();
 
-	water.Initialise(500.0f, 16);
+	water.Initialise(500.0f, 32);
 	
 }
 
@@ -150,6 +150,7 @@ void SceneTestObjLoading::Draw(VulkanCommandBuffer & buffer, const Frustum& frus
 		}
 	}
 
+	water.LateDraw(buffer, frustum);
 	
 }
 
