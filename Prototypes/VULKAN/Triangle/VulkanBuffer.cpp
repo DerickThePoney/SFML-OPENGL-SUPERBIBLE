@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "VulkanBuffer.h"
-#include "VulkanPhysicalDevice.h"
+#include "VulkanRenderer.h"
 
 
 VulkanBuffer::VulkanBuffer()
@@ -12,9 +12,9 @@ VulkanBuffer::~VulkanBuffer()
 {
 }
 
-void VulkanBuffer::Init(VulkanPhysicalDevice& physicalDevice, const VkDevice& device, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags memoryProperties)
+void VulkanBuffer::Init(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags memoryProperties)
 {
-	const QueueFamilyIndices& indices = physicalDevice.GetQueueFamilyIndices();
+	const QueueFamilyIndices& indices = VulkanRenderer::GetPhysicalDevice().GetQueueFamilyIndices();
 	//buffer creation
 	VkBufferCreateInfo bufferInfo = {};
 	bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -33,7 +33,7 @@ void VulkanBuffer::Init(VulkanPhysicalDevice& physicalDevice, const VkDevice& de
 		bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 	}
 
-	if (vkCreateBuffer(device, &bufferInfo, nullptr, &m_kBuffer) != VK_SUCCESS)
+	if (vkCreateBuffer(VulkanRenderer::GetDevice(), &bufferInfo, nullptr, &m_kBuffer) != VK_SUCCESS)
 	{
 		throw std::runtime_error("Unable to create the buffer");
 	}
@@ -41,65 +41,65 @@ void VulkanBuffer::Init(VulkanPhysicalDevice& physicalDevice, const VkDevice& de
 	//memory allocation 
 
 	VkMemoryRequirements memRequirements;
-	vkGetBufferMemoryRequirements(device, m_kBuffer, &memRequirements);
+	vkGetBufferMemoryRequirements(VulkanRenderer::GetDevice(), m_kBuffer, &memRequirements);
 
 	VkMemoryAllocateInfo allocInfo = {};
 	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 	allocInfo.allocationSize = memRequirements.size;
-	allocInfo.memoryTypeIndex = physicalDevice.FindMemoryType(memRequirements.memoryTypeBits, memoryProperties);
+	allocInfo.memoryTypeIndex = VulkanRenderer::GetPhysicalDevice().FindMemoryType(memRequirements.memoryTypeBits, memoryProperties);
 
-	if (vkAllocateMemory(device, &allocInfo, nullptr, &m_kBufferMemory) != VK_SUCCESS)
+	if (vkAllocateMemory(VulkanRenderer::GetDevice(), &allocInfo, nullptr, &m_kBufferMemory) != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to allocate vertex buffer memory!");
 	}
 
-	vkBindBufferMemory(device, m_kBuffer, m_kBufferMemory, 0);
+	vkBindBufferMemory(VulkanRenderer::GetDevice(), m_kBuffer, m_kBufferMemory, 0);
 	m_uiSize = size;
 	m_eUsage = usage;
 	m_eMemoryProperties = memoryProperties;
 }
 
-VkResult VulkanBuffer::MapBuffer(const VkDevice & device, VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, void ** ppData)
+VkResult VulkanBuffer::MapBuffer(VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, void ** ppData)
 {
-	return vkMapMemory(device, m_kBufferMemory, offset, size, flags, ppData);
+	return vkMapMemory(VulkanRenderer::GetDevice(), m_kBufferMemory, offset, size, flags, ppData);
 }
 
-VkResult VulkanBuffer::FlushMappedMemory(const VkDevice & device)
+VkResult VulkanBuffer::FlushMappedMemory()
 {
 	VkMappedMemoryRange range = {};
 	range.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
 	range.memory = m_kBufferMemory;
 	range.size = m_uiSize;
 	range.offset = 0;
-	return vkFlushMappedMemoryRanges(device, 1, &range);
+	return vkFlushMappedMemoryRanges(VulkanRenderer::GetDevice(), 1, &range);
 }
 
-void VulkanBuffer::UnMapBuffer(const VkDevice & device)
+void VulkanBuffer::UnMapBuffer()
 {
-	vkUnmapMemory(device, m_kBufferMemory);
+	vkUnmapMemory(VulkanRenderer::GetDevice(), m_kBufferMemory);
 }
 
-void VulkanBuffer::CopyDataToBuffer(VulkanPhysicalDevice& physicalDevice, const VkDevice & device, const VkCommandPool& transferPool, const VkQueue& queue, VkDeviceSize offset, VkMemoryMapFlags flags, VkDeviceSize iDataSize, const void * pData)
+void VulkanBuffer::CopyDataToBuffer(const VkCommandPool& transferPool, const VkQueue& queue, VkDeviceSize offset, VkMemoryMapFlags flags, VkDeviceSize iDataSize, const void * pData)
 {
 	if (IsMappable())
 	{
 		void* data;
-		MapBuffer(device, offset, iDataSize, flags, &data);
+		MapBuffer(offset, iDataSize, flags, &data);
 		memcpy(data, pData, (size_t)iDataSize);
-		if (ShouldFlush()) FlushMappedMemory(device);
-		UnMapBuffer(device);
+		if (ShouldFlush()) FlushMappedMemory();
+		UnMapBuffer();
 	}
 	else if(IsTransferDst())
 	{
 		VulkanBuffer staging;
-		staging.Init(physicalDevice, device, iDataSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+		staging.Init(iDataSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 		void* data;
-		staging.MapBuffer(device, 0, iDataSize, 0, &data);
+		staging.MapBuffer(0, iDataSize, 0, &data);
 		memcpy(data, pData, (size_t)iDataSize);
-		if (ShouldFlush()) FlushMappedMemory(device);
-		staging.UnMapBuffer(device);
+		if (ShouldFlush()) FlushMappedMemory();
+		staging.UnMapBuffer();
 
-		staging.CopyBufferTo(*this, device, transferPool, queue);
+		staging.CopyBufferTo(*this, transferPool, queue);
 	}
 	else
 	{
@@ -108,7 +108,7 @@ void VulkanBuffer::CopyDataToBuffer(VulkanPhysicalDevice& physicalDevice, const 
 	
 }
 
-void VulkanBuffer::CopyBufferTo(const VulkanBuffer & other, const VkDevice & device, const VkCommandPool & transferPool, const VkQueue& queue)
+void VulkanBuffer::CopyBufferTo(const VulkanBuffer & other, const VkCommandPool & transferPool, const VkQueue& queue)
 {
 	//start
 	VkCommandBufferAllocateInfo allocInfo = {};
@@ -118,7 +118,7 @@ void VulkanBuffer::CopyBufferTo(const VulkanBuffer & other, const VkDevice & dev
 	allocInfo.commandBufferCount = 1;
 
 	VkCommandBuffer commandBuffer;
-	vkAllocateCommandBuffers(device, &allocInfo, &commandBuffer);
+	vkAllocateCommandBuffers(VulkanRenderer::GetDevice(), &allocInfo, &commandBuffer);
 
 	VkCommandBufferBeginInfo beginInfo = {};
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -145,15 +145,15 @@ void VulkanBuffer::CopyBufferTo(const VulkanBuffer & other, const VkDevice & dev
 	vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE);
 	vkQueueWaitIdle(queue);
 
-	vkFreeCommandBuffers(device, transferPool, 1, &commandBuffer);
+	vkFreeCommandBuffers(VulkanRenderer::GetDevice(), transferPool, 1, &commandBuffer);
 
 
 }
 
-void VulkanBuffer::Free(const VkDevice& device)
+void VulkanBuffer::Free()
 {
-	vkFreeMemory(device, m_kBufferMemory, nullptr);
-	vkDestroyBuffer(device, m_kBuffer, nullptr);
+	vkFreeMemory(VulkanRenderer::GetDevice(), m_kBufferMemory, nullptr);
+	vkDestroyBuffer(VulkanRenderer::GetDevice(), m_kBuffer, nullptr);
 	m_kBufferMemory = 0;
 	m_kBuffer = 0;
 }

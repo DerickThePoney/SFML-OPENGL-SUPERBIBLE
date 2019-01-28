@@ -11,8 +11,8 @@ public:
 	VulkanMesh();
 	~VulkanMesh();
 
-	void Initialise(VulkanPhysicalDevice& physicalDevice, VulkanDevice& device, MeshData& data, const VkCommandPool& commandPool, const VkQueue& queue);
-	void Destroy(VulkanDevice& device);
+	void Initialise(MeshData& data, const VkCommandPool& commandPool, const VkQueue& queue);
+	void Destroy();
 
 	void Bind(VkCommandBuffer& buffer);
 	void Draw(VkCommandBuffer& buffer, uint32_t instanceCount);

@@ -16,7 +16,7 @@ VulkanMesh::~VulkanMesh()
 {
 }
 
-void VulkanMesh::Initialise(VulkanPhysicalDevice& physicalDevice, VulkanDevice & device, MeshData & data, const VkCommandPool& commandPool, const VkQueue& queue)
+void VulkanMesh::Initialise(MeshData & data, const VkCommandPool& commandPool, const VkQueue& queue)
 {
 	VkDeviceSize size = sizeof(data.vertices[0]) * data.vertices.size() + sizeof(data.indices[0]) * data.indices.size();
 
@@ -25,26 +25,26 @@ void VulkanMesh::Initialise(VulkanPhysicalDevice& physicalDevice, VulkanDevice &
 
 	//create the staging buffer
 	VulkanBuffer stagingBuffer;
-	stagingBuffer.Init(physicalDevice, device, size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+	stagingBuffer.Init(size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
 
 	//mem map
-	stagingBuffer.CopyDataToBuffer(physicalDevice, device, commandPool, queue, 0, 0, sizeof(data.vertices[0]) * data.vertices.size(), data.vertices.data());
+	stagingBuffer.CopyDataToBuffer(commandPool, queue, 0, 0, sizeof(data.vertices[0]) * data.vertices.size(), data.vertices.data());
 
-	stagingBuffer.CopyDataToBuffer(physicalDevice, device, commandPool, queue, IndexPositions, 0, sizeof(data.indices[0]) * data.indices.size(), data.indices.data());
+	stagingBuffer.CopyDataToBuffer(commandPool, queue, IndexPositions, 0, sizeof(data.indices[0]) * data.indices.size(), data.indices.data());
 
 	//actual buffer creation
-	m_kData.Init(physicalDevice, device, size, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+	m_kData.Init(size, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
 	//copy the buffer
-	stagingBuffer.CopyBufferTo(m_kData, device, commandPool, queue);
+	stagingBuffer.CopyBufferTo(m_kData, commandPool, queue);
 
-	stagingBuffer.Free(device);
+	stagingBuffer.Free();
 }
 
-void VulkanMesh::Destroy(VulkanDevice & device)
+void VulkanMesh::Destroy()
 {
-	m_kData.Free(device);
+	m_kData.Free();
 }
 
 void VulkanMesh::Bind(VkCommandBuffer & buffer)

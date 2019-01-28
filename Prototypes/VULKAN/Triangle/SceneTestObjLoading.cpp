@@ -86,7 +86,7 @@ void SceneTestObjLoading::Destroy()
 	water.Destroy();
 	for (size_t i = 0; i < meshes.size(); ++i)
 	{
-		meshes[i].Destroy(VulkanRenderer::GetDevice());
+		meshes[i].Destroy();
 	}
 
 	for (size_t i = 0; i < diffuseImages.size(); ++i)
@@ -448,7 +448,7 @@ void SceneTestObjLoading::LoadMesh(const aiScene * scene, const aiMesh * mesh, i
 
 	boundingBoxes[IDX].Set(data, glm::mat4(1));
 	boundingSpheres[IDX].Set(data, glm::mat4(1));
-	meshes[IDX].Initialise(VulkanRenderer::GetPhysicalDevice(), VulkanRenderer::GetDevice(), data, VulkanRenderer::GetTranferPool(), VulkanRenderer::GetTransferQueue());
+	meshes[IDX].Initialise(data, VulkanRenderer::GetTranferPool(), VulkanRenderer::GetTransferQueue());
 }
 
 void SceneTestObjLoading::LoadMaterials(const aiScene * scene)

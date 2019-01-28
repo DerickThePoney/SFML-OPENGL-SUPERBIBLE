@@ -290,14 +290,14 @@ void HelloTriangleApplication::UpdateUniformBufferData()
 	ubo.lightSpace =  uboOff.depthMVP;
 
 	void* data;
-	uniformBufferOffscreen.MapBuffer(VulkanRenderer::GetDevice(), 0, sizeof(uboOff), 0, &data);
+	uniformBufferOffscreen.MapBuffer(0, sizeof(uboOff), 0, &data);
 	memcpy(data, &uboOff, sizeof(uboOff));
-	uniformBufferOffscreen.UnMapBuffer(VulkanRenderer::GetDevice());
+	uniformBufferOffscreen.UnMapBuffer();
 
 	
-	uniformBuffer.MapBuffer(VulkanRenderer::GetDevice(), 0, sizeof(ubo), 0, &data);
+	uniformBuffer.MapBuffer(0, sizeof(ubo), 0, &data);
 	memcpy(data, &ubo, sizeof(ubo));
-	uniformBuffer.UnMapBuffer(VulkanRenderer::GetDevice());
+	uniformBuffer.UnMapBuffer();
 }
 
 void HelloTriangleApplication::CreateCommandBuffer(int i)
@@ -357,8 +357,8 @@ void HelloTriangleApplication::Cleanup()
 	//CleanUpSwapChain();
 	CleanUpOffscreenPass();
 
-	uniformBuffer.Free(VulkanRenderer::GetDevice());
-	uniformBufferOffscreen.Free(VulkanRenderer::GetDevice());
+	uniformBuffer.Free();
+	uniformBufferOffscreen.Free();
 
 
 	vkDestroySampler(VulkanRenderer::GetDevice(), textureSampler, nullptr);
@@ -462,9 +462,9 @@ void HelloTriangleApplication::CreateVertexBuffers()
 void HelloTriangleApplication::CreateUniformBuffer()
 {
 	VkDeviceSize bufferSize = sizeof(UniformBufferObject);
-	uniformBuffer.Init(VulkanRenderer::GetPhysicalDevice(), VulkanRenderer::GetDevice(), bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+	uniformBuffer.Init(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 	bufferSize = sizeof(UniformBufferOffscreen);
-	uniformBufferOffscreen.Init(VulkanRenderer::GetPhysicalDevice(), VulkanRenderer::GetDevice(), bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+	uniformBufferOffscreen.Init(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 }
 
 void HelloTriangleApplication::CreateTextureImage()

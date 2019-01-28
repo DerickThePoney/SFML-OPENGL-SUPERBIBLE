@@ -29,9 +29,9 @@ void VulkanImage::Init(uint32_t width, uint32_t height, void * pData, VkDeviceSi
 {
 	//put it all into a staging buffer
 	VulkanBuffer stagingBuffer;
-	stagingBuffer.Init(VulkanRenderer::GetPhysicalDevice(), VulkanRenderer::GetDevice(), size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+	stagingBuffer.Init(size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-	stagingBuffer.CopyDataToBuffer(VulkanRenderer::GetPhysicalDevice(), VulkanRenderer::GetDevice(), VulkanRenderer::GetTranferPool(), VulkanRenderer::GetTransferQueue(), 0, 0, size, pData);
+	stagingBuffer.CopyDataToBuffer(VulkanRenderer::GetTranferPool(), VulkanRenderer::GetTransferQueue(), 0, 0, size, pData);
 
 	
 
@@ -50,7 +50,7 @@ void VulkanImage::Init(uint32_t width, uint32_t height, void * pData, VkDeviceSi
 	}
 
 
-	stagingBuffer.Free(VulkanRenderer::GetDevice());
+	stagingBuffer.Free();
 }
 
 void VulkanImage::Init(const std::string & filename, VkFormat format, VkImageTiling imageTiling, VkImageUsageFlags usage, VkMemoryPropertyFlags memoryFlags, bool bGenerateMipMaps)
@@ -157,9 +157,9 @@ void VulkanImage::CopyNewData(uint32_t width, uint32_t height, void * pData, VkD
 {
 	//put it all into a staging buffer
 	VulkanBuffer stagingBuffer;
-	stagingBuffer.Init(VulkanRenderer::GetPhysicalDevice(), VulkanRenderer::GetDevice(), size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+	stagingBuffer.Init(size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-	stagingBuffer.CopyDataToBuffer(VulkanRenderer::GetPhysicalDevice(), VulkanRenderer::GetDevice(), VulkanRenderer::GetTranferPool(), VulkanRenderer::GetTransferQueue(), 0, 0, size, pData);
+	stagingBuffer.CopyDataToBuffer(VulkanRenderer::GetTranferPool(), VulkanRenderer::GetTransferQueue(), 0, 0, size, pData);
 
 
 	TransitionImageLayout(VulkanRenderer::GetGraphicsPool(), VulkanRenderer::GetGraphicsQueue(), currentLayout, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
@@ -173,7 +173,7 @@ void VulkanImage::CopyNewData(uint32_t width, uint32_t height, void * pData, VkD
 		TransitionImageLayout(VulkanRenderer::GetGraphicsPool(), VulkanRenderer::GetGraphicsQueue(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 	}
 
-	stagingBuffer.Free(VulkanRenderer::GetDevice());
+	stagingBuffer.Free();
 }
 
 void VulkanImage::CopyBufferToImage(VkCommandPool& pool, VkQueue& queue, VulkanBuffer & buffer)

@@ -59,7 +59,7 @@ void WaterRenderingSystem::Destroy()
 	waterNormals.Free();
 	waterPipeline.Destroy();
 	waterPipelineWireframe.Destroy();
-	waterMesh.Destroy(VulkanRenderer::GetDevice());
+	waterMesh.Destroy();
 	
 
 	delete space;
@@ -125,7 +125,7 @@ void WaterRenderingSystem::DrawOverlays()
 
 		if (oldSize != m_fSize || val != oldVal)
 		{
-			waterMesh.Destroy(VulkanRenderer::GetDevice());
+			waterMesh.Destroy();
 			CreateWaterMesh();
 		}
 
@@ -167,7 +167,7 @@ void WaterRenderingSystem::CreateWaterMesh()
 	}
 
 	bounds.Set(data, glm::mat4(1));
-	waterMesh.Initialise(VulkanRenderer::GetPhysicalDevice(), VulkanRenderer::GetDevice(), data, VulkanRenderer::GetTranferPool(), VulkanRenderer::GetTransferQueue());
+	waterMesh.Initialise(data, VulkanRenderer::GetTranferPool(), VulkanRenderer::GetTransferQueue());
 
 }
 
@@ -289,8 +289,8 @@ void WaterRenderingSystem::DestroyTextureViewer()
 	vkDestroyDescriptorPool(VulkanRenderer::GetDevice(), textureViewDescPool, nullptr);
 
 	vkDestroySampler(VulkanRenderer::GetDevice(), textureViewSampler, nullptr);
-	screenSizeBuffer.Free(VulkanRenderer::GetDevice());
-	textureQuad.Destroy(VulkanRenderer::GetDevice());
+	screenSizeBuffer.Free();
+	textureQuad.Destroy();
 	vkDestroyDescriptorSetLayout(VulkanRenderer::GetDevice(), textureViewLayout, nullptr);
 	textureViewPipeline.Destroy();
 }
@@ -314,7 +314,7 @@ void WaterRenderingSystem::CreateTextureViewer()
 	data.indices[0] = 0; data.indices[1] = 1; data.indices[2] = 2;
 	data.indices[3] = 0; data.indices[4] = 2; data.indices[5] = 3;
 
-	textureQuad.Initialise(VulkanRenderer::GetPhysicalDevice(), VulkanRenderer::GetDevice(), data, VulkanRenderer::GetTranferPool(), VulkanRenderer::GetTransferQueue());
+	textureQuad.Initialise(data, VulkanRenderer::GetTranferPool(), VulkanRenderer::GetTransferQueue());
 
 	VkSamplerCreateInfo samplerInfo = {};
 	samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
@@ -395,15 +395,15 @@ void WaterRenderingSystem::CreateTextureViewer()
 
 
 	// uniform buffer
-	screenSizeBuffer.Init(VulkanRenderer::GetPhysicalDevice(), VulkanRenderer::GetDevice(), sizeof(ScreenSize), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+	screenSizeBuffer.Init(sizeof(ScreenSize), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 	ScreenSize s = {};
 	VkExtent2D extent = VulkanRenderer::GetSurfaceExtent();
 	s.screenSize = glm::vec2(extent.width, extent.height);
 
 	void * dataUniform;
-	screenSizeBuffer.MapBuffer(VulkanRenderer::GetDevice(), 0, sizeof(ScreenSize), 0, &dataUniform);
+	screenSizeBuffer.MapBuffer(0, sizeof(ScreenSize), 0, &dataUniform);
 	memcpy(dataUniform, &s, sizeof(s));
-	screenSizeBuffer.UnMapBuffer(VulkanRenderer::GetDevice());
+	screenSizeBuffer.UnMapBuffer();
 
 
 	//DescriptorPool

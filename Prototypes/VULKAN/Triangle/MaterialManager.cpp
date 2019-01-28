@@ -27,7 +27,7 @@ void MaterialManager::Destroy()
 {
 	for (auto it = m_akReservedUniformBuffers.begin(); it != m_akReservedUniformBuffers.end(); ++it)
 	{
-		it->second.Free(VulkanRenderer::GetDevice());
+		it->second.Free();
 	}
 }
 
@@ -47,7 +47,7 @@ void MaterialManager::CreateProjectionBuffer()
 {
 	VkDeviceSize bufferSize = sizeof(UniformBufferObject);
 	VulkanBuffer uniformBuffer;
-	uniformBuffer.Init(VulkanRenderer::GetPhysicalDevice(), VulkanRenderer::GetDevice(), bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+	uniformBuffer.Init(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 	m_akReservedUniformBuffers["UniformBufferObject"] = uniformBuffer;
 	
 	/*bufferSize = sizeof(UniformBufferOffscreen);
