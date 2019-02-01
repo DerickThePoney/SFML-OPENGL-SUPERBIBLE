@@ -9,4 +9,10 @@
 %VULKAN_SDK%\Bin32\glslangValidator.exe -Os -V data/shaders/shadowmappingdirectional.frag -o data/shaders/shadowmappingdirectional.frag.spv
 %VULKAN_SDK%\Bin32\glslangValidator.exe -Os -V data/shaders/UI.vert -o data/shaders/UI.vert.spv
 %VULKAN_SDK%\Bin32\glslangValidator.exe -Os -V data/shaders/UI.frag -o data/shaders/UI.frag.spv
+%VULKAN_SDK%\Bin32\glslangValidator.exe -Os -V data/shaders/NormalsFragment.frag -o data/shaders/NormalsFragment.frag.spv
+%VULKAN_SDK%\Bin32\glslangValidator.exe -Os -V data/shaders/NormalsGeometry.geom -o data/shaders/NormalsGeometry.geom.spv
+%VULKAN_SDK%\Bin32\glslangValidator.exe -Os -V data/shaders/WireframeFragment.frag -o data/shaders/WireframeFragment.frag.spv
+%VULKAN_SDK%\Bin32\glslangValidator.exe -Os -V data/shaders/NormalsVertex.vert -o data/shaders/NormalsVertex.vert.spv
+%VULKAN_SDK%\Bin32\glslangValidator.exe -Os -V data/shaders/NormalsTessControl.tesc -o data/shaders/NormalsTessControl.tesc.spv
+%VULKAN_SDK%\Bin32\glslangValidator.exe -Os -V data/shaders/NormalsTessEval.tese -o data/shaders/NormalsTessEval.tese.spv
 pause

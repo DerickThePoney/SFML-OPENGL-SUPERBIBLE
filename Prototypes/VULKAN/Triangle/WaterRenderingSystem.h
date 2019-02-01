@@ -11,7 +11,7 @@ public:
 	//WaterRenderingSystem();
 	//~WaterRenderingSystem();
 
-	void Initialise(float fSize, int32_t iResolution);
+	void Initialise(float fSize, int32_t iMeshResolution, int32_t iTextureResolution);
 	void Destroy();
 	
 	void Update(float deltaTime);
@@ -22,22 +22,39 @@ public:
 
 private:
 	void CreateWaterMesh();
+	void CreateDebugNormalsLayout();
+	void CreateWaterDescriptorSetLayout();
 	void CreateWaterMaterial();
 	void SetMaterialData();
+	void SetWaterMaterialData();
 
 	void CreateTextureViewer();
 	void DestroyTextureViewer();
-	void UpdateDebugUniformBuffer();
+	
 
 	//Mesh data
 	float m_fSize;
-	int32_t m_iResolution;
+	int32_t m_iMeshResolution;
+	int32_t m_iTextureResolution;
 	int32_t val;
 
 	//Rendering data
 	VulkanMesh waterMesh;
+	VkDescriptorSetLayout waterLayout;
+	VkDescriptorPool waterDescPool;
+	VkDescriptorSet waterDescSet;
+
+	VkDescriptorSetLayout waterNormalsLayout;
+	VkDescriptorPool waterNormalsDescPool;
+	VkDescriptorSet waterNormalsDescSet;
+
+	VkSampler waterSampler;
 	VulkanGraphicsPipeline waterPipeline;
 	VulkanGraphicsPipeline waterPipelineWireframe;
+	VulkanGraphicsPipeline waterPipelineNormals;
+
+	VulkanImage waterDisplacement;
+	VulkanImageView waterDisplacementView;
 	VulkanImage waterNormals;
 	VulkanImageView waterNormalsView;
 	VkDescriptorSet materialData;
@@ -61,6 +78,7 @@ private:
 
 	bool showWireFrame;
 	bool showWaterNormalsTexture;
+	bool showNormals;
 
 	AmplitudeSimulationSpace* space;
 	//std::vector<std::pair<glm::vec3, glm::vec3>> waterheigth;

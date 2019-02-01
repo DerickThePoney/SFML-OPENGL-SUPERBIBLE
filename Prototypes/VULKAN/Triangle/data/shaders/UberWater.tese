@@ -32,6 +32,8 @@ layout(location = 2) in vec3 inTangent[];
 layout(location = 3) in vec3 inColor[];
 layout(location = 4) in vec2 inTexCoord[];
 
+layout(binding = 6) uniform sampler2D displacementField;
+layout(binding = 7) uniform sampler2D worldNormal;
 
 //layout(location = 0) out vec3 fragColor;
 //layout(location = 1) out vec2 fragTexCoord;
@@ -109,7 +111,7 @@ void main()
 	
 	//get world position
 	vec3 worldPosition = vec3(ubo.model * pos);
-	vec3 tangent = vec3(1,0,0);
+	/*vec3 tangent = vec3(1,0,0);
 	vec3 binormal = vec3(0,0,1);
 	worldPosition += GertznerWave(WaveA, worldPosition, tangent, binormal);
 	worldPosition += GertznerWave(WaveB, worldPosition, tangent, binormal);
@@ -117,7 +119,10 @@ void main()
 	//worldPosition += GertznerWave(WaveD, worldPosition, tangent, binormal);
 	//worldPosition += GertznerWave(WaveE, worldPosition, tangent, binormal);
 	//worldPosition += GertznerWave(WaveF, worldPosition, tangent, binormal);
-	vec3 worldNormal = normalize(cross(binormal, tangent));
+	vec3 worldNormal = normalize(cross(binormal, tangent));*/
+
+	worldPosition = worldPosition + texture(displacementField, uv).rgb;
+	vec3 worldNormal = normalize(texture(worldNormal, uv).rgb);
 
 	//standard suff
     gl_Position = ubo.proj * ubo.view * vec4(worldPosition, 1.0);

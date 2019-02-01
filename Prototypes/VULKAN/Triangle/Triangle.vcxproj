@@ -72,6 +72,11 @@
     <ClCompile Include="WaveSpectrum.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="data\shaders\NormalsFragment.frag" />
+    <None Include="data\shaders\NormalsGeometry.geom" />
+    <None Include="data\shaders\NormalsTessControl.tesc" />
+    <None Include="data\shaders\NormalsTessEval.tese" />
+    <None Include="data\shaders\NormalsVertex.vert" />
     <None Include="data\shaders\shadowmappingdirectional.frag" />
     <None Include="data\shaders\shadowmappingdirectional.vert" />
     <None Include="data\shaders\UberNoOpacity.frag" />

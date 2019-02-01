@@ -228,6 +228,21 @@
     <None Include="data\shaders\UI.vert">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="data\shaders\NormalsFragment.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="data\shaders\NormalsGeometry.geom">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="data\shaders\NormalsTessEval.tese">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="data\shaders\NormalsVertex.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="data\shaders\NormalsTessControl.tesc">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">

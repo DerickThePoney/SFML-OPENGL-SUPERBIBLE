@@ -28,7 +28,7 @@ layout(binding = 4) uniform sampler2D opacityMap;
 layout(binding = 5) uniform sampler2D normalMap;
 
 
-#define ambient 0.1
+#define ambient 0.5
 const vec3 lightDir = vec3(0,-1,-1);
 float textureProj(vec4 P, vec2 off)
 {
@@ -113,7 +113,7 @@ void main()
 	vec4 diffuseColor = texture ( diffuseMap, outVertexData.fragTexCoord);
 	vec4 ambientColor = texture ( ambientMap, outVertexData.fragTexCoord);
 	//float opacity = texture ( opacityMap, fragTexCoord).r;
-	outColor = ComputeLighting(normalize(lightDir), normalize(outVertexData.fragNormal), vec3(normalize(outVertexData.fragViewDir)), diffuseColor, vec4(0.7,0.7,0.7,1.0), ambientColor, shadow);
+	outColor = ComputeLighting(normalize(lightDir), normalize(outVertexData.fragNormal), vec3(normalize(outVertexData.fragViewDir)), diffuseColor, vec4(1.0,1.0,1.0,1.0), ambientColor, shadow);
 	outColor.a = diffuseColor.a;
 
 	//outColor = vec4(outVertexData.fragNormal,1.0);

@@ -77,7 +77,11 @@ void SceneTestObjLoading::InitialiseFromFile(const std::string & filename)
 
 	GroupByPipeline();
 
-	water.Initialise(500.0f, 32);
+#ifdef _DEBUG
+	water.Initialise(500.0f, 16, 16);
+#else
+	water.Initialise(500.0f, 16, 512);
+#endif
 	
 }
 

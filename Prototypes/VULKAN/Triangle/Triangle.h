@@ -34,6 +34,7 @@ public:
 	static std::vector<VkWriteDescriptorSet> GetDescriptorWrites() { return getInstance().descriptorWrites; }
 	static VkSampler GetRepeatSampler() { return getInstance().textureSampler; }
 	static VkSampler GetNoRepeatSampler() { return getInstance().textureSamplerNoRepeat; }
+	static VkDescriptorBufferInfo& GetSceneDataUniformBuffer() { return getInstance().bufferInfo; }
 private:
 	
 

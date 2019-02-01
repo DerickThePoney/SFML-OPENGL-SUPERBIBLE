@@ -13,16 +13,17 @@ layout(location = 2) out vec3 outTangent[4];
 layout(location = 3) out vec3 outColor[4];
 layout(location = 4) out vec2 outTexCoord[4];
 
+#define tess 10
 void main()
 {
 	if(gl_InvocationID == 0)
 	{
-		gl_TessLevelInner[0] = 10;
-		gl_TessLevelInner[1] = 10;
-		gl_TessLevelOuter[0] = 10;
-		gl_TessLevelOuter[1] = 10;
-		gl_TessLevelOuter[2] = 10;
-		gl_TessLevelOuter[3] = 10;
+		gl_TessLevelInner[0] = tess;
+		gl_TessLevelInner[1] = tess;
+		gl_TessLevelOuter[0] = tess;
+		gl_TessLevelOuter[1] = tess;
+		gl_TessLevelOuter[2] = tess;
+		gl_TessLevelOuter[3] = tess;
 	}
 
 
