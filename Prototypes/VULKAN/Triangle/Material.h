@@ -16,6 +16,8 @@ public:
 	void Destroy();
 	void SetShaders(std::vector<ShadersFileType>& shaders, int iMaxInstances);
 
+	VkDescriptorSet GetDescriptorSet();
+
 private:
 	void CreateDescriptorSetLayout();
 	VkShaderStageFlagBits ConvertToUsableShaderStage(SHADER_TYPE type);

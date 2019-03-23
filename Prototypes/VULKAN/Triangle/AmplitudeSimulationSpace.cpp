@@ -55,6 +55,8 @@ std::pair<glm::vec3, glm::vec3> AmplitudeSimulationSpace::waterSurface(glm::vec2
 	glm::vec3 tx = { 0, 0, 0 };
 	glm::vec3 ty = { 0, 0, 0 };
 
+	float ampl = 0;
+
 	for (int izeta = 0; izeta < gridDim(Zeta); izeta++) {
 		float  zeta = idxToPos(izeta, Zeta);
 		auto &profile = m_profileBuffers[izeta];
@@ -70,7 +72,7 @@ std::pair<glm::vec3, glm::vec3> AmplitudeSimulationSpace::waterSurface(glm::vec2
 			float kdir_x = glm::dot(kdir , pos);
 
 			glm::vec4 prof = profile(kdir_x);
-			float ampl = amplitude({ pos[X], pos[Y], angle, zeta });
+			ampl += amplitude({ pos[X], pos[Y], angle, zeta });
 			glm::vec4 wave_data = dx * a * prof;
 
 			surface +=

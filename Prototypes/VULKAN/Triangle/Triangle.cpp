@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Triangle.h"
+#include "RaytracingScene.h"
 static void check_vk_result(VkResult err)
 {
 	if (err == 0) return;
@@ -53,10 +54,10 @@ void HelloTriangleApplication::InitWindow()
 	glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
 	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
 
-	window = glfwCreateWindow(mode->width, mode->height, "Vulkan triangle example", nullptr, nullptr);
+	window = glfwCreateWindow(800, 600, "Vulkan triangle example", nullptr, nullptr);
 	//window = glfwCreateWindow(mode->width, mode->height, "Vulkan triangle example", glfwGetPrimaryMonitor(), nullptr);
-	WIDTH = mode->width;
-	HEIGHT = mode->height;
+	WIDTH = 800;
+	HEIGHT = 600;
 
 	glfwSetKeyCallback(window, HelloTriangleApplication::key_callback);
 	glfwSetWindowIconifyCallback(window, window_iconify_callback);
@@ -455,7 +456,8 @@ void HelloTriangleApplication::CreateGraphicsPipeline()
 
 void HelloTriangleApplication::CreateVertexBuffers()
 {	
-	m_pkScene = new SceneTestObjLoading();
+	m_pkScene = new RaytracingScene();
+	//m_pkScene = new SceneTestObjLoading();
 	m_pkScene->InitialiseFromFile("data/Models/Sponza/sponza.obj");
 }
 

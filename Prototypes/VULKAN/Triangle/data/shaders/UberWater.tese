@@ -121,8 +121,8 @@ void main()
 	//worldPosition += GertznerWave(WaveF, worldPosition, tangent, binormal);
 	vec3 worldNormal = normalize(cross(binormal, tangent));*/
 
-	worldPosition = worldPosition + texture(displacementField, uv).rgb;
-	vec3 worldNormal = normalize(texture(worldNormal, uv).rgb);
+	worldPosition = worldPosition + texture(displacementField, uv).xyz;
+	vec3 worldNormal = normalize(texture(worldNormal, uv).xyz);
 
 	//standard suff
     gl_Position = ubo.proj * ubo.view * vec4(worldPosition, 1.0);

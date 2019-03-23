@@ -1,9 +1,10 @@
 #include "stdafx.h"
 #include "Intersections.h"
 #include "AABB.h"
-#include "BoundingSphere.h"
+#include "Sphere.h"
 #include "Plane.h"
 #include "Frustum.h"
+#include "Ray.h"
 
 bool Intersect(const AABB& first, const AABB& second)
 {
@@ -81,7 +82,7 @@ float Intersect(const AABB& box, const Plane& plane)
 		return test;
 }
 
-float Intersect(const BoundingSphere & sphere, const Plane & plane)
+float Intersect(const Sphere & sphere, const Plane & plane)
 {
 	return (plane.normal.x * sphere.center.x) + (plane.normal.y * sphere.center.y) + (plane.normal.z * sphere.center.z) + plane.offset + sphere.radius;
 }
@@ -97,7 +98,7 @@ bool Intersect(const AABB& box, const Frustum& frustum)
 	return true;
 }
 
-bool Intersect(const BoundingSphere & sphere, const Frustum & frustum)
+bool Intersect(const Sphere & sphere, const Frustum & frustum)
 {
 	for (auto i = 0; i < 6; i++)
 	{
@@ -108,4 +109,18 @@ bool Intersect(const BoundingSphere & sphere, const Frustum & frustum)
 		}
 	}
 	return true;
+}
+
+bool Intersect(const Sphere & sphere, const Ray & ray)
+{
+	// intermediate Value
+	glm::vec3 w = sphere.center - ray.Origin();
+	float wsq = glm::dot(w, w);
+	float proj = glm::dot(w, ray.Direction());
+	float rsq = sphere.radius * sphere.radius;
+
+	if (proj < 0.0f&& wsq > rsq)
+		return false;
+
+	return wsq - proj * proj <= rsq;
 }

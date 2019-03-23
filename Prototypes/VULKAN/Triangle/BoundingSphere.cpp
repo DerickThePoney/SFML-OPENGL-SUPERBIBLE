@@ -4,6 +4,7 @@
 
 
 BoundingSphere::BoundingSphere()
+	: Sphere()
 {
 }
 

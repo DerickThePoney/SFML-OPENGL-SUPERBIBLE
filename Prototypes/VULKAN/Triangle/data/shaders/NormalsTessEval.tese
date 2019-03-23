@@ -41,6 +41,6 @@ void main()
 	vec2 uv2 = mix(inTexCoord[3], inTexCoord[2], gl_TessCoord.x);
 	vec2 uv = mix(uv1, uv2, gl_TessCoord.y);
 
-	gl_Position = gl_Position + texture(displacementField, uv);
+	gl_Position = gl_Position + texture(displacementField, uv).xyzw;
 	outNormal = normalize(texture(worldNormal, uv).xyz);
 }

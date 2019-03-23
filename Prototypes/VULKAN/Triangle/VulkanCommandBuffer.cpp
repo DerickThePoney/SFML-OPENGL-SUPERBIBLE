@@ -194,6 +194,11 @@ void VulkanCommandBuffer::DrawMesh(VulkanMesh& mesh)
 	mesh.Draw(m_kBufferObject,1);
 }
 
+void VulkanCommandBuffer::DrawTriangles(const uint32_t number)
+{
+	vkCmdDraw(m_kBufferObject, number, 1, 0, 0);
+}
+
 void VulkanCommandBuffer::PipelineBarrier(VkPipelineStageFlags srcStage, VkPipelineStageFlags dstStage, VkDependencyFlags dependencies, uint32_t memoryBarrierCount, VkMemoryBarrier * memoryBariers, uint32_t bufferMemoryBarrierCount, VkBufferMemoryBarrier * bufferMemoryBariers, uint32_t imageMemoryBarrierCount, VkImageMemoryBarrier * imageMemoryBariers)
 {
 	vkCmdPipelineBarrier(

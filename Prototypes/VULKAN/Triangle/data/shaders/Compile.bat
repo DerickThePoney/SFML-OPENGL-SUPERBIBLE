@@ -15,4 +15,6 @@
 %VULKAN_SDK%\Bin32\glslangValidator.exe -Os -V data/shaders/NormalsVertex.vert -o data/shaders/NormalsVertex.vert.spv
 %VULKAN_SDK%\Bin32\glslangValidator.exe -Os -V data/shaders/NormalsTessControl.tesc -o data/shaders/NormalsTessControl.tesc.spv
 %VULKAN_SDK%\Bin32\glslangValidator.exe -Os -V data/shaders/NormalsTessEval.tese -o data/shaders/NormalsTessEval.tese.spv
+%VULKAN_SDK%\Bin32\glslangValidator.exe -Os -V data/shaders/FullscreenTriangle.vert -o data/shaders/FullscreenTriangle.vert.spv
+%VULKAN_SDK%\Bin32\glslangValidator.exe -Os -V data/shaders/FullscreenTriangle.frag -o data/shaders/FullscreenTriangle.frag.spv
 pause

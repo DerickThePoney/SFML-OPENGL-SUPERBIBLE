@@ -201,6 +201,23 @@ void Material::CreateDescriptorSetLayout()
 	}
 }
 
+VkDescriptorSet Material::GetDescriptorSet()
+{
+	VkDescriptorSet set;
+	VkDescriptorSetAllocateInfo info = {};
+	info.descriptorPool = m_kDescriptorPool;
+	info.descriptorSetCount = 1;
+	info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+	info.pSetLayouts = &m_kDescriptorsLayout;
+
+	if (vkAllocateDescriptorSets(VulkanRenderer::GetDevice(), &info, &set) != VK_SUCCESS)
+	{
+		throw std::runtime_error("Unable to allocate descriptor set");
+	}
+
+	return set;
+}
+
 VkShaderStageFlagBits Material::ConvertToUsableShaderStage(SHADER_TYPE type)
 {
 	switch (type)

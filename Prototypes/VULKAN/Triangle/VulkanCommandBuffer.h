@@ -63,6 +63,7 @@ public:
 
 	//draw calls
 	void DrawMesh(VulkanMesh& mesh);
+	void DrawTriangles(const uint32_t number);
 
 
 	//Barriers
